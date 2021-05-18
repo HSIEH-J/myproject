@@ -1,0 +1,162 @@
+body{
+    margin: 0px;
+}
+
+header{
+    border-bottom: solid 10px lightgray;
+    height:100px;
+}
+
+
+#main-header{
+    display: flex;
+    justify-content: space-between;
+    margin: 10px 10px 0px 10px;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    line-height: 100px
+}
+
+#sidebar{
+    width: 300px;
+    display: flex;
+    justify-content: space-evenly
+}
+
+#search{
+    background-image: url(../images/search.png);
+    background-repeat: no-repeat;
+    background-position: right center;
+    height: 30px;
+    width: 150px;
+    border: solid 1px;  
+    border-radius: 10px;
+}
+
+#add{
+    text-align: center;
+    margin-top: 3%;
+}
+
+/* position: absolute;
+left: 50%;
+z-index: -1; */
+
+#box{
+    border: none;
+    border-bottom: solid 1px gray;
+    outline: medium;
+    width: 500px;
+}
+
+#dino{
+    display: none;
+}
+
+#page{
+    display: flex;
+    flex-wrap: wrap;
+}
+
+#index{
+    display: none;
+    border-left: solid 3px gray;
+    height:2000px;
+    z-index: 1;
+    position: absolute;
+    left: 250px;
+}
+
+#create{
+    position: absolute;
+    left: 90%;
+    bottom: 5%;
+    cursor: pointer;
+}
+
+#option{
+    display: none;
+    text-align: center;
+    border: solid 2px gray;
+    height: 80px;
+    width: 120px;
+    margin-bottom: 5%;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    box-shadow:1px 2px 1px 2px lightgray
+}
+
+.category{
+    line-height:40px;
+    cursor: pointer;
+}
+
+#carton:hover{
+    background-color: rgb(140,198,63);
+}
+
+#file:hover{
+    background-color: rgb(140,198,63);
+}
+
+.newCarton{
+    height: 250px;
+    width: 250px;
+    margin-top: 2%;
+    margin-left: 1%;
+}
+
+.top{
+    height: 187.5px;
+    text-align: left
+}
+
+.pencil{
+    position: absolute;
+    z-index: 1;
+}
+
+.image{
+    position: absolute;
+    z-index: -1;
+}
+
+.frame{
+    height: 250px;
+    width: 250px;
+    margin-top: 2%;
+    margin-left: 1%;
+}
+
+.bookmark{
+    border: solid 1px lightgray;
+    height: 250px;
+    width: 250px;
+    box-shadow:1px 2px 1px 2px lightgray
+}
+
+.info{
+   
+    border-top: solid 1px lightgray;
+    
+}
+
+.title{
+    margin-left: 3%;
+    margin-top: 2%;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-size: 15px;
+}
+
+.url{
+    display: flex;
+    justify-content: start;
+}
+
+a{
+    text-decoration: none;
+    color: green
+}
+
+a:hover{
+    text-decoration: underline;
+}
+

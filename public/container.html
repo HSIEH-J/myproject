@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <link rel="icon" href="images/favicon-20210512121052246.ico" type="image/x-icon" >
+        <title>Container</title>
+        <link href="css/styles.css" rel="stylesheet">
+    </head>
+
+    <body>
+        <header>
+            <div id="main-header">
+                <div>
+                    <img src="images/logo.png" width=216px height=76px>
+                </div>
+                <div id="sidebar">
+                    <div>
+                        <div>匯入Chrome書籤</div>
+                    </div>
+                    <div>
+                       <input id="search" type="text">
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div id="add">
+            <input id="box">
+            <button id="urlButton" onclick="addBookmarkPage()">+</button>
+        </div>
+
+        <div id="dino">
+            <img src="images/dino2.gif" width="200" height="150">
+        </div>
+       
+        <div id="page">
+        </div>
+        
+        <div id="index">
+        </div>
+        
+        <div id="create">
+             <div id="option">
+                 <div class="category" id="file">Add Files</div>
+                 <div class="category" id="carton">Add Cartons</div>
+             </div>
+             <img src="images/create.png" id="plus">
+        </div>
+        
+
+        <footer>
+        </footer>
+
+        <script src="js/bookmark.js"></script>
+     
+        <script src="/socket.io/socket.io.js"></script>
+        <script>
+            const socket = io();
+            socket.on("done", ()=>{
+                location.reload();
+                //page.innerHTML = "worked!!!";
+            })
+        </script>
+       
+    </body>
+</html>
+
+
+        
