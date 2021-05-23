@@ -1,6 +1,6 @@
 const axios = require("axios");
 const sharp = require("sharp");
-const { query } = require("./mysql");
+const { pool } = require("./mysql");
 const aws = require("aws-sdk");
 
 aws.config.update({ accessKeyId: process.env.S3_ID, secretAccessKey: process.env.S3_PWD });
@@ -20,11 +20,25 @@ const getTitle = async function (url) {
 };
 
 const insertContainerData = async function (insert) {
-  await query("INSERT INTO container SET ?", insert);
+  await pool.query("INSERT INTO bookmark SET ?", insert);
 };
 
+// const checkUrl = async function (url) {
+//   const check = await pool.query("SELECT url FROM bookmark WHERE url = ? FOR UPDATE", url);
+//   if (check[0].length !== 0) {
+//     return false;
+//   } else {
+//     return true;
+//   }
+// };
+
 const getContainerData = async function () {
-  const data = await query("SELECT address, title, img FROM container");
+  const data = await pool.query("SELECT id, url, title, thumbnail, sequence, timestamp FROM bookmark WHERE folder_id IS NULL");
+  return data;
+};
+
+const getFolderData = async function () {
+  const data = await pool.query("SELECT id, folder_name, sequence, timestamp FROM folder WHERE folder_id IS NULL");
   return data;
 };
 
@@ -64,4 +78,37 @@ const uploadS3 = async function (url) {
   return address;
 };
 
-module.exports = { getThumbnail, insertContainerData, getTitle, uploadS3, getContainerData };
+const createFolder = async (insert) => {
+  await pool.query("INSERT INTO folder set ?", insert);
+};
+
+const sequenceChange = async (data) => {
+  for (const n of data) {
+    if (n.type === "bookmark") {
+      await pool.query("UPDATE bookmark SET sequence=?, timestamp=? WHERE id=?", [n.order, n.time, n.id]);
+    } else {
+      await pool.query("UPDATE folder SET sequence=?, timestamp=? WHERE id=?", [n.order, n.time, n.id]);
+    }
+  }
+};
+
+const insertIntoSubfolder = async (data) => {
+  if (data.type === "bookmark") {
+    console.log("===bookmark===");
+    await pool.query("UPDATE bookmark SET folder_id=?, timestamp=? WHERE id=?", [data.folder_id, data.time, data.update_id]);
+  } else {
+    await pool.query("UPDATE folder SET folder_id=?, timestamp=? WHERE id=?", [data.folder_id, data.time, data.update_id]);
+  }
+};
+
+module.exports = {
+  getThumbnail,
+  insertContainerData,
+  getTitle,
+  uploadS3,
+  getContainerData,
+  createFolder,
+  getFolderData,
+  sequenceChange,
+  insertIntoSubfolder
+};

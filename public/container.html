@@ -1,19 +1,20 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" style="height: 100vh; width: 100vw;">
 
     <head>
         <link rel="icon" href="images/favicon-20210512121052246.ico" type="image/x-icon" >
         <title>Container</title>
         <link href="css/styles.css" rel="stylesheet">
+        <link href="css/tem.css" rel="stylesheet">
     </head>
 
     <body>
-        <header>
-            <div id="main-header">
-                <div>
-                    <img src="images/logo.png" width=216px height=76px>
+        <!-- <header>
+            <div id="mainHeader">
+                <div class="hamburger">
+                    <button onclick="openSidebar()">☰</button>
                 </div>
-                <div id="sidebar">
+                <div id="index">
                     <div>
                         <div>匯入Chrome書籤</div>
                     </div>
@@ -22,29 +23,62 @@
                     </div>
                 </div>
             </div>
-        </header>
+        </header> -->
 
-        <div id="add">
-            <input id="box">
-            <button id="urlButton" onclick="addBookmarkPage()">+</button>
-        </div>
-
-        <div id="dino">
-            <img src="images/dino2.gif" width="200" height="150">
-        </div>
-       
-        <div id="page">
-        </div>
+        <!-- Sidebar-->
+        <div class="screen">
+            <!-- Sidebar-->
+            <div class="sidebar bar_block" style="display: none;">
+                <button onclick="closeSidebar()" class="bar_item close_button">Close &laquo;</button>
+                <div class="bar_item">File 1</div>
+                <div class="bar_item">File 2</div>
+                <div class="dropdown_hover">
+                  <button class="sidebar_button">Carton &blacktriangledown;</button>
+                  <div class="dropdown_content" style="display: none">
+                    <div class="bar_item down">File 1</div>
+                    <div class="bar_item down">File 2</div>
+                  </div>
+                </div>
+                <div class="bar_item">File 3</div>
+            </div>
+            <div class="container">
+                <div id="mainHeader">
+                    <div class="hamburger">
+                        <!-- <button onclick="openSidebar()" class="smallIcon">☰</button> -->
+                        <button onclick="openSidebar()" class="smallIcon"><img src="images/hamburger.png"></button>
+                    </div>
+                    <div id="index">
+                        <div>
+                            <div>匯入Chrome書籤</div>
+                        </div>
+                        <div>
+                           <input id="search" type="text">
+                        </div>
+                        <img src="images/search.png">
+                    </div>
+                </div>
+                <div class="center">
+                    <input id="box">
+                    <button id="urlButton" onclick="addBookmarkPage()">+</button>
+                </div>
+                <div class="center">
+                    <button class="changeIcon">&Colon;</button>
+                    <button class="changeIcon">&Congruent;</button>
+                </div>
         
-        <div id="index">
-        </div>
-        
-        <div id="create">
-             <div id="option">
-                 <div class="category" id="file">Add Files</div>
-                 <div class="category" id="carton">Add Cartons</div>
-             </div>
-             <img src="images/create.png" id="plus">
+                <!-- <div id="dino">
+                    <img src="images/dino2.gif" width="200" height="150">
+                </div> -->
+                <div id="page">
+                </div>
+            </div>   
+            <div id="create">
+                <div id="option">
+                    <div class="category" id="folder">Add Files</div>
+                </div>
+                <img src="images/folder.png" id="plus">
+            </div>
+           
         </div>
         
 
@@ -52,6 +86,7 @@
         </footer>
 
         <script src="js/bookmark.js"></script>
+        <script src="js/drag.js"></script>
      
         <script src="/socket.io/socket.io.js"></script>
         <script>

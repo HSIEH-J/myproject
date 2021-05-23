@@ -14,7 +14,8 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use("/api/1.0",
   [
-    require("./routes/screenshot_route")
+    require("./routes/bookmark_route"),
+    require("./routes/folder_route")
   ]
 );
 
