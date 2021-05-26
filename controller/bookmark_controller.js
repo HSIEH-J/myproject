@@ -50,10 +50,19 @@ const importThumbnailData = async (req, res, next) => {
 
 // container.html get the folders and the bookmarks
 const containerData = async (req, res, next) => {
+  const { id } = req.query;
   const dataObj = { data: [] };
-  const mark = await bookmark.getContainerData();
-  const folder = await bookmark.getFolderData();
-  const data = mark[0].concat(folder[0]);
+  let data;
+  if (id === undefined) {
+    const mark = await bookmark.getContainerData();
+    const folder = await bookmark.getFolderData();
+    data = mark[0].concat(folder[0]);
+  } else {
+    const mark = await bookmark.getSubfolderBookmarkData(id);
+    const folder = await bookmark.getSubfolderData(id);
+    data = mark.concat(folder);
+  }
+  // console.log(data);
   data.sort((a, b) => {
     if (a.timestamp > b.timestamp) {
       return 1;
@@ -63,7 +72,7 @@ const containerData = async (req, res, next) => {
     }
     return 0;
   });
-  console.log(data);
+  // console.log(data);
   for (const n of data) {
     if (n.folder_name === undefined) {
       dataObj.data.push({ id: n.id, url: n.url, title: n.title, thumbnail: n.thumbnail });
@@ -78,7 +87,8 @@ const containerData = async (req, res, next) => {
 const createFolder = async (req, res, next) => {
   const name = req.body.name;
   const time = req.body.time;
-  const insert = { id: time, user_id: 1, folder_name: name, timestamp: time };
+  const id = req.body.folder_id;
+  const insert = { id: time, user_id: 1, folder_name: name, folder_id: id, timestamp: time };
   await bookmark.createFolder(insert);
 };
 
@@ -89,6 +99,7 @@ const sequenceChange = async (req, res, next) => {
   await bookmark.sequenceChange(data);
 };
 
+// when user drag a folder or a bookmark into another folder
 const insertIntoSubfolder = async (req, res, next) => {
   const data = req.body;
   console.log(data);

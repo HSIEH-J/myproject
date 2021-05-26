@@ -5,7 +5,6 @@
         <link rel="icon" href="images/favicon-20210512121052246.ico" type="image/x-icon" >
         <title>Container</title>
         <link href="css/styles.css" rel="stylesheet">
-        <link href="css/tem.css" rel="stylesheet">
     </head>
 
     <body>
@@ -29,19 +28,18 @@
         <div class="screen">
             <!-- Sidebar-->
             <div class="sidebar bar_block" style="display: none;">
-                <button onclick="closeSidebar()" class="bar_item close_button">Close &laquo;</button>
-                <div class="bar_item">File 1</div>
-                <div class="bar_item">File 2</div>
-                <div class="dropdown_hover">
-                  <button class="sidebar_button">Carton &blacktriangledown;</button>
-                  <div class="dropdown_content" style="display: none">
-                    <div class="bar_item down">File 1</div>
-                    <div class="bar_item down">File 2</div>
-                  </div>
+                <div id="sidebarTop">
+                    <button onclick="closeSidebar()" class="bar_item close_button">Close &laquo;</button>
                 </div>
-                <div class="bar_item">File 3</div>
+                <div id="sidebarContent"></div>
+                <div id="sidebarBottom">
+                    <div>
+                        <img src="images/plus.svg" width="16px" height="16px">
+                    </div>
+                    <div>New Folder</div>
+                </div>
             </div>
-            <div class="container">
+            <div id="container">
                 <div id="mainHeader">
                     <div class="hamburger">
                         <!-- <button onclick="openSidebar()" class="smallIcon">☰</button> -->
@@ -72,12 +70,13 @@
                 <div id="page">
                 </div>
             </div>   
-            <div id="create">
+            <!-- <div id="create">
                 <div id="option">
                     <div class="category" id="folder">Add Files</div>
                 </div>
                 <img src="images/folder.png" id="plus">
-            </div>
+            </div> -->
+            
            
         </div>
         
@@ -85,8 +84,13 @@
         <footer>
         </footer>
 
+        <script src="js/container.js"></script>
         <script src="js/bookmark.js"></script>
+        <script src="js/folder.js"></script>
         <script src="js/drag.js"></script>
+        <script src="js/sidebar.js"></script>
+        <script src="js/subfolder.js"></script>
+        
      
         <script src="/socket.io/socket.io.js"></script>
         <script>

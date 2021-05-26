@@ -42,3 +42,13 @@ function getRandomNumber () {
     return (c === "x" ? r : (r & 0x3 | 0x8)).toString(16);
   });
 }
+
+<script>
+    d3.json("/api/1.0/nest", (d) => {
+        return d;
+    }).then((d)=>{
+        const data = d;
+        const a = d3.group(data, d=>d.id)
+        console.log(a)
+    })
+</script>

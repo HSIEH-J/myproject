@@ -1,8 +1,8 @@
-// const app = require("../app");
+const app = require("../app");
+
 const http = require("http");
 
-const server = http.createServer();
-// const io = require("../models/socket").init(server);
+const server = http.createServer(app);
 const io = require("../models/socket").init(server);
 
 io.on("connection", (socket) => {

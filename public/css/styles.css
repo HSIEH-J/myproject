@@ -79,13 +79,50 @@ body{
     font-size: 20px;
     color: WhiteSmoke;
     font-family: Helvetica, sans-serif;
+    width: 98px;
+    height: 45px;
+    outline: medium;
+    text-align: left;
+}
+
+.sidebar_button:hover{
+    background-color: Gainsboro;
+    color: SlateGrey;
+    cursor: pointer;
+}
+
+.dropdown_hover{
+    cursor: pointer;
+}
+
+.dropdown_hover:hover{
+    background-color: Gainsboro;
+    color: SlateGrey
 }
 
 .down{
-    color: darkgrey
+    color: WhiteSmoke;
+    text-align: center;
 }
 
-.container{
+#sidebarTop{
+    height: 5vh;
+    border-bottom: solid 1px lightgray;
+}
+
+#sidebarContent{
+    height: 90vh;
+}
+
+#sidebarBottom{
+    height: 5vh;
+    display: flex;
+    justify-content: space-evenly;
+    border-top: solid 1px lightgray;
+}
+
+
+#container{
     display: flex;
     flex-direction: column;
     /* position: relative; */
@@ -146,21 +183,22 @@ body{
     flex-direction: column;
     position: relative;
     width: 250px;
-    height:250px
+    height:250px;
 }
 
 .folderName{
-    width:150px;
+    width:135px;
     height: 25px;
-    margin: auto;
+    /* margin: auto; */
     text-align: center;
     top: 80%;
     left: 4%;
-    z-index: 1;
     position: absolute;
-    background-color: SteelBlue;
+    left:8%;
+    background-color: rgb(85, 141, 143);
     color: white;
     font-size: 20px;
+    border: none;
     
 }
 
@@ -226,6 +264,7 @@ body{
     width: 250px;
     margin-top: 2%;
     margin-left: 1%;
+    cursor: pointer;
 }
 
 .bookmark{

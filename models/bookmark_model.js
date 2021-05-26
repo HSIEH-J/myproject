@@ -38,8 +38,18 @@ const getContainerData = async function () {
 };
 
 const getFolderData = async function () {
-  const data = await pool.query("SELECT id, folder_name, sequence, timestamp FROM folder WHERE folder_id IS NULL");
+  const data = await pool.query("SELECT id, folder_name, sequence, timestamp FROM folder WHERE folder_id = 0");
   return data;
+};
+
+const getSubfolderData = async (id) => {
+  const bookmark = await pool.query("SELECT * FROM bookmark WHERE folder_id = ?", id);
+  return bookmark[0];
+};
+
+const getSubfolderBookmarkData = async (id) => {
+  const folder = await pool.query("SELECT * FROM folder WHERE folder_id = ?", id);
+  return folder[0];
 };
 
 const getLocation = (s3, params) => {
@@ -110,5 +120,7 @@ module.exports = {
   createFolder,
   getFolderData,
   sequenceChange,
-  insertIntoSubfolder
+  insertIntoSubfolder,
+  getSubfolderData,
+  getSubfolderBookmarkData
 };
