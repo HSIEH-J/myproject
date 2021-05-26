@@ -1,7 +1,7 @@
 const { pool } = require("./mysql");
 
-const sidebarData = async () => {
-  const parent = await pool.query("SELECT id, folder_name, folder_id FROM folder WHERE folder_id = 0");
+const sidebarData = async (id) => {
+  const parent = await pool.query("SELECT id, folder_name, folder_id FROM folder WHERE folder_id = 0 && user_id = ?", id);
   // console.log(parent[0]);
   const data = [];
   for (const n of parent[0]) {

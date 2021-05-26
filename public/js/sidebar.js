@@ -23,7 +23,13 @@ function closeSidebar () {
 }
 
 const getNestData = async () => {
-  const response = await fetch("/api/1.0/nest");
+  const response = await fetch("/api/1.0/nest", {
+    headers: new Headers({
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`
+    }),
+    method: "GET"
+  });
   const data = await response.json();
   return data;
 };

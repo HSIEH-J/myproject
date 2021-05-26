@@ -27,6 +27,7 @@ function addBookmarkPage () {
   };
   xhr.open("post", "/api/1.0/test", true);
   xhr.setRequestHeader("Content-type", "application/json");
+  xhr.setRequestHeader("Authorization", "Bearer " + token);
   const data = JSON.stringify(urlData);
   console.log(data);
   xhr.send(data);

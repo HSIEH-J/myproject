@@ -26,7 +26,8 @@ const sequenceUpdate = async (data) => {
   const response = await fetch("/api/1.0/change", {
     body: JSON.stringify(data),
     headers: new Headers({
-      "Content-Type": "application/json"
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`
     }),
     method: "POST"
   });
@@ -38,7 +39,8 @@ const insertSubFolder = async (data) => {
   const response = await fetch("/api/1.0/subfolder", {
     body: JSON.stringify(data),
     headers: new Headers({
-      "Content-Type": "application/json"
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`
     }),
     method: "POST"
   });

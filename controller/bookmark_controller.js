@@ -7,6 +7,7 @@ const importThumbnailData = async (req, res, next) => {
   // get url
   const url = req.body.url;
   const time = req.body.time;
+  const user = req.user.id;
   const titleData = await bookmark.getTitle(url);
   console.log(titleData);
   // get url title => check if status = done
@@ -25,7 +26,7 @@ const importThumbnailData = async (req, res, next) => {
         console.log(title);
         const location = await bookmark.uploadS3(url);
         console.log(location);
-        const insert = { url: url, title: title, thumbnail: location, timestamp: time };
+        const insert = { user_id: user, url: url, title: title, thumbnail: location, timestamp: time };
         await bookmark.insertContainerData(insert);
         console.log(socket.id);
         socket.emit("done");
@@ -38,7 +39,7 @@ const importThumbnailData = async (req, res, next) => {
     console.log(title);
     const location = await bookmark.uploadS3(url);
     console.log(location);
-    const insert = { user_id: 1, url: url, title: title, thumbnail: location, timestamp: time };
+    const insert = { user_id: user, url: url, title: title, thumbnail: location, timestamp: time };
     await bookmark.insertContainerData(insert);
     res.send(true);
   }
@@ -51,15 +52,17 @@ const importThumbnailData = async (req, res, next) => {
 // container.html get the folders and the bookmarks
 const containerData = async (req, res, next) => {
   const { id } = req.query;
+  const user = req.user.id;
+  console.log(user);
   const dataObj = { data: [] };
   let data;
   if (id === undefined) {
-    const mark = await bookmark.getContainerData();
-    const folder = await bookmark.getFolderData();
+    const mark = await bookmark.getContainerData(user);
+    const folder = await bookmark.getFolderData(user);
     data = mark[0].concat(folder[0]);
   } else {
-    const mark = await bookmark.getSubfolderBookmarkData(id);
-    const folder = await bookmark.getSubfolderData(id);
+    const mark = await bookmark.getSubfolderBookmarkData(id, user);
+    const folder = await bookmark.getSubfolderData(id, user);
     data = mark.concat(folder);
   }
   // console.log(data);
@@ -88,22 +91,25 @@ const createFolder = async (req, res, next) => {
   const name = req.body.name;
   const time = req.body.time;
   const id = req.body.folder_id;
-  const insert = { id: time, user_id: 1, folder_name: name, folder_id: id, timestamp: time };
+  const user = req.user.id;
+  const insert = { id: time, user_id: user, folder_name: name, folder_id: id, timestamp: time };
   await bookmark.createFolder(insert);
 };
 
 // when user drag a folder or a bookmark
 const sequenceChange = async (req, res, next) => {
   const data = req.body.data;
+  const user = req.user.id;
   // console.log(data);
-  await bookmark.sequenceChange(data);
+  await bookmark.sequenceChange(data, user);
 };
 
 // when user drag a folder or a bookmark into another folder
 const insertIntoSubfolder = async (req, res, next) => {
   const data = req.body;
+  const user = req.user.id;
   console.log(data);
-  await bookmark.insertIntoSubfolder(data);
+  await bookmark.insertIntoSubfolder(data, user);
 };
 
 // when user drag a folder or a bookmark into a folder

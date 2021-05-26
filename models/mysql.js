@@ -1,20 +1,18 @@
-const mysql = require("mysql2");
+const mysql = require("mysql2/promise");
 // Create connection
 
-const db = mysql.createPool({
+const mysqlConfig = {
   host: process.env.DB_HOST,
   user: process.env.DB_USER,
   password: process.env.DB_PWD,
   database: "myproject",
   waitForConnections: true,
   connectionLimit: 10
-});
-
-const promiseQuery = db.promise();
-
-module.exports = {
-  pool: promiseQuery
 };
+
+const pool = mysql.createPool(mysqlConfig);
+
+module.exports = { pool };
 
 // if use promisify
 // const { promisify } = require("util");

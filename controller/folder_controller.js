@@ -21,7 +21,8 @@ function buildTree (list) {
 }
 
 const getNestData = async (req, res, next) => {
-  const data = await folder.sidebarData();
+  const user = req.user.id;
+  const data = await folder.sidebarData(user);
   const temp = buildTree(data);
   res.send(temp);
 };

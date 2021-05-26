@@ -1,6 +1,20 @@
+const token = localStorage.getItem("accessToken");
+console.log(token);
+
+if (!token) {
+  alert("請先登入");
+  window.location.href = "/sign.html";
+}
+
 // render main content data
 const getBookmarkData = async () => {
-  const response = await fetch("/api/1.0/get");
+  const response = await fetch("/api/1.0/get", {
+    headers: new Headers({
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`
+    }),
+    method: "GET"
+  });
   const data = await response.json();
   return data;
 };

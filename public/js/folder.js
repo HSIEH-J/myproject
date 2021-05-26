@@ -11,7 +11,8 @@ const createNewFolder = async (data) => {
   const response = await fetch("/api/1.0/folder", {
     body: JSON.stringify(data),
     headers: new Headers({
-      "Content-Type": "application/json"
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`
     }),
     method: "POST"
   });
