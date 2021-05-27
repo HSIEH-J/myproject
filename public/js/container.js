@@ -1,10 +1,10 @@
-const token = localStorage.getItem("accessToken");
-console.log(token);
-
-if (!token) {
+if (!document.cookie) {
   alert("請先登入");
   window.location.href = "/sign.html";
 }
+
+const cookieArr = document.cookie.split("=");
+const token = cookieArr[1];
 
 // render main content data
 const getBookmarkData = async () => {
