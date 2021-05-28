@@ -33,7 +33,7 @@ function register () {
   const data = { email: email, password: pwd };
   signUp(data).then(data => {
     console.log(data);
-    localStorage.setItem("accessToken", data.data.access_token);
+    // localStorage.setItem("accessToken", data.data.access_token);
   });
 }
 
@@ -43,6 +43,6 @@ function logIn () {
   const data = { email: email, password: pwd };
   signIn(data).then(data => {
     console.log(data);
-    localStorage.setItem("accessToken", data.data.access_token);
+    // localStorage.setItem("accessToken", data.data.access_token);
   });
 }

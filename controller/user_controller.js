@@ -23,6 +23,7 @@ const signUp = async (req, res) => {
     res.status(500).send({ error: "Database Query Error" });
     return;
   }
+  res.cookie("token", user.access_token);
   res.status(200).send({
     data: { access_token: user.access_token }
   });
@@ -48,6 +49,7 @@ const nativeSignIn = async (req, res) => {
     res.status(500).send({ error: "Database Query Error" });
     return;
   }
+  res.cookie("token", user.access_token);
   res.status(200).send({ data: { access_token: user.access_token } });
 };
 
