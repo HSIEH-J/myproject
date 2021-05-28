@@ -1,11 +1,3 @@
-if (!document.cookie) {
-  alert("請先登入");
-  window.location.href = "/sign.html";
-}
-
-const cookieArr = document.cookie.split("=");
-const token = cookieArr[1];
-
 // render main content data
 const getBookmarkData = async () => {
   const response = await fetch("/api/1.0/get", {
