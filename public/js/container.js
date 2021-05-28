@@ -1,5 +1,5 @@
 const token = localStorage.getItem("accessToken");
-console.log(token);
+// console.log(token);
 
 if (!token) {
   alert("請先登入");

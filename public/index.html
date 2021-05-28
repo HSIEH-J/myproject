@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en" style="height: 100vh; width: 100vw;">
+
+    <head>
+        <link rel="icon" href="images/favicon-20210512121052246.ico" type="image/x-icon" >
+        <title>home page</title>
+    </head>
+
+    <body>
+       <h1>Hello!</h1>
+    </body>
+
+    <script>
+        window.addEventListener("message", receiveMessage, false);
+        function receiveMessage (event) {
+            if (event.origin === "chrome-extension://koggopoanaidpohodhpdklohbngbjkif"){
+                console.log(event.origin)
+                event.source.postMessage(localStorage.accessToken, event.origin);
+            }
+        }
+    </script>
+</html>
+

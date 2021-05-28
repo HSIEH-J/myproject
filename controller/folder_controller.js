@@ -27,4 +27,14 @@ const getNestData = async (req, res, next) => {
   res.send(temp);
 };
 
-module.exports = { getNestData };
+const getAllFolders = async (req, res) => {
+  const id = req.user.id;
+  const folders = await folder.getAllFolders(id);
+  const data = [];
+  for (const n of folders) {
+    data.push({ folder_id: n.id, name: n.folder_name });
+  }
+  res.json(data);
+};
+
+module.exports = { getNestData, getAllFolders };

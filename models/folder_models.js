@@ -14,4 +14,9 @@ const sidebarData = async (id) => {
   return data;
 };
 
-module.exports = { sidebarData };
+const getAllFolders = async (id) => {
+  const folders = await pool.query("SELECT id, folder_name FROM folder WHERE user_id = ?", id);
+  return folders[0];
+};
+
+module.exports = { sidebarData, getAllFolders };
