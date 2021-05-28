@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 const token = localStorage.getItem("accessToken");
 // console.log(token);
 

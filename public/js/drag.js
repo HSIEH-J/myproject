@@ -51,14 +51,14 @@ const insertSubFolder = async (data) => {
 page.addEventListener("drop", (e) => {
   console.log("dropped");
   cancelDefault(e);
-
+  console.log(e.target.className);
   // get new and old index
   const nodes = Array.prototype.slice.call(page.children);
   console.log(nodes);
   const oldIndex = e.dataTransfer.getData("text/plain", index);
   let target;
   const className = e.target.className;
-  if (className === "frame folderItem") {
+  if (className === "frame folderItem" || className === "block") {
     target = e.target;
   } else {
     target = e.target.parentElement.parentElement;
@@ -84,6 +84,8 @@ page.addEventListener("drop", (e) => {
       console.log(response);
     });
     page.removeChild(oldChild);
+  } else if (target.className === "block") {
+    target.appendChild(document.getElementById(oldChild.id));
   } else {
     // set new sequence
     const parentDiv = target.parentNode;

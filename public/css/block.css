@@ -1,0 +1,12 @@
+.block{
+    border: 2px solid;
+    padding: 20px; 
+    width: 300px;
+    resize: both;
+    overflow: auto;
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: 2%;
+    margin-left: 1%;
+}
+

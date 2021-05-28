@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 // // const url = location.href;
 // // const id = url.split("=")[1];
 
@@ -13,6 +14,8 @@ const getData = async (id) => {
 };
 
 // // eslint-disable-next-line no-unused-vars
+// eslint-disable-next-line no-unused-vars
+const block = document.getElementById("blockIcon");
 function folderClick (e) {
   const id = e.id;
   console.log(id);
@@ -67,4 +70,5 @@ function folderClick (e) {
   parentId.style.display = "none";
   parentId.innerHTML = e.id;
   container.appendChild(parentId);
+  block.style.display = "block";
 }
