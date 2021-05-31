@@ -16,6 +16,7 @@ const getData = async (id) => {
 // // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-unused-vars
 const block = document.getElementById("blockIcon");
+const note = document.getElementById("noteIcon");
 function folderClick (e) {
   const id = e.id;
   console.log(id);
@@ -32,17 +33,14 @@ function folderClick (e) {
         frame.setAttribute("draggable", "true");
         frame.setAttribute("id", `${get[n].id}`);
         frame.innerHTML = `<a href=${get[n].url} class="thumbnailUrl" target="_blank">
-                           <div class="top">
-                              <div class="pencil">
-                                <img src="../images/pencil.png">
-                              </div>
-                              <div class="thumbnail">
-                                <img src=${get[n].thumbnail} width=250>
-                              </div>
-                           </div>
-                           <div class="info">
-                              <div class='title'>${get[n].title}</div>
-                           </div>
+                            <div class="top">
+                                <div class="thumbnail">
+                                  <img src=${get[n].thumbnail} width=250>
+                                </div>
+                            </div>
+                            <div class="info">
+                                <div class='title'>${get[n].title}</div>
+                            </div>
                            </a>`;
         // eslint-disable-next-line no-undef
         page.appendChild(frame);
@@ -71,4 +69,5 @@ function folderClick (e) {
   parentId.innerHTML = e.id;
   container.appendChild(parentId);
   block.style.display = "block";
+  note.style.display = "block";
 }

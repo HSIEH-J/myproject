@@ -2,6 +2,7 @@
 page.addEventListener("dragstart", (e) => {
 //   console.log(page.getElementsByTagName("div")[0]);
   console.log("dragStart");
+  console.log(e.target);
   const nodes = Array.prototype.slice.call(page.children);
   console.log(nodes.indexOf(e.target));
   const index = nodes.indexOf(e.target);
@@ -58,12 +59,15 @@ page.addEventListener("drop", (e) => {
   const oldIndex = e.dataTransfer.getData("text/plain", index);
   let target;
   const className = e.target.className;
-  if (className === "frame folderItem" || className === "block") {
+  if (className === "frame folderItem" || className === "block" || className === "frame bookmark") {
     target = e.target;
+  } else if (className === "title") {
+    target = e.target.parentElement.parentElement.parentElement;
   } else {
     target = e.target.parentElement.parentElement;
   }
   const newIndex = nodes.indexOf(target);
+  console.log(newIndex);
   const newChild = page.children[newIndex];
   const oldChild = page.children[oldIndex];
   // remove element if old Element = bookmark and new Element = carton

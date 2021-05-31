@@ -53,30 +53,36 @@
                         <div>
                            <input id="search" type="text">
                         </div>
-                        <img src="images/search.png">
+                        <div>
+                            <img src="images/search.svg" id="searchIcon">
+                        </div>
                     </div>
                 </div>
                 <div class="center">
-                    <input id="box">
-                    <button id="urlButton" onclick="addBookmarkPage()">+</button>
+                    <div>
+                        <input id="box">
+                        <button id="urlButton" onclick="addBookmarkPage()">+</button>
+                    </div>
+                    <div>
+                        <button class="changeIcon">&Colon;</button>
+                        <button class="changeIcon">&Congruent;</button>
+                    </div>
                 </div>
-                <div class="center">
-                    <button class="changeIcon">&Colon;</button>
-                    <button class="changeIcon">&Congruent;</button>
-                </div>
-        
                 <!-- <div id="dino">
                     <img src="images/dino2.gif" width="200" height="150">
                 </div> -->
                 <div id="page">
                 </div>
             </div>   
+            <!-- style="display: none;" -->
+            <div id="dataArea">
+
+            </div>
             <div id="create">
-                <div id="option">
-                    <div class="category" id="folder">Add Files</div>
-                </div>
-                <img src="images/folder.png" id="plus">
-                <img src="images/pencil.png" id="blockIcon" style="display: none;">
+                <img src="images/folder.svg" id="plus" class="createIcon">
+                <img src="images/block.svg" class="createIcon" id="blockIcon" style="display: none;">
+                <img src="images/sticky-note.svg" class="createIcon" id="noteIcon" style="display: none;">
+                <img src="images/trashcan.svg" class="createIcon" id="trashIcon">
             </div>
             
            

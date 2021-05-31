@@ -1,11 +1,4 @@
 const page = document.getElementById("page");
-// add folder
-const plus = document.getElementById("plus");
-const option = document.getElementById("option");
-// const index = document.getElementById("index");
-plus.addEventListener("click", () => {
-  option.style.display = "block";
-});
 
 const createNewFolder = async (data) => {
   const response = await fetch("/api/1.0/folder", {
@@ -21,28 +14,25 @@ const createNewFolder = async (data) => {
 };
 
 let num;
-option.addEventListener("click", (e) => {
+// eslint-disable-next-line no-undef
+create.addEventListener("click", (e) => {
+  const id = e.target.id;
   const parentId = document.getElementById("parent_id");
-  if (parentId !== null) {
-    num = parentId.textContent;
-  }
-  const point = e.target.id;
-  // eslint-disable-next-line no-undef
-  const timestamp = getTimeStamp();
-  console.log(timestamp);
-  const inputId = parseInt(timestamp) + parseInt(1);
-  // const num = getRandomNumber();
-  if (point === "folder") {
+  num = parentId.textContent;
+  if (id === "plus") {
+    const timestamp = getTimeStamp();
+    console.log(timestamp);
+    const inputId = parseInt(timestamp) + parseInt(1);
     const addCarton = document.createElement("div");
     addCarton.setAttribute("class", "frame folderItem");
     addCarton.setAttribute("id", timestamp);
     addCarton.setAttribute("draggable", "true");
     addCarton.innerHTML = ` <div>
-                              <img src="images/folder-2.png" class="newFolder">
-                            </div>
-                            <div>
-                              <input type="text" class="folderName" value="folder" id=${inputId}>
-                            </div>`;
+                                <img src="images/folder-2.png" class="newFolder">
+                              </div>
+                              <div>
+                                <input type="text" class="folderName" value="folder" id=${inputId}>
+                              </div>`;
     page.appendChild(addCarton);
     const folder = document.getElementById(inputId);
     let data;
@@ -57,7 +47,4 @@ option.addEventListener("click", (e) => {
       console.log(response);
     });
   }
-
-  option.style.display = "none";
-  // location.reload();
 });

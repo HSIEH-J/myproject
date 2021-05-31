@@ -9,29 +9,40 @@ body{
     justify-content: space-between;
     margin: 10px 10px 0px 10px;
     font-family: Helvetica, sans-serif;
-    height: 35px;
+    height: 5vh;
+}
+
+.hamburger{
+    line-height: 5vh;
 }
 
 #index{
     width: 350px;
     display: flex;
     justify-content: space-evenly;
-    line-height: 35px;
+    line-height: 5vh;
 }
+
+
 
 #search{
     /* background-image: url(../images/search.png);
     background-repeat: no-repeat;
     background-position: right center; */
-    height: 30px;
+    height: 25px;
     width: 150px;
     border: solid 1px;  
     border-radius: 10px;
 }
 
+#searchIcon{
+    width: 30px;
+    height: 30px;
+}
+
 .screen{
-    /* display: flex; */
-    height:100%
+    display: flex;
+    height:100vh;
 }
 
 /* .bar_block{
@@ -125,16 +136,24 @@ body{
 #container{
     display: flex;
     flex-direction: column;
+    position: relative;
     /* position: relative; */
     /* width: 90vw; */
     /* height: 100%; */
 }
 
+#dataArea{
+    width: 80vh;
+    border-left: solid 1px;
+}
+
 
 .center{
+    display: flex;
+    flex-direction: column;
     text-align: center;
     line-height: 30px;
-    /* margin-top: 3%; */
+    height: 5vh;
 }
 
 .changeIcon{
@@ -156,8 +175,8 @@ body{
 #page{
     display: flex;
     flex-wrap: wrap;
-    /* margin: auto; */
-    margin-top: 0px;
+    height: 80vh;
+    overflow: auto;
 }
 
 .smallIcon{
@@ -213,13 +232,22 @@ body{
 }
 
 #create{
+    display: flex;
+    justify-content: space-around;
     position: absolute;
-    left: 90%;
-    bottom: 5%;
+    width: 450px;
+    bottom: 2%;
+    right: 3%;
+    height:5vh;
     cursor: pointer;
 }
 
-#option{
+.classIcon{
+    height:35px;
+    width:35px
+}
+
+/* #option{
     display: none;
     text-align: center;
     border: solid 2px gray;
@@ -228,7 +256,7 @@ body{
     font-family: Helvetica, sans-serif;
     box-shadow:1px 2px 1px 2px lightgray;
     margin-bottom: 10%;
-}
+} */
 
 .category{
     line-height:40px;
@@ -249,11 +277,6 @@ body{
     text-align: left
 }
 
-.pencil{
-    position: absolute;
-    z-index: 1;
-}
-
 .thumbnail{
     position: absolute;
     z-index: -1;
@@ -272,7 +295,9 @@ body{
     height: 250px;
     width: 250px;
     box-shadow:1px 2px 1px 2px lightgray;
+    position: relative;
 }
+
 
 [draggable="true"]{
     user-select: none;

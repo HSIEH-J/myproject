@@ -30,18 +30,15 @@ getBookmarkData().then(data => {
       frame.setAttribute("draggable", "true");
       frame.setAttribute("id", `${get[n].id}`);
       frame.innerHTML = `<a href=${get[n].url} class="thumbnailUrl" target="_blank">
-                           <div class="top">
-                              <div class="pencil">
-                                <img src="../images/pencil.png">
-                              </div>
+                          <div class="top">
                               <div class="thumbnail">
                                 <img src=${get[n].thumbnail} width=250>
                               </div>
-                           </div>
-                           <div class="info">
+                          </div>
+                          <div class="info">
                               <div class='title'>${get[n].title}</div>
-                           </div>
-                           </a>`;
+                          </div>
+                         </a>`;
       page.appendChild(frame);
     } else {
       const addCarton = document.createElement("div");
@@ -52,10 +49,10 @@ getBookmarkData().then(data => {
       addCarton.setAttribute("id", `${get[n].id}`);
       addCarton.innerHTML = `<div>
                                 <img src="images/folder-2.png" class="newFolder">
-                               </div>
-                               <div>
+                             </div>
+                             <div>
                                 <input type="text" class="folderName" value="${get[n].folder_name}" id="folder${n}">
-                               </div>`;
+                             </div>`;
       page.appendChild(addCarton);
     }
   }
