@@ -9,72 +9,63 @@
     </head>
     
     <body>
-        <!-- header -->
-        <div id="mainHeader">
-            <div class="hamburger">
-                <!-- <button onclick="openSidebar()" class="smallIcon">☰</button> -->
-                <button onclick="openSidebar()" class="smallIcon"><img src="images/hamburger.png"></button>
-            </div>
-            <div id="index">
-                <div>
-                    <div>匯入Chrome書籤</div>
-                </div>
-                <div>
-                   <input id="search" type="text">
-                </div>
-                <div>
-                    <img src="images/search.svg" id="searchIcon">
-                </div>
-            </div>
-        </div>
-
-        <!-- main Area => has three part sidebar & content & block -->
-        <div class="screen">
+        
+        <div id="area">
             <!-- Sidebar-->
-            <div id="sidebar" style="display: none;">
-                <div id="sidebarTop">
-                    <button onclick="closeSidebar()" class="bar_item close_button">Close &laquo;</button>
+            <div id="sidebarArea">
+                <div class="hamburger">
+                    <button onclick="openSidebar()" class="smallIcon"><img src="images/hamburger.png"></button>
                 </div>
-                <div id="sidebarContent"></div>
-                <div id="sidebarBottom">
-                    <div>
-                        <img src="images/plus.svg" width="16px" height="16px">
+                <div id="sidebar" style="display: none;">
+                    <div id="sidebarTop">
+                        <button onclick="closeSidebar()" class="bar_item close_button">Close &laquo;</button>
                     </div>
-                    <div>New Folder</div>
+                    <div id="sidebarContent"></div>
+                    <div id="sidebarBottom">
+                        <div>
+                            <img src="images/plus.svg" width="16px" height="16px">
+                        </div>
+                        <div>New Folder</div>
+                    </div>
                 </div>
             </div>
-             <!-- content => including url input & bookmarks display option & bookmarks.folders -->
+             <!-- main -->
             <div id="container">
-                <div class="center">
-                    <div id="urlInput">
-                        <input id="box">
-                        <button id="urlButton" onclick="addBookmarkPage()">+</button>
+                <div id="nav">
+                    <div id="navTop">
+                        <input type="text" id="search">
+                        <div id="new">
+                            <input id="box">
+                            <button id="urlButton" onclick="addBookmarkPage()">+</button>
+                        </div>
                     </div>
-                    <div>
-                        <button class="changeIcon">&Colon;</button>
-                        <button class="changeIcon">&Congruent;</button>
+                    <div id="navBottom">
+                        <div id="folderNav">
+                            <img src="images/folder.svg" width=35px height=35px>
+                            <div id="class">未分類</div>
+                        </div>
+                        <div id="display">
+                            <img src="images/card.svg" class="changeIcon" width=20px height=20px>
+                            <div>視窗</div>
+                        </div>
                     </div>
                 </div>
-                <!-- <div id="dino">
-                    <img src="images/dino2.gif" width="200" height="150">
-                </div> -->
-                <div id="page">
-                </div>
-            </div>   
-            <!-- style="display: none;" -->
-            <!-- display block when click the subfolder -->
-            <div id="dataArea" style="display: none;" draggable="true">
-                <!-- <div class="block" ></div> -->
+                <div id="page"></div> 
             </div>
 
-            <div id="create">
-                <img src="images/folder.svg" id="plus" class="createIcon">
-                <img src="images/block.svg" class="createIcon" id="blockIcon" style="display: none;">
-                <img src="images/sticky-note.svg" class="createIcon" id="noteIcon" style="display: none;">
-                <img src="images/trashcan.svg" class="createIcon" id="trashIcon">
+            <!--highlight area-->
+            <div id="dataArea" style="display: none;" draggable="true">
             </div>
         </div>
-
+        
+    
+        <div id="create">
+            <img src="images/folder.svg" id="plus" class="createIcon">
+            <img src="images/block.svg" class="createIcon" id="blockIcon" style="display: none;">
+            <img src="images/sticky-note.svg" class="createIcon" id="noteIcon" style="display: none;">
+            <img src="images/trashcan.svg" class="createIcon" id="trashIcon">
+        </div>
+       
         <!-- function icon => including add folder, create block.sticky note, trash can -->
         
 

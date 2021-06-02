@@ -13,9 +13,7 @@ function openSidebar () {
     container.style.width = "20vw";
     dataArea.style.width = "70vw";
   }
-  mainHeader.style.justifyContent = "flex-end";
   hamburger.style.display = "none";
-  screen.style.display = "flex";
   sidebar.style.display = "block";
 }
 
@@ -27,7 +25,6 @@ function closeSidebar () {
     container.style.width = "20vw";
     dataArea.style.width = "80vw";
   }
-  mainHeader.style.justifyContent = "space-between";
   hamburger.style.display = "block";
   sidebar.style.display = "none";
 }
