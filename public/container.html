@@ -9,26 +9,29 @@
     </head>
     
     <body>
-        <!-- <header>
-            <div id="mainHeader">
-                <div class="hamburger">
-                    <button onclick="openSidebar()">☰</button>
+        <!-- header -->
+        <div id="mainHeader">
+            <div class="hamburger">
+                <!-- <button onclick="openSidebar()" class="smallIcon">☰</button> -->
+                <button onclick="openSidebar()" class="smallIcon"><img src="images/hamburger.png"></button>
+            </div>
+            <div id="index">
+                <div>
+                    <div>匯入Chrome書籤</div>
                 </div>
-                <div id="index">
-                    <div>
-                        <div>匯入Chrome書籤</div>
-                    </div>
-                    <div>
-                       <input id="search" type="text">
-                    </div>
+                <div>
+                   <input id="search" type="text">
+                </div>
+                <div>
+                    <img src="images/search.svg" id="searchIcon">
                 </div>
             </div>
-        </header> -->
+        </div>
 
-        <!-- Sidebar-->
+        <!-- main Area => has three part sidebar & content & block -->
         <div class="screen">
             <!-- Sidebar-->
-            <div class="sidebar bar_block" style="display: none;">
+            <div id="sidebar" style="display: none;">
                 <div id="sidebarTop">
                     <button onclick="closeSidebar()" class="bar_item close_button">Close &laquo;</button>
                 </div>
@@ -40,26 +43,10 @@
                     <div>New Folder</div>
                 </div>
             </div>
+             <!-- content => including url input & bookmarks display option & bookmarks.folders -->
             <div id="container">
-                <div id="mainHeader">
-                    <div class="hamburger">
-                        <!-- <button onclick="openSidebar()" class="smallIcon">☰</button> -->
-                        <button onclick="openSidebar()" class="smallIcon"><img src="images/hamburger.png"></button>
-                    </div>
-                    <div id="index">
-                        <div>
-                            <div>匯入Chrome書籤</div>
-                        </div>
-                        <div>
-                           <input id="search" type="text">
-                        </div>
-                        <div>
-                            <img src="images/search.svg" id="searchIcon">
-                        </div>
-                    </div>
-                </div>
                 <div class="center">
-                    <div>
+                    <div id="urlInput">
                         <input id="box">
                         <button id="urlButton" onclick="addBookmarkPage()">+</button>
                     </div>
@@ -75,18 +62,20 @@
                 </div>
             </div>   
             <!-- style="display: none;" -->
-            <div id="dataArea">
-
+            <!-- display block when click the subfolder -->
+            <div id="dataArea" style="display: none;" draggable="true">
+                <!-- <div class="block" ></div> -->
             </div>
+
             <div id="create">
                 <img src="images/folder.svg" id="plus" class="createIcon">
                 <img src="images/block.svg" class="createIcon" id="blockIcon" style="display: none;">
                 <img src="images/sticky-note.svg" class="createIcon" id="noteIcon" style="display: none;">
                 <img src="images/trashcan.svg" class="createIcon" id="trashIcon">
             </div>
-            
-           
         </div>
+
+        <!-- function icon => including add folder, create block.sticky note, trash can -->
         
 
         <footer>
@@ -99,7 +88,6 @@
         <script src="js/sidebar.js"></script>
         <script src="js/subfolder.js"></script>
         <script src="js/block.js"></script>
-        
      
         <script src="/socket.io/socket.io.js"></script>
         <script>

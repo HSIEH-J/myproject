@@ -52,6 +52,7 @@ const insertSubFolder = async (data) => {
 page.addEventListener("drop", (e) => {
   console.log("dropped");
   cancelDefault(e);
+  console.log(e.target);
   console.log(e.target.className);
   // get new and old index
   const nodes = Array.prototype.slice.call(page.children);
@@ -59,7 +60,7 @@ page.addEventListener("drop", (e) => {
   const oldIndex = e.dataTransfer.getData("text/plain", index);
   let target;
   const className = e.target.className;
-  if (className === "frame folderItem" || className === "block" || className === "frame bookmark") {
+  if (className === "frame folderItem" || className === "frame bookmark") {
     target = e.target;
   } else if (className === "title") {
     target = e.target.parentElement.parentElement.parentElement;
@@ -88,8 +89,6 @@ page.addEventListener("drop", (e) => {
       console.log(response);
     });
     page.removeChild(oldChild);
-  } else if (target.className === "block") {
-    target.appendChild(document.getElementById(oldChild.id));
   } else {
     // set new sequence
     const parentDiv = target.parentNode;
@@ -113,6 +112,31 @@ page.addEventListener("drop", (e) => {
 
 page.addEventListener("dragenter", cancelDefault);
 page.addEventListener("dragover", cancelDefault);
+
+// drop into a block
+dataArea.addEventListener("drop", (e) => {
+  console.log("dropped");
+  if (e.target.className === "block") {
+    const oldIndex = e.dataTransfer.getData("text/plain", index);
+    const oldChild = page.children[oldIndex];
+    e.target.appendChild(document.getElementById(oldChild.id));
+    // const className = oldChild.className;
+    // console.log(className);
+    // let old;
+    // if (className === "frame folderItem") {
+    //   old = "folder";
+    // } else {
+    //   old = "bookmark";
+    // }
+    // const blockData = { type: old, update_id: oldChild.id, div_id: e.target.id, time: getTimeStamp() };
+    // console.log(blockData);
+    // insertSubFolder(blockData).then(data => {
+    //   console.log(data);
+    // });
+  }
+});
+dataArea.addEventListener("dragenter", cancelDefault);
+dataArea.addEventListener("dragover", cancelDefault);
 
 function cancelDefault (e) {
   e.preventDefault();

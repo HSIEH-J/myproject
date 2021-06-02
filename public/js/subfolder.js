@@ -13,11 +13,16 @@ const getData = async (id) => {
   return await response.json();
 };
 
+// document.addEventListener("click", (e) => {
+//   console.log(e.target);
+// });
+
 // // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-unused-vars
 const block = document.getElementById("blockIcon");
 const note = document.getElementById("noteIcon");
 function folderClick (e) {
+  console.log(e);
   const id = e.id;
   console.log(id);
   // eslint-disable-next-line no-undef
@@ -71,3 +76,46 @@ function folderClick (e) {
   block.style.display = "block";
   note.style.display = "block";
 }
+
+const getBlockData = async (id) => {
+  const response = await fetch(`/api/1.0/div?id=${id}`, {
+    headers: new Headers({
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`
+    }),
+    method: "GET"
+  });
+  return await response.json();
+};
+
+block.addEventListener("click", () => {
+  dataArea.style.display = "block";
+  const parent = document.getElementById("parent_id");
+  const id = parent.innerHTML;
+  console.log(id);
+  getBlockData(id).then(data => {
+    for (const n of data.data) {
+      const div = document.createElement("div");
+      div.setAttribute("class", "block");
+      div.setAttribute("draggable", "true");
+      for (const x of n.bookmarks) {
+        const frame = document.createElement("div");
+        frame.setAttribute("class", "frame bookmark");
+        frame.setAttribute("draggable", "true");
+        frame.setAttribute("id", `${x.id}`);
+        frame.innerHTML = `<a href=${x.url} class="thumbnailUrl" target="_blank">
+                              <div class="top">
+                                  <div class="thumbnail">
+                                    <img src=${x.thumbnail} width=250>
+                                  </div>
+                              </div>
+                              <div class="info">
+                                  <div class='title'>${x.title}</div>
+                              </div>
+                           </a>`;
+        div.appendChild(frame);
+      }
+      dataArea.appendChild(div);
+    }
+  });
+});

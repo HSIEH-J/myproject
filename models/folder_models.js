@@ -19,4 +19,13 @@ const getAllFolders = async (id) => {
   return folders[0];
 };
 
-module.exports = { sidebarData, getAllFolders };
+const insertDivTable = async (data) => {
+  await pool.query("INSERT INTO block SET ?", data);
+};
+
+const getBlockData = async (user, folder) => {
+  const data = await pool.query("SELECT bookmark.div_id, bookmark.id, bookmark.url, bookmark.title, bookmark.thumbnail, bookmark.timestamp AS bookmarkTime, block.timestamp AS divTime FROM bookmark INNER JOIN block ON bookmark.div_id = block.id WHERE bookmark.user_id = ? && bookmark.folder_id = ? ORDER BY bookmarkTime;", [user, folder]);
+  return data[0];
+};
+
+module.exports = { sidebarData, getAllFolders, insertDivTable, getBlockData };

@@ -1,25 +1,35 @@
 // Sidebar
 // eslint-disable-next-line camelcase
-const bar_block = document.querySelector(".bar_block");
+const sidebar = document.getElementById("sidebar");
 const hamburger = document.querySelector(".hamburger");
 const mainHeader = document.querySelector("#mainHeader");
 const screen = document.querySelector(".screen");
 const container = document.querySelector("#container");
 // eslint-disable-next-line no-unused-vars
 function openSidebar () {
+  if (dataArea.style.display === "none") {
+    container.style.width = "90vw";
+  } else {
+    container.style.width = "20vw";
+    dataArea.style.width = "70vw";
+  }
   mainHeader.style.justifyContent = "flex-end";
   hamburger.style.display = "none";
   screen.style.display = "flex";
-  bar_block.style.display = "block";
-  container.style.width = "90vw";
+  sidebar.style.display = "block";
 }
 
 // eslint-disable-next-line no-unused-vars
 function closeSidebar () {
+  if (dataArea.style.display === "none") {
+    container.style.width = "100vw";
+  } else {
+    container.style.width = "20vw";
+    dataArea.style.width = "80vw";
+  }
   mainHeader.style.justifyContent = "space-between";
-  container.style.width = "100vw";
   hamburger.style.display = "block";
-  bar_block.style.display = "none";
+  sidebar.style.display = "none";
 }
 
 const getNestData = async () => {

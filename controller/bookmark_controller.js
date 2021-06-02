@@ -104,7 +104,7 @@ const sequenceChange = async (req, res, next) => {
   await bookmark.sequenceChange(data, user);
 };
 
-// when user drag a folder or a bookmark into another folder
+// when user drag a folder or a bookmark into another folder or a block
 const insertIntoSubfolder = async (req, res, next) => {
   const data = req.body;
   const user = req.user.id;

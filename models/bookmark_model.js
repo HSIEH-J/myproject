@@ -49,13 +49,13 @@ const getFolderData = async function (id) {
 
 // get subfolder folders
 const getSubfolderData = async (id, userId) => {
-  const bookmark = await pool.query("SELECT * FROM bookmark WHERE folder_id = ? && user_id = ?", [id, userId]);
+  const bookmark = await pool.query("SELECT * FROM bookmark WHERE folder_id = ? && user_id = ? && div_id IS NULL", [id, userId]);
   return bookmark[0];
 };
 
 // get subfolder bookmarks
 const getSubfolderBookmarkData = async (id, userId) => {
-  const folder = await pool.query("SELECT * FROM folder WHERE folder_id = ? && user_id = ?", [id, userId]);
+  const folder = await pool.query("SELECT * FROM folder WHERE folder_id = ? && user_id = ? && div_id IS NULL", [id, userId]);
   return folder[0];
 };
 
@@ -114,9 +114,17 @@ const sequenceChange = async (data, userId) => {
 const insertIntoSubfolder = async (data, userId) => {
   if (data.type === "bookmark") {
     console.log("===bookmark===");
-    await pool.query("UPDATE bookmark SET folder_id=?, timestamp=? WHERE id=? && user_id = ?", [data.folder_id, data.time, data.update_id, userId]);
+    if (!data.div_id) {
+      await pool.query("UPDATE bookmark SET folder_id=?, timestamp=? WHERE id=? && user_id = ?", [data.folder_id, data.time, data.update_id, userId]);
+    } else {
+      await pool.query("UPDATE bookmark SET div_id=?, timestamp=? WHERE id=? && user_id = ?", [data.div_id, data.time, data.update_id, userId]);
+    }
   } else {
-    await pool.query("UPDATE folder SET folder_id=?, timestamp=? WHERE id=?  && user_id = ?", [data.folder_id, data.time, data.update_id, userId]);
+    if (!data.div_id) {
+      await pool.query("UPDATE folder SET folder_id=?, timestamp=? WHERE id=?  && user_id = ?", [data.folder_id, data.time, data.update_id, userId]);
+    } else {
+      await pool.query("UPDATE folder SET div_id=?, timestamp=? WHERE id=?  && user_id = ?", [data.div_id, data.time, data.update_id, userId]);
+    }
   }
 };
 

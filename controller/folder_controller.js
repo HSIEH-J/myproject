@@ -37,4 +37,43 @@ const getAllFolders = async (req, res) => {
   res.json(data);
 };
 
-module.exports = { getNestData, getAllFolders };
+const insertDivTable = async (req, res) => {
+  const id = req.user.id;
+  const data = { id: req.body.div_id, user_id: id, folder_id: req.body.folder_id, timestamp: req.body.time };
+  await folder.insertDivTable(data);
+};
+
+const getDivData = async (req, res) => {
+  const { id } = req.query;
+  const user = req.user.id;
+  const data = await folder.getBlockData(user, id);
+  const dataObj = { data: [] };
+  for (const n of data) {
+    console.log(n.bookmarkTime);
+    const y = n.div_id;
+    const x = dataObj.data.map((item) => {
+      return item.div_id;
+    }).indexOf(y);
+    if (x === -1) {
+      dataObj.data.push({
+        div_id: n.div_id,
+        time: n.divTime,
+        bookmarks: [{ id: n.id, url: n.url, title: n.title, thumbnail: n.thumbnail, time: n.bookmarkTime }]
+      });
+    } else {
+      dataObj.data[x].bookmarks.push({ id: n.id, url: n.url, title: n.title, thumbnail: n.thumbnail, time: n.bookmarkTime });
+    }
+  }
+  dataObj.data.sort((a, b) => {
+    if (a.time > b.time) {
+      return 1;
+    }
+    if (a.time < b.time) {
+      return -1;
+    }
+    return 0;
+  });
+  res.status(200).send(dataObj);
+};
+
+module.exports = { getNestData, getAllFolders, insertDivTable, getDivData };

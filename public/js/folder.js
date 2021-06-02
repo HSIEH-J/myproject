@@ -1,7 +1,22 @@
 const page = document.getElementById("page");
+const dataArea = document.getElementById("dataArea");
+const urlInput = document.getElementById("urlInput");
 
 const createNewFolder = async (data) => {
   const response = await fetch("/api/1.0/folder", {
+    body: JSON.stringify(data),
+    headers: new Headers({
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`
+    }),
+    method: "POST"
+  });
+  const json = await response.json();
+  return json;
+};
+
+const createBlock = async (data) => {
+  const response = await fetch("/api/1.0/block", {
     body: JSON.stringify(data),
     headers: new Headers({
       "Content-Type": "application/json",
@@ -17,8 +32,12 @@ let num;
 // eslint-disable-next-line no-undef
 create.addEventListener("click", (e) => {
   const id = e.target.id;
+  console.log(id);
   const parentId = document.getElementById("parent_id");
-  num = parentId.textContent;
+  if (parentId) {
+    num = parentId.innerHTML;
+  }
+  console.log(num);
   if (id === "plus") {
     const timestamp = getTimeStamp();
     console.log(timestamp);
@@ -46,5 +65,43 @@ create.addEventListener("click", (e) => {
       const response = data;
       console.log(response);
     });
+  } else if (id === "blockIcon") {
+    const sidebar = document.getElementById("sidebar");
+    if (sidebar.style.display === "none") {
+      container.style.width = "20vw";
+      dataArea.style.width = "80vw";
+    } else {
+      container.style.width = "20vw";
+      dataArea.style.width = "70vw";
+    }
+    dataArea.style.display = "block";
+    urlInput.style.display = "none";
+    const resizeDiv = document.createElement("div");
+    resizeDiv.setAttribute("class", "block");
+    resizeDiv.setAttribute("draggable", "true");
+    const time = getTimeStamp();
+    // const id = getTimeStamp() + "resize";
+    resizeDiv.id = time;
+    dataArea.appendChild(resizeDiv);
+    const data = { div_id: time, folder_id: num, time: time };
+    createBlock(data).then(data => {
+      console.log(data);
+    });
+  } else if (id === "noteIcon") {
+    const noteDiv = document.createElement("div");
+    noteDiv.className = "frame";
+    noteDiv.setAttribute("maxlength", "150");
+    noteDiv.setAttribute("draggable", "true");
+    const time = getTimeStamp();
+    noteDiv.id = time;
+    noteDiv.innerHTML = "<textarea class=\"stickyNote\" type=\"text\"></textarea>";
+    page.appendChild(noteDiv);
   }
 });
+
+// document.addEventListener("click", (e) => {
+//   console.log(e.target);
+//   if(e.target.className === "stickyNote"){
+
+//   }
+// });
