@@ -1,11 +1,12 @@
 .block{
-    border: 2px solid gray;
+    border: 5px solid gray;
     width: 800px;
     height: 560px;
     display: flex;
     flex-wrap: wrap;
     margin-top: 2%;
     margin-left: 1%;
+    box-shadow:1px 2px 1px 2px lightgray;
 }
 
 .stickyNote{
@@ -16,5 +17,9 @@
     border: none;
     outline: medium;
     font-size: 20px;
+}
+
+#test{
+    
 }
 

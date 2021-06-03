@@ -88,12 +88,16 @@ const containerData = async (req, res, next) => {
 
 // when user create a new folder
 const createFolder = async (req, res, next) => {
+  console.log(req.body);
   const name = req.body.name;
   const time = req.body.time;
-  const id = req.body.folder_id;
+  const folderId = req.body.folder_id;
+  const id = req.body.id;
+  console.log(id);
   const user = req.user.id;
-  const insert = { id: time, user_id: user, folder_name: name, folder_id: id, timestamp: time };
+  const insert = { id: id, user_id: user, folder_name: name, folder_id: folderId, timestamp: time };
   await bookmark.createFolder(insert);
+  res.status(200).json("inserted");
 };
 
 // when user drag a folder or a bookmark
@@ -112,6 +116,14 @@ const insertIntoSubfolder = async (req, res, next) => {
   await bookmark.insertIntoSubfolder(data, user);
 };
 
+const updateBlock = async (req, res) => {
+  const data = req.body;
+  const user = req.user.id;
+  console.log(data);
+  await bookmark.updateBlock(data, user);
+  res.status(200).send("updated");
+};
+
 // when user drag a folder or a bookmark into a folder
 
-module.exports = { importThumbnailData, containerData, createFolder, sequenceChange, insertIntoSubfolder };
+module.exports = { importThumbnailData, containerData, createFolder, sequenceChange, insertIntoSubfolder, updateBlock };

@@ -13,17 +13,14 @@
         <div id="area">
             <!-- Sidebar-->
             <div id="sidebarArea">
-                <div class="hamburger">
-                    <button onclick="openSidebar()" class="smallIcon"><img src="images/hamburger.png"></button>
-                </div>
-                <div id="sidebar" style="display: none;">
+                <div id="sidebar">
                     <div id="sidebarTop">
-                        <button onclick="closeSidebar()" class="bar_item close_button">Close &laquo;</button>
+                        <div class="bar_item" id="homepage">Homepage</div>
                     </div>
                     <div id="sidebarContent"></div>
                     <div id="sidebarBottom">
                         <div>
-                            <img src="images/plus.svg" width="16px" height="16px">
+                            <img src="images/plus.svg" class="createIcon" width="20px" height="20px">
                         </div>
                         <div>New Folder</div>
                     </div>
@@ -35,35 +32,53 @@
                     <div id="navTop">
                         <input type="text" id="search">
                         <div id="new">
-                            <input id="box">
-                            <button id="urlButton" onclick="addBookmarkPage()">+</button>
+                            <div id="import">Import</div>
+                            <div id="url" style="display: none;">
+                                <div>
+                                    <div>URL</div>
+                                    <input id="box" type="text" value="please enter URL">
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div id="navBottom">
                         <div id="folderNav">
-                            <img src="images/folder.svg" width=35px height=35px>
-                            <div id="class">未分類</div>
+                            <div>
+                                <img src="images/folder.svg" width=35px height=35px>
+                            </div>
+                            <div id="folderNameChange" class="class">unsorted</div>
+                            <div>
+                                <img src="images/create-folder.svg" class="createIcon" id="plus" width=20px height=20px>
+                            </div>
                         </div>
                         <div id="display">
-                            <img src="images/card.svg" class="changeIcon" width=20px height=20px>
-                            <div>視窗</div>
+                            <div class="hover">
+                                <img src="images/board.svg" class="createIcon" id="boardIcon" style="display: none;">
+                            </div>
+                            <div class="hover">
+                                <img src="images/sticky-note.svg" class="createIcon" id="noteIcon" style="display: none;">
+                            </div>
+                            <div class="flex hover">
+                                <img src="images/card.svg" class="changeIcon createIcon" id="cardIcon">
+                                <div>Card</div>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div id="page"></div> 
+                <div id="page" draggable="true"></div> 
             </div>
 
             <!--highlight area-->
             <div id="dataArea" style="display: none;" draggable="true">
+                <img src="images/close.svg" class="hover" id="close" width="20px" height="20px">
+                <div id="highlight" style="display: none;">
+                    <img src="images/board-img.svg" style="margin-top: 2%;" width="700px" height="300px"><br>
+                    <div>No Collection board</div>
+                    <div>Click to create a new one</div>
+                    <button onclick="createBoard()" class="click">Click</button>
+                </div>
+                
             </div>
-        </div>
-        
-    
-        <div id="create">
-            <img src="images/folder.svg" id="plus" class="createIcon">
-            <img src="images/block.svg" class="createIcon" id="blockIcon" style="display: none;">
-            <img src="images/sticky-note.svg" class="createIcon" id="noteIcon" style="display: none;">
-            <img src="images/trashcan.svg" class="createIcon" id="trashIcon">
         </div>
        
         <!-- function icon => including add folder, create block.sticky note, trash can -->
@@ -76,9 +91,8 @@
         <script src="js/bookmark.js"></script>
         <script src="js/folder.js"></script>
         <script src="js/drag.js"></script>
-        <script src="js/sidebar.js"></script>
+        <!-- <script src="js/sidebar.js"></script> -->
         <script src="js/subfolder.js"></script>
-        <script src="js/block.js"></script>
      
         <script src="/socket.io/socket.io.js"></script>
         <script>

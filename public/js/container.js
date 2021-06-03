@@ -22,6 +22,7 @@ const getBookmarkData = async () => {
 
 getBookmarkData().then(data => {
   const get = data.data;
+  console.log(get);
   for (const n in get) {
     if (get[n].folder_name === undefined) {
       console.log("===undefined===");
@@ -56,4 +57,9 @@ getBookmarkData().then(data => {
       page.appendChild(addCarton);
     }
   }
+});
+
+const homepage = document.getElementById("homepage");
+homepage.addEventListener("click", (e) => {
+  location.reload();
 });

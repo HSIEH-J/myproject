@@ -1,3 +1,4 @@
+const e = require("express");
 const folder = require("../models/folder_models");
 
 function buildTree (list) {
@@ -47,21 +48,33 @@ const getDivData = async (req, res) => {
   const { id } = req.query;
   const user = req.user.id;
   const data = await folder.getBlockData(user, id);
+  // console.log(data);
   const dataObj = { data: [] };
   for (const n of data) {
-    console.log(n.bookmarkTime);
     const y = n.div_id;
     const x = dataObj.data.map((item) => {
       return item.div_id;
     }).indexOf(y);
     if (x === -1) {
-      dataObj.data.push({
-        div_id: n.div_id,
-        time: n.divTime,
-        bookmarks: [{ id: n.id, url: n.url, title: n.title, thumbnail: n.thumbnail, time: n.bookmarkTime }]
-      });
+      if (!n.folder_name) {
+        dataObj.data.push({
+          div_id: n.div_id,
+          time: n.divTime,
+          details: [{ id: n.bookmark_id, url: n.url, title: n.title, thumbnail: n.thumbnail, time: n.bookmarkTime }]
+        });
+      } else {
+        dataObj.data.push({
+          div_id: n.div_id,
+          time: n.divTime,
+          details: [{ id: n.subfolder_id, folder_name: n.folder_name }]
+        });
+      }
     } else {
-      dataObj.data[x].bookmarks.push({ id: n.id, url: n.url, title: n.title, thumbnail: n.thumbnail, time: n.bookmarkTime });
+      if (!n.folder_name) {
+        dataObj.data[x].details.push({ id: n.bookmark_id, url: n.url, title: n.title, thumbnail: n.thumbnail, time: n.bookmarkTime });
+      } else {
+        dataObj.data[x].details.push({ id: n.subfolder_id, folder_name: n.folder_name });
+      }
     }
   }
   dataObj.data.sort((a, b) => {
@@ -73,6 +86,8 @@ const getDivData = async (req, res) => {
     }
     return 0;
   });
+  console.log("checkout dataObj");
+  console.log(dataObj);
   res.status(200).send(dataObj);
 };
 

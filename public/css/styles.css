@@ -22,6 +22,7 @@ body{
 
 #area{
     display: flex;
+    width: 100vw;
 }
 
 /* .screen{
@@ -34,12 +35,10 @@ body{
 } */
 
 #sidebarArea{
+    font-family: Futura,Trebuchet MS,Arial,sans-serif;;
     width: 10vw;
 }
 
-/* .hamburger{
-    line-height: 5vh;
-} */
 .smallIcon{
     border:none;
     background-color: transparent;
@@ -61,7 +60,7 @@ body{
     text-align: center;
     font-size: 20px;
     line-height: 45px;
-    color: WhiteSmoke;
+    color: gray;
     font-family: Helvetica, sans-serif;
 }
 
@@ -74,22 +73,11 @@ body{
     color: SlateGrey
 }
 
-.close_button{
-    border: none;
-    background-color: rgb(79, 131, 133);
-    height: 5%;
-    font-size: 20px;
-    color: WhiteSmoke;
-    font-family: Helvetica, sans-serif;
-    width:10vw;
-    outline: medium;
-}
-
 .sidebar_button{
     border: none;
     background-color: transparent;
     font-size: 20px;
-    color: WhiteSmoke;
+    color: gray;
     font-family: Helvetica, sans-serif;
     width: 98px;
     height: 45px;
@@ -118,8 +106,10 @@ body{
 }
 
 #sidebarTop{
-    height: 5vh;
+    line-height: 8vh;
+    height: 8vh;
     border-bottom: solid 1px lightgray;
+    box-shadow:1px 2px 1px 2px rgb(183,194,180);
 }
 
 #sidebarContent{
@@ -138,7 +128,7 @@ body{
     display: flex;
     flex-direction: column;
     position: relative;
-    width: 100vw;
+    width: 90vw;
     /* position: relative; */
     /* width: 90vw; */
     /* height: 100%; */
@@ -158,38 +148,72 @@ body{
     border-bottom: solid 1px lightgray;
     box-shadow:1px 2px 1px 2px rgb(183,194,180);
     background-color: rgb(225, 229, 223);
-    height: 5vh;
+    height: 8vh;
+    color: gray;
+    font-family: Futura,Trebuchet MS,Arial,sans-serif;
 }
 
 #navTop{
     display: flex;
     justify-content: space-between;
+    height: 4vh;
+}
+
+#new{
+    position: relative;
+}
+
+#import{
+    border: solid 2px gray;
+    background: rgb(85, 141, 143);
+    color: whitesmoke;
+    border-radius: 10%;
+    height: 30px;
+    width: 50px;
+    cursor: pointer;
+}
+
+#import:hover{
+    background: lightgray;
+    color: rgb(85, 141, 143);
+}
+
+#url{
+    width:500px;
+    height: 150px;
+    box-shadow:1px 2px 1px 2px lightgray;
+    background: white;
+    position: absolute;
+    right:20%;
+    top: 80%;
+    border-radius: 2%;
+
 }
 
 #navBottom{
     display: flex;
     justify-content: space-between;
+    height: 4vh
+}
+
+.createIcon{
+    cursor: pointer;
+    width: 25px;
+    height: 25px;
 }
 
 #folderNav{
     display:flex;
     justify-content: space-between;
-    width: 100px;
-}
-
-#class{
-    line-height: 35px;
+    width: 150px;
+    line-height: 4vh;
 }
 
 #display{
     display: flex;
     justify-content: space-around;
-    width: 80px;
-    font-family: Futura,Trebuchet MS,Arial,sans-serif; 
-}
-
-#display:hover{
-    background-color: lightgray;
+    width: 250px;
+    height: 4vh;
 }
 
 .changeIcon{
@@ -199,26 +223,42 @@ body{
 
 #dataArea{
     display: flex;
-    flex-direction: column;
-    border-left: solid 5px green;
+    border-left: solid 5px rgb(225, 229, 223);
     overflow: auto;
+    text-align: center;
+    position: relative;
+}
+
+#close{
+    position: absolute;
+    top: 1%;
+    left: 1%
+}
+
+.click{
+    background: rgb(225, 229, 223);
+    font-family: Futura,Trebuchet MS,Arial,sans-serif;
+    border-radius: 3%;
+}
+
+#highlight{
+    line-height: 50px;
+    font-family: Futura,Trebuchet MS,Arial,sans-serif;
+}
+
+.hover:hover{
+    background-color: lightgray;
 }
 
 #box{
-    border: none;
-    border-bottom: solid 1px gray;
-    outline: medium;
-    width: 500px;
+    width: 350px;
 }
 
-#dino{
-    display: none;
-}
 
 #page{
     display: flex;
     flex-wrap: wrap;
-    height: 90vh;
+    height: 92vh;
     overflow: auto;
 }
 
@@ -233,7 +273,7 @@ body{
 
 .folderItem{
     display: flex;
-    flex-direction: column;
+    /* flex-direction: column; */
     position: relative;
     width: 250px;
     height:250px;
@@ -245,9 +285,8 @@ body{
     /* margin: auto; */
     text-align: center;
     top: 80%;
-    left: 4%;
+    left: 10%;
     position: absolute;
-    left:8%;
     background-color: rgb(85, 141, 143);
     color: white;
     font-size: 20px;
@@ -265,21 +304,6 @@ body{
     position: absolute;
 }
 
-#create{
-    display: flex;
-    justify-content: space-around;
-    position: absolute;
-    width: 450px;
-    bottom: 2%;
-    right: 3%;
-    height:5vh;
-    cursor: pointer;
-}
-
-.classIcon{
-    height:35px;
-    width:35px
-}
 
 /* #option{
     display: none;
@@ -348,10 +372,7 @@ body{
     font-size: 15px;
 }
 
-.url{
-    display: flex;
-    justify-content: start;
-}
+
 
 a{
     text-decoration: none;
@@ -360,5 +381,9 @@ a{
 
 a:hover{
     text-decoration: underline;
+}
+
+.flex{
+    display: flex;
 }
 

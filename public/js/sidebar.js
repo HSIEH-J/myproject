@@ -1,34 +1,4 @@
 // Sidebar
-// eslint-disable-next-line camelcase
-const sidebar = document.getElementById("sidebar");
-const hamburger = document.querySelector(".hamburger");
-const mainHeader = document.querySelector("#mainHeader");
-const screen = document.querySelector(".screen");
-const container = document.querySelector("#container");
-// eslint-disable-next-line no-unused-vars
-function openSidebar () {
-  if (dataArea.style.display === "none") {
-    container.style.width = "90vw";
-  } else {
-    container.style.width = "20vw";
-    dataArea.style.width = "70vw";
-  }
-  hamburger.style.display = "none";
-  sidebar.style.display = "block";
-}
-
-// eslint-disable-next-line no-unused-vars
-function closeSidebar () {
-  if (dataArea.style.display === "none") {
-    container.style.width = "100vw";
-  } else {
-    container.style.width = "20vw";
-    dataArea.style.width = "80vw";
-  }
-  hamburger.style.display = "block";
-  sidebar.style.display = "none";
-}
-
 const getNestData = async () => {
   const response = await fetch("/api/1.0/nest", {
     headers: new Headers({
