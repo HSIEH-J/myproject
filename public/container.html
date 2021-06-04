@@ -91,7 +91,7 @@
                     <img src="images/board-img.svg" style="margin-top: 2%;" width="700px" height="300px"><br>
                     <div>No Collection board</div>
                     <div>Click to create a new one</div>
-                    <button onclick="createBoard()" class="click">Click</button>
+                    <button id="click">Click</button>
                 </div>
                 <img src="images/plus.svg" class="hover" id="addBlock" width="20px" height="20px" style="display: none;">
                 
@@ -116,24 +116,14 @@
             const socket = io();
             socket.on("done", (msg)=>{
                 console.log(msg);
-                const frame = document.createElement("div");
-                frame.setAttribute("class", "frame bookmark");
-                frame.setAttribute("draggable", "true");
-                frame.setAttribute("id", `${msg.id}`);
-                frame.innerHTML = `<a href=${msg.url} class="thumbnailUrl" target="_blank">
-                                    <div class="top">
-                                        <div class="thumbnail">
-                                            <img src=${msg.thumbnail} width=250>
-                                        </div>
-                                    </div>
-                                    <div class="info">
-                                        <div class='title'>${msg.title}</div>
-                                    </div>
-                                    </a>
-                                    <div class="trashCan bookmarkTrash">
-                                        <img src="images/trash.svg" width="35px" height="35px">
-                                    </div>`;
-                page.appendChild(frame);
+                const frame = document.getElementById(msg.id);
+                console.log(frame)
+                const img = frame.children[0].children[0].children[0].children[0];
+                console.log(img)
+                const title = frame.children[0].children[1].children[0];
+                console.log(title)
+                img.src = msg.thumbnail;
+                title.innerHTML = msg.title;
             })
         </script>
        

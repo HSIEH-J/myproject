@@ -9,6 +9,7 @@ const importThumbnailData = async (req, res, next) => {
   const url = req.body.url;
   const time = req.body.time;
   const user = req.user.id;
+  console.log(req.body);
   if (cache.client.ready) {
     await cache.set("url", JSON.stringify(url));
   }
@@ -17,6 +18,10 @@ const importThumbnailData = async (req, res, next) => {
   console.log(titleData);
   // get url title => check if status = done
   // if not => get API every 3's util the status is done
+  if (titleData.status === "error") {
+    res.status(401).json("wrong format");
+    return;
+  }
   if (titleData.status !== "done") {
     const test = async function () {
       let titleData = await bookmark.getTitle(url);
@@ -29,38 +34,39 @@ const importThumbnailData = async (req, res, next) => {
         clearInterval(this);
         const title = titleData.title;
         console.log(title);
-        const location = await bookmark.uploadS3(url);
+        const location = await bookmark.uploadS3(url, time);
         console.log(location);
-        if (!req.body.id) {
+        if (!req.body.parent_id) {
           console.log("no folder id");
-          insert = { user_id: user, url: url, title: title, thumbnail: location, timestamp: time, remove: 0 };
+          insert = { id: req.body.id, user_id: user, url: url, title: title, thumbnail: location, timestamp: time, remove: 0 };
         } else {
           console.log("folder id");
-          insert = { user_id: user, folder_id: req.body.id, url: url, title: title, thumbnail: location, timestamp: time, remove: 0 };
+          insert = { id: req.body.id, user_id: user, folder_id: req.body.parent_id, url: url, title: title, thumbnail: location, timestamp: time, remove: 0 };
         }
         const result = await bookmark.insertContainerData(insert);
         console.log(result[0]);
-        const id = result[0].insertId;
         // console.log(id);
         console.log(socket.id);
-        const msg = { id: id, url: url, title: title, thumbnail: location };
+        const msg = { id: req.body.id, title: title, thumbnail: location };
         socket.emit("done", msg);
       }
     };
     setInterval(test, 6000);
-    res.send(false);
+    res.status(200).json("waiting for incoming thumbnail");
   } else {
     const title = titleData.title;
     console.log(title);
-    const location = await bookmark.uploadS3(url);
+    const location = await bookmark.uploadS3(url, time);
     console.log(location);
-    if (!req.body.id) {
-      insert = { user_id: user, url: url, title: title, thumbnail: location, timestamp: time, remove: 0 };
+    if (!req.body.parent_id) {
+      insert = { id: req.body.id, user_id: user, url: url, title: title, thumbnail: location, timestamp: time, remove: 0 };
     } else {
-      insert = { user_id: user, folder_id: req.body.id, url: url, title: title, thumbnail: location, timestamp: time, remove: 0 };
+      insert = { id: req.body.id, user_id: user, folder_id: req.body.parent_id, url: url, title: title, thumbnail: location, timestamp: time, remove: 0 };
     }
     await bookmark.insertContainerData(insert);
-    res.send(true);
+    const msg = { id: req.body.id, title: title, thumbnail: location };
+    socket.emit("done", msg);
+    res.status(200).json("bookmark generated");
   }
 
   // } catch (err) {

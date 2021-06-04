@@ -235,7 +235,7 @@ body{
     left: 1%
 }
 
-.click{
+#click{
     background: rgb(225, 229, 223);
     font-family: Futura,Trebuchet MS,Arial,sans-serif;
     border-radius: 3%;
@@ -374,6 +374,11 @@ body{
     z-index: -1;
 }
 
+.default{
+    width: 250px;
+   height: 187.5px;
+}
+
 .frame{
     height: 250px;
     width: 250px;
@@ -405,6 +410,9 @@ body{
     margin-top: 2%;
     font-family: Helvetica, sans-serif;
     font-size: 15px;
+    /* overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis; */
 }
 
 

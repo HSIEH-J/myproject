@@ -35,43 +35,64 @@ box.addEventListener("click", (e) => {
 box.addEventListener("keydown", (e) => {
   const parentId = document.getElementById("parent_id");
   let parent;
+  if (parentId) {
+    parent = parentId.innerHTML;
+  }
+  console.log(parent);
   let urlData;
   console.log(e.code);
   if (e.code === "Enter") {
     urlClick.style.display = "none";
-    importUrl.style.display = "none";
     console.log(e.code);
-    alert("enter");
     const url = box.value;
-    const timestamp = getTimeStamp();
-    if (parentId) {
-      parent = parentId.innerHTML;
-      urlData = { id: parent, url: url, time: timestamp };
+    if (!url) {
+      alert("You didn't enter any urls");
+      urlClick.style.display = "none";
     } else {
-      urlData = { url: url, time: timestamp };
-    }
-    console.log(parent);
-    console.log(urlData);
-    const xhr = new XMLHttpRequest();
-    xhr.onreadystatechange = function () {
-      if (xhr.readyState === 4) {
-        box.value = "";
-        console.log(xhr.responseText);
-        const text = xhr.responseText;
-        if (text === "true") {
-          alert("書籤已插入...");
-          location.reload();
-        } else {
-          alert("書籤製作中，請稍等...");
-        }
+      const timestamp = getRandomNumber();
+      const frame = document.createElement("div");
+      frame.setAttribute("class", "frame bookmark");
+      frame.setAttribute("draggable", "true");
+      frame.setAttribute("id", timestamp);
+      frame.innerHTML = `<a href=${url} class="thumbnailUrl" target="_blank">
+                          <div class="top">
+                              <div class="thumbnail">
+                                  <img src="./images/default.svg" width=250 class="default">
+                              </div>
+                          </div>
+                          <div class="info">
+                              <div class='title'>${"loading"}</div>
+                          </div>
+                          </a>
+                          <div class="trashCan bookmarkTrash">
+                              <img src="images/trash.svg" width="35px" height="35px">
+                          </div>`;
+      page.appendChild(frame);
+      if (parent) {
+        urlData = { id: timestamp, parent_id: parent, url: url, time: timestamp };
+      } else {
+        urlData = { id: timestamp, url: url, time: timestamp };
       }
-    };
-    xhr.open("post", "/api/1.0/test", true);
-    xhr.setRequestHeader("Content-type", "application/json");
-    xhr.setRequestHeader("Authorization", "Bearer " + token);
-    const data = JSON.stringify(urlData);
-    console.log(data);
-    xhr.send(data);
+      console.log(parentId);
+      console.log(parent);
+      console.log(urlData);
+      const xhr = new XMLHttpRequest();
+      xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4) {
+          box.value = "";
+          if (xhr.status !== 200) {
+            alert("there's something wrong, please try again!");
+          }
+          console.log(xhr.responseText);
+        }
+      };
+      xhr.open("post", "/api/1.0/test", true);
+      xhr.setRequestHeader("Content-type", "application/json");
+      xhr.setRequestHeader("Authorization", "Bearer " + token);
+      const data = JSON.stringify(urlData);
+      console.log(data);
+      xhr.send(data);
+    }
   }
 });
 

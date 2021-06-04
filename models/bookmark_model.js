@@ -76,10 +76,10 @@ const getLocation = (s3, params) => {
   });
 };
 
-const uploadS3 = async function (url) {
+const uploadS3 = async function (url, time) {
   // generate img name
-  const urlArr = url.split("/");
-  const name = urlArr[2] + Date.now() + ".jpeg";
+  // const urlArr = url.split("/");
+  const name = time + ".jpeg";
   console.log(name);
   // get buffer
   const optimized = await getThumbnail(url);
@@ -148,10 +148,12 @@ const removeAllItem = async (type, id, userId) => {
     await pool.query("UPDATE bookmark SET remove = 1  WHERE folder_id= ? && user_id = ?", [id, userId]);
     await pool.query("UPDATE block SET remove = 1  WHERE folder_id = ? && user_id = ?", [id, userId]);
     const folder = await pool.query("WITH RECURSIVE cte (id, folder_name, folder_id) AS (select id, folder_name, folder_id from folder WHERE folder_id = ? UNION ALL SELECT t1.id, t1.folder_name, t1.folder_id FROM folder t1 INNER JOIN cte ON t1.folder_id = cte.id) SELECT id, folder_id FROM cte", [id]);
-    for (const n of folder[0]) {
-      await pool.query("UPDATE folder SET remove = 1 WHERE id=?", [n.id]);
-      await pool.query("UPDATE bookmark SET remove = 1 WHERE folder_id = ?", [n.id]);
-      await pool.query("UPDATE block SET remove = 1 WHERE folder_id = ?", [n.id]);
+    if (folder[0].length !== 0) {
+      for (const n of folder[0]) {
+        await pool.query("UPDATE folder SET remove = 1 WHERE id=?", [n.id]);
+        await pool.query("UPDATE bookmark SET remove = 1 WHERE folder_id = ?", [n.id]);
+        await pool.query("UPDATE block SET remove = 1 WHERE folder_id = ?", [n.id]);
+      }
     }
   } else {
     await pool.query("UPDATE block SET remove = 1  WHERE id = ? && user_id = ?", [id, userId]);
@@ -160,33 +162,20 @@ const removeAllItem = async (type, id, userId) => {
     const all = pool.query("SELECT id FROM folder WHERE div_id = ?", [id]);
     console.log(all);
     const data = [];
-    for (const n of all[0]) {
-      const folder = await pool.query("WITH RECURSIVE cte (id, folder_name, folder_id) AS (select id, folder_name, folder_id from folder WHERE folder_id = ? UNION ALL SELECT t1.id, t1.folder_name, t1.folder_id FROM folder t1 INNER JOIN cte ON t1.folder_id = cte.id) SELECT id, folder_id FROM cte", [n.id]);
-      data.push(folder);
-    }
-    console.log(data);
-    for (const n of data) {
-      await pool.query("UPDATE folder SET remove = 1 WHERE id=?", [n.id]);
-      await pool.query("UPDATE bookmark SET remove = 1 WHERE folder_id = ?", [n.id]);
-      await pool.query("UPDATE block SET remove = 1 WHERE folder_id = ?", [n.id]);
+    if (all[0].length !== 0) {
+      for (const n of all[0]) {
+        const folder = await pool.query("WITH RECURSIVE cte (id, folder_name, folder_id) AS (select id, folder_name, folder_id from folder WHERE folder_id = ? UNION ALL SELECT t1.id, t1.folder_name, t1.folder_id FROM folder t1 INNER JOIN cte ON t1.folder_id = cte.id) SELECT id, folder_id FROM cte", [n.id]);
+        data.push(folder);
+      }
+      console.log(data);
+      for (const n of data) {
+        await pool.query("UPDATE folder SET remove = 1 WHERE id=?", [n.id]);
+        await pool.query("UPDATE bookmark SET remove = 1 WHERE folder_id = ?", [n.id]);
+        await pool.query("UPDATE block SET remove = 1 WHERE folder_id = ?", [n.id]);
+      }
     }
   }
 };
-
-// const removeItem = async (type, id, userId) => {
-//   if (type === "bookmark") {
-//     await pool.query("UPDATE bookmark SET remove = 1  WHERE id=? && user_id = ?", [id, userId]);
-//   } else if (type === "folder") {
-//     await pool.query("UPDATE folder SET remove = 1 WHERE id=? && user_id = ? || folder_id =  ? && user_id = ?", [id, userId, id, userId]);
-//     await pool.query("UPDATE bookmark SET remove = 1  WHERE folder_id = ? && user_id = ?", [id, userId]);
-//     await pool.query("UPDATE block SET remove = 1  WHERE folder_id = ? && user_id = ?", [id, userId]);
-//   } else {
-//     await pool.query("UPDATE block SET remove = 1  WHERE id = ? && user_id = ?", [id, userId]);
-//     await pool.query("UPDATE bookmark SET remove = 1  WHERE div_id = ? && user_id = ?", [id, userId]);
-//     await pool.query("UPDATE folder SET remove = 1 WHERE div_id = ? && user_id = ? || folder_id =  ? && user_id = ?", [id, userId, id, userId]);
-//   }
-//   return true;
-// };
 
 module.exports = {
   getThumbnail,
