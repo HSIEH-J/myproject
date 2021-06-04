@@ -65,7 +65,23 @@
                         </div>
                     </div>
                 </div>
-                <div id="page" draggable="true"></div> 
+                <div id="page" draggable="true">
+                    <!-- <div class="frame bookmark" draggable="true" id="1">
+                        <a href="https://evernote.com/intl/zh-tw/" class="thumbnailUrl" target="_blank">
+                            <div class="top">
+                                <div class="thumbnail">
+                                  <img src="https://stylish-upload.s3.amazonaws.com/evernote.com1622744906768.jpeg" width=250>
+                                </div>
+                            </div>
+                            <div class="info">
+                                <div class='title'>evernote</div>
+                            </div>
+                        </a>
+                        <div id="trashCan">
+                            <img src="images/trash.svg" width="35px" height="35px" id="trash">
+                        </div>
+                    </div> -->
+                </div> 
             </div>
 
             <!--highlight area-->
@@ -77,6 +93,7 @@
                     <div>Click to create a new one</div>
                     <button onclick="createBoard()" class="click">Click</button>
                 </div>
+                <img src="images/plus.svg" class="hover" id="addBlock" width="20px" height="20px" style="display: none;">
                 
             </div>
         </div>
@@ -97,9 +114,26 @@
         <script src="/socket.io/socket.io.js"></script>
         <script>
             const socket = io();
-            socket.on("done", ()=>{
-                location.reload();
-                //page.innerHTML = "worked!!!";
+            socket.on("done", (msg)=>{
+                console.log(msg);
+                const frame = document.createElement("div");
+                frame.setAttribute("class", "frame bookmark");
+                frame.setAttribute("draggable", "true");
+                frame.setAttribute("id", `${msg.id}`);
+                frame.innerHTML = `<a href=${msg.url} class="thumbnailUrl" target="_blank">
+                                    <div class="top">
+                                        <div class="thumbnail">
+                                            <img src=${msg.thumbnail} width=250>
+                                        </div>
+                                    </div>
+                                    <div class="info">
+                                        <div class='title'>${msg.title}</div>
+                                    </div>
+                                    </a>
+                                    <div class="trashCan bookmarkTrash">
+                                        <img src="images/trash.svg" width="35px" height="35px">
+                                    </div>`;
+                page.appendChild(frame);
             })
         </script>
        

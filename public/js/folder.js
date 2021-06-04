@@ -33,13 +33,16 @@ plus.addEventListener("click", (e) => {
   addCarton.setAttribute("class", "frame folderItem");
   // eslint-disable-next-line no-undef
   addCarton.setAttribute("id", dataId);
-  addCarton.setAttribute("onclick", "folderClick(this)");
+  // addCarton.setAttribute("onclick", "folderClick(this)");
   addCarton.setAttribute("draggable", "true");
   addCarton.innerHTML = ` <div>
                             <img src="images/folder-2.png" class="newFolder">
                           </div>
                           <div>
-                            <input type="text" class="folderName" value="folder" id=${inputId}>
+                            <input type="text" class="folderName" value="folder" id=${inputId} onchange="changeName(this.id)">
+                          </div>
+                          <div class="trashCan folderTrash">
+                            <img src="images/trash.svg" width="35px" height="35px">
                           </div>`;
   page.appendChild(addCarton);
   const folder = document.getElementById(inputId);
@@ -58,14 +61,3 @@ plus.addEventListener("click", (e) => {
     console.log(response);
   });
 });
-
-// } else if (id === "noteIcon") {
-//   const noteDiv = document.createElement("div");
-//   noteDiv.className = "frame";
-//   noteDiv.setAttribute("maxlength", "150");
-//   noteDiv.setAttribute("draggable", "true");
-//   const time = getTimeStamp();
-//   noteDiv.id = time;
-//   noteDiv.innerHTML = "<textarea class=\"stickyNote\" type=\"text\"></textarea>";
-//   page.appendChild(noteDiv);
-// }

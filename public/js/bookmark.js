@@ -18,14 +18,14 @@ function getRandomNumber () {
 
 const box = document.getElementById("box");
 const importUrl = document.getElementById("import");
-const url = document.getElementById("url");
+const urlClick = document.getElementById("url");
 
 // document.addEventListener("click", (e) => {
 //   console.log(e.target);
 // });
 
 importUrl.addEventListener("click", () => {
-  url.style.display = "block";
+  urlClick.style.display = "block";
 });
 
 box.addEventListener("click", (e) => {
@@ -33,13 +33,25 @@ box.addEventListener("click", (e) => {
 });
 
 box.addEventListener("keydown", (e) => {
+  const parentId = document.getElementById("parent_id");
+  let parent;
+  let urlData;
   console.log(e.code);
   if (e.code === "Enter") {
+    urlClick.style.display = "none";
+    importUrl.style.display = "none";
     console.log(e.code);
     alert("enter");
     const url = box.value;
     const timestamp = getTimeStamp();
-    const urlData = { url: url, time: timestamp };
+    if (parentId) {
+      parent = parentId.innerHTML;
+      urlData = { id: parent, url: url, time: timestamp };
+    } else {
+      urlData = { url: url, time: timestamp };
+    }
+    console.log(parent);
+    console.log(urlData);
     const xhr = new XMLHttpRequest();
     xhr.onreadystatechange = function () {
       if (xhr.readyState === 4) {
@@ -62,3 +74,7 @@ box.addEventListener("keydown", (e) => {
     xhr.send(data);
   }
 });
+
+// document.addEventListener("mouseover", (e) => {
+//   console.log(e.target);
+// });

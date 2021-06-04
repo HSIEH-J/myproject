@@ -1,4 +1,5 @@
 const bookmark = require("../models/bookmark_model");
+const cache = require("../util/cache");
 
 // when user insert a url
 const importThumbnailData = async (req, res, next) => {
@@ -8,6 +9,10 @@ const importThumbnailData = async (req, res, next) => {
   const url = req.body.url;
   const time = req.body.time;
   const user = req.user.id;
+  if (cache.client.ready) {
+    await cache.set("url", JSON.stringify(url));
+  }
+  let insert;
   const titleData = await bookmark.getTitle(url);
   console.log(titleData);
   // get url title => check if status = done
@@ -26,10 +31,20 @@ const importThumbnailData = async (req, res, next) => {
         console.log(title);
         const location = await bookmark.uploadS3(url);
         console.log(location);
-        const insert = { user_id: user, url: url, title: title, thumbnail: location, timestamp: time };
-        await bookmark.insertContainerData(insert);
+        if (!req.body.id) {
+          console.log("no folder id");
+          insert = { user_id: user, url: url, title: title, thumbnail: location, timestamp: time, remove: 0 };
+        } else {
+          console.log("folder id");
+          insert = { user_id: user, folder_id: req.body.id, url: url, title: title, thumbnail: location, timestamp: time, remove: 0 };
+        }
+        const result = await bookmark.insertContainerData(insert);
+        console.log(result[0]);
+        const id = result[0].insertId;
+        // console.log(id);
         console.log(socket.id);
-        socket.emit("done");
+        const msg = { id: id, url: url, title: title, thumbnail: location };
+        socket.emit("done", msg);
       }
     };
     setInterval(test, 6000);
@@ -39,7 +54,11 @@ const importThumbnailData = async (req, res, next) => {
     console.log(title);
     const location = await bookmark.uploadS3(url);
     console.log(location);
-    const insert = { user_id: user, url: url, title: title, thumbnail: location, timestamp: time };
+    if (!req.body.id) {
+      insert = { user_id: user, url: url, title: title, thumbnail: location, timestamp: time, remove: 0 };
+    } else {
+      insert = { user_id: user, folder_id: req.body.id, url: url, title: title, thumbnail: location, timestamp: time, remove: 0 };
+    }
     await bookmark.insertContainerData(insert);
     res.send(true);
   }
@@ -95,7 +114,7 @@ const createFolder = async (req, res, next) => {
   const id = req.body.id;
   console.log(id);
   const user = req.user.id;
-  const insert = { id: id, user_id: user, folder_name: name, folder_id: folderId, timestamp: time };
+  const insert = { id: id, user_id: user, folder_name: name, folder_id: folderId, timestamp: time, remove: 0 };
   await bookmark.createFolder(insert);
   res.status(200).json("inserted");
 };
@@ -124,6 +143,15 @@ const updateBlock = async (req, res) => {
   res.status(200).send("updated");
 };
 
+const removeItem = async (req, res) => {
+  const type = req.body.type;
+  const user = req.user.id;
+  const id = req.body.id;
+  console.log(req.body);
+  await bookmark.removeAllItem(type, id, user);
+  res.status(200).json("removed");
+};
+
 // when user drag a folder or a bookmark into a folder
 
-module.exports = { importThumbnailData, containerData, createFolder, sequenceChange, insertIntoSubfolder, updateBlock };
+module.exports = { importThumbnailData, containerData, createFolder, sequenceChange, insertIntoSubfolder, updateBlock, removeItem };

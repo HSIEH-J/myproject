@@ -39,20 +39,26 @@ getBookmarkData().then(data => {
                           <div class="info">
                               <div class='title'>${get[n].title}</div>
                           </div>
-                         </a>`;
+                         </a>
+                         <div class="trashCan bookmarkTrash">
+                            <img src="images/trash.svg" width="35px" height="35px">
+                         </div>`;
       page.appendChild(frame);
     } else {
       const addCarton = document.createElement("div");
       addCarton.setAttribute("class", "frame folderItem");
       // addCarton.setAttribute("id", "d71d8a71-7ea5-421e-88ec-ff19eb982e2b");
       addCarton.setAttribute("draggable", "true");
-      addCarton.setAttribute("onclick", "folderClick(this)");
+      // addCarton.setAttribute("onclick", "folderClick(this)");
       addCarton.setAttribute("id", `${get[n].id}`);
       addCarton.innerHTML = `<div>
                                 <img src="images/folder-2.png" class="newFolder">
                              </div>
                              <div>
-                                <input type="text" class="folderName" value="${get[n].folder_name}" id="folder${n}">
+                                <input type="text" class="folderName" value="${get[n].folder_name}" id="folder${n}" onchange="changeName(this.id)">
+                             </div>
+                             <div class="trashCan folderTrash">
+                                <img src="images/trash.svg" width="35px" height="35px">
                              </div>`;
       page.appendChild(addCarton);
     }
@@ -63,3 +69,29 @@ const homepage = document.getElementById("homepage");
 homepage.addEventListener("click", (e) => {
   location.reload();
 });
+
+const changeFolderName = async (data) => {
+  const response = await fetch("/api/1.0/name", {
+    body: JSON.stringify(data),
+    headers: new Headers({
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`
+    }),
+    method: "POST"
+  });
+  const json = await response.json();
+  return json;
+};
+
+function changeName (id) {
+  const inputItem = document.getElementById(id);
+  const name = inputItem.value;
+  alert(name);
+  const parentId = inputItem.parentNode.parentNode.id;
+  console.log(parentId);
+  const data = { id: parentId, name: name };
+  console.log(data);
+  changeFolderName(data).then(data => {
+    console.log(data);
+  });
+}

@@ -40,7 +40,7 @@ const getAllFolders = async (req, res) => {
 
 const insertDivTable = async (req, res) => {
   const id = req.user.id;
-  const data = { id: req.body.div_id, user_id: id, folder_id: req.body.folder_id, timestamp: req.body.time };
+  const data = { id: req.body.div_id, user_id: id, folder_id: req.body.folder_id, timestamp: req.body.time, remove: 0 };
   await folder.insertDivTable(data);
 };
 
@@ -60,12 +60,16 @@ const getDivData = async (req, res) => {
         dataObj.data.push({
           div_id: n.div_id,
           time: n.divTime,
+          width: n.width,
+          height: n.height,
           details: [{ id: n.bookmark_id, url: n.url, title: n.title, thumbnail: n.thumbnail, time: n.bookmarkTime }]
         });
       } else {
         dataObj.data.push({
           div_id: n.div_id,
           time: n.divTime,
+          width: n.width,
+          height: n.height,
           details: [{ id: n.subfolder_id, folder_name: n.folder_name }]
         });
       }
@@ -91,4 +95,19 @@ const getDivData = async (req, res) => {
   res.status(200).send(dataObj);
 };
 
-module.exports = { getNestData, getAllFolders, insertDivTable, getDivData };
+const changeFolderName = async (req, res) => {
+  const userId = req.user.id;
+  const folderId = req.body.id;
+  const name = req.body.name;
+  await folder.changeFolderName(name, folderId, userId);
+  res.status(200).json("updated");
+};
+
+const updateBlockSize = async (req, res) => {
+  const userId = req.user.id;
+  const data = req.body;
+  console.log(data);
+  await folder.updateBlockSize(data, userId);
+};
+
+module.exports = { getNestData, getAllFolders, insertDivTable, getDivData, changeFolderName, updateBlockSize };

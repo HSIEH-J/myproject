@@ -1,5 +1,5 @@
 const router = require("express").Router();
-const { importThumbnailData, containerData, createFolder, sequenceChange, insertIntoSubfolder, updateBlock } = require("../controller/bookmark_controller");
+const { importThumbnailData, containerData, createFolder, sequenceChange, insertIntoSubfolder, updateBlock, removeItem } = require("../controller/bookmark_controller");
 const { authentication } = require("../util/util");
 
 // import url
@@ -14,5 +14,7 @@ router.route("/change").post(authentication(), sequenceChange);
 router.route("/subfolder").post(authentication(), insertIntoSubfolder);
 
 router.route("/update").post(authentication(), updateBlock);
+
+router.route("/remove").post(authentication(), removeItem);
 
 module.exports = router;

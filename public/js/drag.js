@@ -192,40 +192,40 @@ dataArea.addEventListener("drop", (e) => {
     console.log(divId);
     const blockLength = document.getElementById(divId).children.length;
     console.log(typeof (blockLength));
-    if (blockLength === 6) {
-      alert("Beyond limit! The board can only contain 6 items. Please create a new one!");
-    } else {
-      if (target.className === "frame folderItem" && target.id !== oldChild.id) {
-        console.log(page.children[oldIndex]);
-        if (className === "frame folderItem") {
-          type = "folder";
-        } else {
-          type = "bookmark";
-        }
-        const timestamp = getTimeStamp();
-        const subfolder = { type: type, update_id: oldChild.id, folder_id: target.id, time: timestamp };
-        insertSubFolder(subfolder).then(data => {
-          const response = data;
-          console.log(response);
-        });
-        page.removeChild(oldChild);
-      } else if (target.className === "block" || target.className === "block") {
-        // get data from page
-        target.appendChild(document.getElementById(oldChild.id));
-        if (className === "frame folderItem") {
-          type = "folder";
-        } else {
-          type = "bookmark";
-        }
-        console.log(type);
-        console.log(divId);
-        const blockData = { type: type, update_id: oldChild.id, div_id: divId, time: getTimeStamp() };
-        console.log(blockData);
-        insertSubFolder(blockData).then(data => {
-          console.log(data);
-        });
+    // if (blockLength === 6) {
+    //   alert("Beyond limit! The board can only contain 6 items. Please create a new one!");
+    // } else {
+    if (target.className === "frame folderItem" && target.id !== oldChild.id) {
+      console.log(page.children[oldIndex]);
+      if (className === "frame folderItem") {
+        type = "folder";
+      } else {
+        type = "bookmark";
       }
+      const timestamp = getTimeStamp();
+      const subfolder = { type: type, update_id: oldChild.id, folder_id: target.id, time: timestamp };
+      insertSubFolder(subfolder).then(data => {
+        const response = data;
+        console.log(response);
+      });
+      page.removeChild(oldChild);
+    } else if (target.className === "block" || target.className === "block") {
+      // get data from page
+      target.appendChild(document.getElementById(oldChild.id));
+      if (className === "frame folderItem") {
+        type = "folder";
+      } else {
+        type = "bookmark";
+      }
+      console.log(type);
+      console.log(divId);
+      const blockData = { type: type, update_id: oldChild.id, div_id: divId, time: getTimeStamp() };
+      console.log(blockData);
+      insertSubFolder(blockData).then(data => {
+        console.log(data);
+      });
     }
+    // }
   } else {
     const data = JSON.parse(e.dataTransfer.getData("data"));
     console.log(data);
