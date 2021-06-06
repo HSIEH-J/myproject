@@ -126,13 +126,20 @@
                 img.src = msg.thumbnail;
                 title.innerHTML = msg.title;
             })
+            function getTimeStamp () {
+                const date = Date.now() + performance.now();
+                const timestamp = Math.floor(date / 1000); ;
+                return timestamp;
+            }
             function text (msg){
-              socket.emit("stickyNote", (msg))
+                socket.emit("stickyNote", (msg))
             }
             function input(e) {
                 console.log(e.id);
                 console.log(e.value);
-                text(e.value)
+                const time = getTimeStamp();
+                const obj = {id: e.id, text: e.value, time: time}
+                text(obj)
             }
 
         </script>

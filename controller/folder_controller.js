@@ -111,8 +111,20 @@ const updateBlockSize = async (req, res) => {
 };
 
 const cacheTest = async (req, res) => {
-  const data = await cache.get("text");
-  console.log(data);
+  // const data = await cache.get("text");
+  // console.log(data);
+  const keys = await cache.keys("*");
+  console.log(keys);
+  const dataObj = { data: [] };
+  for (const n of keys) {
+    if (n !== "url") {
+      const cacheData = JSON.parse(await cache.get(n));
+      console.log(cacheData);
+      dataObj.data.push({ id: n, text: cacheData.text });
+    }
+  }
+  console.log(dataObj);
+  res.send("ok");
 };
 // const insertStickyNote = async (req, res) => {
 //   const userId = req.user.id;

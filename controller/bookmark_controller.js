@@ -112,16 +112,22 @@ const containerData = async (req, res, next) => {
 };
 
 // when user create a new folder
-const createFolder = async (req, res, next) => {
+const insertItem = async (req, res, next) => {
   console.log(req.body);
-  const name = req.body.name;
+  const id = req.body.id;
   const time = req.body.time;
   const folderId = req.body.folder_id;
-  const id = req.body.id;
+  const type = req.body.type;
   console.log(id);
   const user = req.user.id;
-  const insert = { id: id, user_id: user, folder_name: name, folder_id: folderId, timestamp: time, remove: 0 };
-  await bookmark.createFolder(insert);
+  let insert;
+  if (type === "folder") {
+    const name = req.body.name;
+    insert = { id: id, user_id: user, folder_name: name, folder_id: folderId, timestamp: time, remove: 0 };
+  } else if (type === "stickyNote") {
+    insert = { id: id, user_id: user, folder_id: folderId, timestamp: time, remove: 0 };
+  }
+  await bookmark.createItem(type, insert);
   res.status(200).json("inserted");
 };
 
@@ -160,4 +166,4 @@ const removeItem = async (req, res) => {
 
 // when user drag a folder or a bookmark into a folder
 
-module.exports = { importThumbnailData, containerData, createFolder, sequenceChange, insertIntoSubfolder, updateBlock, removeItem };
+module.exports = { importThumbnailData, containerData, insertItem, sequenceChange, insertIntoSubfolder, updateBlock, removeItem };

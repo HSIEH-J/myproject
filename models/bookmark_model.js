@@ -2,7 +2,6 @@ const axios = require("axios");
 const sharp = require("sharp");
 const { pool } = require("./mysql");
 const aws = require("aws-sdk");
-const e = require("express");
 
 aws.config.update({ accessKeyId: process.env.S3_ID, secretAccessKey: process.env.S3_PWD });
 
@@ -97,8 +96,12 @@ const uploadS3 = async function (url, time) {
   return address;
 };
 
-const createFolder = async (insert) => {
-  await pool.query("INSERT INTO folder set ?", insert);
+const createItem = async (type, insert) => {
+  if (type === "folder") {
+    await pool.query("INSERT INTO folder set ?", insert);
+  } else if (type === "stickyNote") {
+    await pool.query("INSERT INTO stickyNote set ?", insert);
+  }
 };
 
 // drag and drop
@@ -183,7 +186,7 @@ module.exports = {
   getTitle,
   uploadS3,
   getContainerData,
-  createFolder,
+  createItem,
   getFolderData,
   sequenceChange,
   insertIntoSubfolder,

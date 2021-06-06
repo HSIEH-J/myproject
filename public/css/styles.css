@@ -55,7 +55,7 @@ body{
     flex-direction: column;
     /* height: 100%; */
     /* max-height: 100%; */
-    background-color: rgb(225,229,223);
+    background-color: rgb(54,119,115);
     height: 100vh;
     text-align: center;
     font-size: 20px;
@@ -109,7 +109,7 @@ body{
     line-height: 8vh;
     height: 8vh;
     border-bottom: solid 1px lightgray;
-    box-shadow:1px 2px 1px 2px rgb(183,194,180);
+    box-shadow:1px 2px 1px 2px lightgray;
 }
 
 #sidebarContent{
@@ -146,8 +146,8 @@ body{
 
 #nav{
     border-bottom: solid 1px lightgray;
-    box-shadow:1px 2px 1px 2px rgb(183,194,180);
-    background-color: rgb(225, 229, 223);
+    box-shadow:1px 2px 1px 2px lightgray;
+    /* background-color: rgb(225, 229, 223); */
     height: 8vh;
     color: gray;
     font-family: Futura,Trebuchet MS,Arial,sans-serif;

@@ -313,10 +313,13 @@ document.addEventListener("click", (e) => {
 });
 
 note.addEventListener("click", (e) => {
+  const parent = document.getElementById("parent_id");
+  const parentId = parent.id;
+  console.log(parentId);
   const noteDiv = document.createElement("div");
   noteDiv.className = "frame";
   noteDiv.setAttribute("draggable", "true");
-  // const time = getTimeStamp();
+  const time = getTimeStamp();
   const id = getRandomNumber();
   // noteDiv.id = time;
   // onchange=\"changeName(this.id)\"></textarea
@@ -325,9 +328,12 @@ note.addEventListener("click", (e) => {
                           <img src="images/trash.svg" width="35px" height="35px">
                         </div>`;
   page.appendChild(noteDiv);
-  // const textArea = document.getElementById(id);
-  // textArea.selectionStart = "21";
-  // textArea.selectionEnd = "21";
+  const data = { type: "stickyNote", id: id, folder_id: parentId, timestamp: time };
+  createItem(data).then(data => {
+    console.log("insert db stickyNote");
+    const response = data;
+    console.log(response);
+  });
 });
 
 // const sticky = document.querySelector("stickyNote");

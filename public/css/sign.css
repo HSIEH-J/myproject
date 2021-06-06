@@ -1,6 +1,28 @@
+#mainImg{
+    width: 90px;
+    height: 90px;
+    margin-top: 2%;
+}
+
+#title{
+    font-size: 50px;
+    color: rgb(214,201,177)
+}
+
+#subtitle{
+    font-size: 20px;
+    color: rgb(214,201,177)
+}
+
+#state{
+    font-size: 30px;
+    color: rgb(214,201,177);
+    margin-top: 10%;
+}
+
 #signBlock{
-    width: 450px;
-    height: 500px;
+    width: 600px;
+    height: 750px;
     border: solid 2px rgb(139,147,165);
     box-shadow:1px 2px 1px 2px lightgray;
     margin: auto;
@@ -11,26 +33,80 @@
     bottom: 0;
     right: 0;
     left: 0;
-    background-color: rgb(125,161,117)
+    background-color: rgb(54,119,115)
 }
 
 .sign{
-    line-height: 50px;
-    margin-top: 15%
+    line-height: 70px;
+    margin-top: 2%
 }
 
 .input{
-    width:200px;
-    height: 30px;
+    width:250px;
+    height: 50px;
     border: solid 1px lightgray;
     font-family: Futura,Trebuchet MS,Arial,sans-serif;
 }
 
 button{
-    background-color: rgb(54,119,115);
-    color: white
+    background-color: white;
+    font-size: 20px;
+    cursor: pointer;
+    background-color: rgb(214,201,177);
 }
 
-#exsist{
-    margin-top: 20%
+button:hover{
+    background-color: Gainsboro;
+}
+
+#exist{
+    margin-top: 25%;
+    font-size: 20px;
+    color: rgb(214,201,177)
+}
+
+@media screen and (max-width: 1800px) {
+    #mainImg{
+        width: 70px;
+        height: 70px;
+    }
+
+    #title{
+        font-size: 35px
+    }
+
+    #subtitle{
+        font-size: 12px;
+    }
+
+    #state{
+        font-size: 25px;
+        color: rgb(214,201,177);
+        margin-top: 10%;
+    }
+
+    #signBlock{
+        width: 450px;
+        height: 500px;
+    }
+    
+    .sign{
+        line-height: 50px;
+    }
+    
+    .input{
+        width:200px;
+        height: 30px;
+    }
+    
+    button{
+        font-size: 15px;
+    }
+    
+    #exist{
+        margin-top: 15%;
+        font-size: 15px;
+    }
+
+
 }

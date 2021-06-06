@@ -1,8 +1,8 @@
 const page = document.getElementById("page");
 const plus = document.getElementById("plus");
 
-const createNewFolder = async (data) => {
-  const response = await fetch("/api/1.0/folder", {
+const createItem = async (data) => {
+  const response = await fetch("/api/1.0/item", {
     body: JSON.stringify(data),
     headers: new Headers({
       "Content-Type": "application/json",
@@ -49,13 +49,13 @@ plus.addEventListener("click", (e) => {
   let data;
   if (num) {
     // eslint-disable-next-line no-undef
-    data = { id: dataId, name: folder.value, folder_id: num, time: timestamp };
+    data = { type: "folder", id: dataId, name: folder.value, folder_id: num, time: timestamp };
   } else {
     // eslint-disable-next-line no-undef
-    data = { id: dataId, name: folder.value, folder_id: 0, time: timestamp };
+    data = { type: "folder", id: dataId, name: folder.value, folder_id: 0, time: timestamp };
   }
   console.log(data);
-  createNewFolder(data).then(data => {
+  createItem(data).then(data => {
     console.log("insert db folder");
     const response = data;
     console.log(response);

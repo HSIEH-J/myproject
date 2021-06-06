@@ -27,8 +27,8 @@ const server = http.createServer(app);
 
 const io = require("./models/socket").init(server);
 
+// const dataObj = { data: [] };
 // app.set("io", io);
-
 io.on("connection", (socket) => {
   console.log("a user connected", socket.id);
   socket.on("disconnect", () => {
@@ -36,17 +36,11 @@ io.on("connection", (socket) => {
   });
   socket.on("stickyNote", (msg) => {
     console.log(msg);
-    const text = msg.toString();
-    const textObj = { user: 2, id: 123, text: text };
+    const key = msg.id.toString();
+    const data = { user: 2, id: msg.id, text: msg.text, time: msg.time };
     if (cache.client.ready) {
-      cache.set("text", JSON.stringify(textObj));
+      cache.set(key, JSON.stringify(data));
     }
-    setTimeout(() => {
-      cache.get("text").then(data => {
-        console.log("setTimeout");
-        console.log(data);
-      });
-    }, 3000);
   });
   app.set("socket", socket);
 });
