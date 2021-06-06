@@ -1,5 +1,6 @@
 const express = require("express");
 const app = express();
+const cache = require("./util/cache");
 // env
 require("dotenv").config();
 
@@ -32,6 +33,20 @@ io.on("connection", (socket) => {
   console.log("a user connected", socket.id);
   socket.on("disconnect", () => {
     console.log("Connection disconnected", socket.id);
+  });
+  socket.on("stickyNote", (msg) => {
+    console.log(msg);
+    const text = msg.toString();
+    const textObj = { user: 2, id: 123, text: text };
+    if (cache.client.ready) {
+      cache.set("text", JSON.stringify(textObj));
+    }
+    setTimeout(() => {
+      cache.get("text").then(data => {
+        console.log("setTimeout");
+        console.log(data);
+      });
+    }, 3000);
   });
   app.set("socket", socket);
 });

@@ -23,6 +23,12 @@
     font-size: 20px;
 }
 
+.noteTrash{
+    position: absolute;
+    bottom:1%;
+    left:80%;
+}
+
 .blockTrash{
     position: absolute;
     right: 1%;

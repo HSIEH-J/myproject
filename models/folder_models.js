@@ -23,6 +23,10 @@ const insertDivTable = async (data) => {
   await pool.query("INSERT INTO block SET ?", data);
 };
 
+// const insertStickyNote = async (data) => {
+//   await pool.query("INSERT INTO stickyNote SET ?", data);
+// };
+
 const getBlockData = async (user, folder) => {
   const data = await pool.query("SELECT bookmark.div_id, bookmark.id AS bookmark_id, bookmark.url, bookmark.title, bookmark.thumbnail, bookmark.timestamp, block.timestamp AS divTime, block.width, block.height FROM bookmark INNER JOIN block ON bookmark.div_id = block.id WHERE bookmark.user_id = ? && bookmark.folder_id = ? && bookmark.remove = 0 ORDER BY bookmark.timestamp;", [user, folder]);
   const folderData = await pool.query("SELECT folder.folder_name, folder.id AS subfolder_id, folder.sequence, folder.timestamp, block.id AS div_id, block.timestamp AS divTime, block.width, block.height FROM folder INNER JOIN block ON folder.div_id = block.id WHERE folder.user_id = ? && folder.folder_id = ?  && folder.remove = 0 ORDER BY folder.timestamp", [user, folder]);

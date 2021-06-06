@@ -4,18 +4,29 @@
     <head>
         <link rel="icon" href="images/favicon-20210512121052246.ico" type="image/x-icon" >
         <title>SignUp</title>
+        <link href="css/sign.css" rel="stylesheet">
     </head>
 
     <body>
-        <div>
-            <h1>Sign up</h1>
-            <input value="email" id="emailUp">
-            <input value="password" type="password" id="pwdUp">
-            <button type="submit" onclick="register()">button</button>
-            <h1>Log in</h1>
-            <input value="email" id="emailIn">
-            <input value="password" type="password" id="pwdIn">
-            <button type="submit" onclick="logIn()">button</button>
+        <div id="signBlock">
+            <img src="images/logopng.png" width= 70px height=70px style="margin-top: 2%;">
+            <div style="font-size: 35px;">Bookmark</div>
+            <div style="font-size: 12px;">Organize bookmarks</div>
+            <div class="sign">
+                <input value="email" id="emailUp" class="input"><br>
+                <input value="password" type="password" id="pwdUp" class="input"><br>
+                <button type="submit" onclick="register()" class="input">button</button>
+            </div>
+            <div class="sign" style="display: none;">
+                <input value="email" id="emailIn">
+                <input value="password" type="password" id="pwdIn">
+                <button type="submit" onclick="logIn()" class="input">button</button> -->
+            </div>
+            <div id="exsist">
+                <div>Already have an account &#63;</div>
+                <div>Log In</div>
+            </div>
+           
 
         </div>
 

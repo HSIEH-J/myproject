@@ -1,0 +1,100 @@
+body{
+    margin: 0px;
+    height: 100vh;
+    width: 100vw;
+}
+#header{
+    width: 1500px;
+    display: flex;
+    justify-content: space-between;
+    margin: auto;
+    font-family: Futura,Trebuchet MS,Arial,sans-serif;
+    line-height: 67px;
+    margin-top: 1%;
+    margin-bottom: 2%;
+}
+#logo{
+    width: 190px;
+    height: 67px
+}
+#index{
+    width: 1500px;
+    height: 800px;
+    margin: auto;
+    border-radius: 5%;
+    position: relative;
+}
+#background{
+    width: 1500px;
+    height: 800px;
+}
+#signButton{
+    width: 250px;
+    height: 100px;
+    font-size: 35px;
+    border: solid 2px rgb(54,119,115);
+    background-color: transparent;
+    border-radius: 5%;
+    outline: medium;
+    position: absolute;
+    top: 65%;
+    left: 10%;
+    cursor: pointer;
+    background-color: rgb(54,119,115);
+    color: white
+}
+
+#signButton:hover{
+    background-color: Gainsboro;
+    color: black
+}
+
+#intro{
+    border-top: solid 1px darkgray;
+    border-bottom: solid 1px darkgray;
+    /* margin: auto; */
+    text-align: center;
+    position: absolute;
+    width:90%;
+    top: 80%;
+    left: 5%;
+    right: 5%;
+    font-family: Futura,Trebuchet MS,Arial,sans-serif;
+}
+
+@media screen and (max-width: 1800px) {
+    #header{
+        width: 750px;
+        line-height: 48px
+    }
+    #logo{
+        width: 120px;
+        height: 48px
+    }
+    #index{
+        width: 800px;
+        height: 500px;
+        margin: auto;
+        border-radius: 5%;
+        position: relative;
+    }
+    #background{
+        width:  800px;
+        height: 400px;
+    }
+    #signButton{
+        width: 125px;
+        height: 50px;
+        font-size: 18px;
+        top:55%;
+        left: 15%
+    }
+    #intro{
+        position: absolute;
+        top: 80%;
+        left: 5%;
+        right: 5%;
+
+
+    }
+}

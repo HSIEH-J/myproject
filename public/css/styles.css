@@ -280,11 +280,7 @@ body{
     left:50%
 }
 
-.noteTrash{
-    position: absolute;
-    bottom:1%;
-    left:80%;
-}
+
 
 .frame:hover .trashCan {
     display: block;

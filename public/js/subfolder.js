@@ -236,14 +236,12 @@ document.addEventListener("click", (e) => {
     console.log(removeParent);
     console.log(removeChild);
     const id = removeChild.id;
+    const parent = document.getElementById(removeParent.id);
+    const child = document.getElementById(id);
     // confirm("Are you want to delete this Item?");
     const ans = confirm("Are you want to delete this Item?");
     if (ans) {
-      if (removeChild.className === "block") {
-        const parent = document.getElementById(removeParent.id);
-        console.log(parent);
-        const child = document.getElementById(id);
-        console.log(child);
+      if (removeChild.className === "block" || removeParent.className === "block") {
         parent.removeChild(child);
       } else {
         const child = document.getElementById(id);
@@ -306,23 +304,33 @@ document.addEventListener("click", (e) => {
       console.log(data);
     });
   }
+  if (e.target.className === "stickyNote") {
+    // const stickyNote = document.getElementsByClassName("stickyNote");
+    const startPosition = e.target.selectionStart;
+    const endPosition = e.target.selectionEnd;
+    console.log(startPosition, endPosition);
+  }
 });
 
 note.addEventListener("click", (e) => {
   const noteDiv = document.createElement("div");
   noteDiv.className = "frame";
-  noteDiv.setAttribute("maxlength", "150");
   noteDiv.setAttribute("draggable", "true");
-  const time = getTimeStamp();
-  noteDiv.id = time;
+  // const time = getTimeStamp();
+  const id = getRandomNumber();
+  // noteDiv.id = time;
   // onchange=\"changeName(this.id)\"></textarea
-  noteDiv.innerHTML += "<textarea class=\"stickyNote\" type=\"text\">";
+  noteDiv.innerHTML += `<textarea class="stickyNote" id=${id} type="text" maxlength ="150" oninput="input(this)"></textarea>`;
   noteDiv.innerHTML += `<div class="trashCan noteTrash">
                           <img src="images/trash.svg" width="35px" height="35px">
                         </div>`;
   page.appendChild(noteDiv);
+  // const textArea = document.getElementById(id);
+  // textArea.selectionStart = "21";
+  // textArea.selectionEnd = "21";
 });
 
-document.addEventListener("mousedown", (e) => {
-  console.log(e.target);
-});
+// const sticky = document.querySelector("stickyNote");
+// sticky.addEventListener("input", (e) => {
+//   console.log(e.target);
+// });

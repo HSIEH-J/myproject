@@ -1,4 +1,4 @@
-const e = require("express");
+const cache = require("../util/cache");
 const folder = require("../models/folder_models");
 
 function buildTree (list) {
@@ -110,4 +110,16 @@ const updateBlockSize = async (req, res) => {
   await folder.updateBlockSize(data, userId);
 };
 
-module.exports = { getNestData, getAllFolders, insertDivTable, getDivData, changeFolderName, updateBlockSize };
+const cacheTest = async (req, res) => {
+  const data = await cache.get("text");
+  console.log(data);
+};
+// const insertStickyNote = async (req, res) => {
+//   const userId = req.user.id;
+//   // const receiveData = req.body;
+//   console.log(data);
+//   const data = { id: msg.id, user_id: user, folder_id: 0, timestamp: timestamp, remove: 0 };
+//   await folder.insertStickyNote(data);
+// };
+
+module.exports = { getNestData, getAllFolders, insertDivTable, getDivData, changeFolderName, updateBlockSize, cacheTest };

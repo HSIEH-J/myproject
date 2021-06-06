@@ -3,66 +3,33 @@
 
     <head>
         <link rel="icon" href="images/favicon-20210512121052246.ico" type="image/x-icon" >
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>home page</title>
         <!-- <link href="css/styles.css" rel="stylesheet"> -->
-        <style>
-          body{
-              margin: 0px;
-              height: 100vh;
-              width: 100vw;
-          }
-          #header{
-              display: flex;
-              justify-content: space-between;
-              margin-top: 1%;
-              margin-left: 2%;
-              margin-right: 2%;
-          }
-          #index{
-              width: 1500px;
-              height: 900px;
-              margin: auto;
-              border-radius: 5%;
-              background-color: rgb(183,194,180);
-          }
-          #background{
-              width: 1500px;
-              height: 900px;
-          }
-          #sign{
-            width: 250px;
-            height: 100px;
-            border: solid 2px lightgray;
-            border-radius: 15%;
-            position: absolute;
-            top: 45%;
-            left: 35%
-          }
-          #signButton{
-              width: 250px;
-              height: 100px;
-              font-size: 35px;
-              background-color: white;
-              border: none;
-              outline: medium;
-          }
-        </style>
+        <link href="css/index.css" rel="stylesheet">
+          
     </head>
 
     <body>
         <header>
             <div id="header">
-                <img src="images/logo.png" width="190" height="67px">
-                <h3>Log In</h3>
+                <img src="images/logo.png" id="logo">
+                <div>Log In</div>
             </div>
         </header>
         <div id="index">
-            <img src="images/index.svg" id="background">
-        </div>
-        <div id="sign">
-            <button id="signButton" onclick="signUp()">Get Started</button>
-        </div>
-        
+            <img src="images/index-2.png" id="background">
+            <div id="sign">
+                <button id="signButton" onclick="signUp()">Get Started</button>
+            </div>
+        </div> 
+        <div id="intro">
+            <p>Bookmark.site is a tool that let you organize your numerous bookmarks!</p>
+            <!-- <p>You can classfy your bookmars</p>
+            <p>Create folders</p>
+            <p>Write down some remarks</p>
+            <p>And style your own board!</p> -->
+        </div> 
     </body>
 
     <!-- <script>

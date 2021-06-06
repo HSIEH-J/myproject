@@ -94,6 +94,7 @@
                     <button id="click">Click</button>
                 </div>
                 <img src="images/plus.svg" class="hover" id="addBlock" width="20px" height="20px" style="display: none;">
+                <textarea class="stickyNote" id="test" type="text" maxlength ="150" oninput="input(this)"></textarea>
                 
             </div>
         </div>
@@ -125,6 +126,15 @@
                 img.src = msg.thumbnail;
                 title.innerHTML = msg.title;
             })
+            function text (msg){
+              socket.emit("stickyNote", (msg))
+            }
+            function input(e) {
+                console.log(e.id);
+                console.log(e.value);
+                text(e.value)
+            }
+
         </script>
        
     </body>
