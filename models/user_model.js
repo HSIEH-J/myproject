@@ -21,11 +21,12 @@ const signUp = async (email, password) => {
       email: email,
       password: bcrypt.hashSync(password, salt)
     };
-    const accessToken = jwt.sign({ provider: user.provider, email: user.email }, TOKEN_SECRET, { expiresIn: TOKEN_EXPIRE });
+    // const accessToken = jwt.sign({ provider: user.provider, email: user.email }, TOKEN_SECRET, { expiresIn: TOKEN_EXPIRE });
     const insert = "INSERT INTO user SET ?";
     const result = await conn.query(insert, user);
-    user.access_token = accessToken;
     user.id = result[0].insertId;
+    const accessToken = jwt.sign({ id: user.id, provider: user.provider, email: user.email }, TOKEN_SECRET, { expiresIn: TOKEN_EXPIRE });
+    user.access_token = accessToken;
     await conn.query("COMMIT");
     return { user };
   } catch (error) {
@@ -43,11 +44,12 @@ const nativeSignIn = async (email, password) => {
     await conn.query("START TRANSACTION");
     const users = await conn.query("SELECT * FROM user WHERE email = ?", [email]);
     const user = users[0][0];
+    const id = user.id;
     if (!bcrypt.compareSync(password, user.password)) {
       await conn.query("COMMIT");
       return { error: "Password is wrong" };
     }
-    const accessToken = jwt.sign({ provider: user.provider, email: user.email }, TOKEN_SECRET);
+    const accessToken = jwt.sign({ id: id, provider: user.provider, email: user.email }, TOKEN_SECRET);
     await conn.query("COMMIT");
     user.access_token = accessToken;
     return { user };

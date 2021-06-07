@@ -10,9 +10,9 @@ const importThumbnailData = async (req, res, next) => {
   const time = req.body.time;
   const user = req.user.id;
   console.log(req.body);
-  if (cache.client.ready) {
-    await cache.set("url", JSON.stringify(url));
-  }
+  // if (cache.client.ready) {
+  //   await cache.set("url", JSON.stringify(url));
+  // }
   let insert;
   const titleData = await bookmark.getTitle(url);
   console.log(titleData);
@@ -84,13 +84,25 @@ const containerData = async (req, res, next) => {
   if (id === undefined) {
     const mark = await bookmark.getContainerData(user);
     const folder = await bookmark.getFolderData(user);
-    data = mark[0].concat(folder[0]);
+    data = mark.concat(folder);
   } else {
     const mark = await bookmark.getSubfolderBookmarkData(id, user);
     const folder = await bookmark.getSubfolderData(id, user);
-    data = mark.concat(folder);
+    const note = await bookmark.getSubfolderStickyNote(id, user);
+    const cacheData = await cache.get(user);
+    const dataTrans = JSON.parse(cacheData);
+    if (dataTrans) {
+      const a = dataTrans.filter(el => el[1].folder_id === id);
+      for (const n of note) {
+        for (const x of a) {
+          if (x[0] === n.id) {
+            n.text = x[1].text;
+          }
+        }
+      }
+    }
+    data = mark.concat(folder, note);
   }
-  // console.log(data);
   data.sort((a, b) => {
     if (a.timestamp > b.timestamp) {
       return 1;
@@ -102,10 +114,13 @@ const containerData = async (req, res, next) => {
   });
   // console.log(data);
   for (const n of data) {
-    if (n.folder_name === undefined) {
+    console.log(n.folder_name);
+    if (n.url) {
       dataObj.data.push({ id: n.id, url: n.url, title: n.title, thumbnail: n.thumbnail });
-    } else {
+    } else if (n.folder_name) {
       dataObj.data.push({ id: n.id, folder_name: n.folder_name });
+    } else {
+      dataObj.data.push({ id: n.id, text: n.text, width: n.width, height: n.height });
     }
   }
   res.send(dataObj);

@@ -94,8 +94,6 @@
                     <button id="click">Click</button>
                 </div>
                 <img src="images/plus.svg" class="hover" id="addBlock" width="20px" height="20px" style="display: none;">
-                <textarea class="stickyNote" id="test" type="text" maxlength ="150" oninput="input(this)"></textarea>
-                
             </div>
         </div>
        
@@ -114,7 +112,14 @@
      
         <script src="/socket.io/socket.io.js"></script>
         <script>
-            const socket = io();
+            const socket = io({
+                auth:{
+                    token:token
+                }
+            });
+            socket.on("connect_error", (err) => {
+                console.log(err)
+            })
             socket.on("done", (msg)=>{
                 console.log(msg);
                 const frame = document.getElementById(msg.id);
@@ -126,6 +131,8 @@
                 img.src = msg.thumbnail;
                 title.innerHTML = msg.title;
             })
+            //socket token
+            
             function getTimeStamp () {
                 const date = Date.now() + performance.now();
                 const timestamp = Math.floor(date / 1000); ;
@@ -135,10 +142,11 @@
                 socket.emit("stickyNote", (msg))
             }
             function input(e) {
-                console.log(e.id);
+                const parent = document.getElementById('parent_id');
+                const parentId = parent.innerHTML;
+                console.log(e.parentNode.id);
                 console.log(e.value);
-                const time = getTimeStamp();
-                const obj = {id: e.id, text: e.value, time: time}
+                const obj = {id: e.parentNode.id, folder_id: parentId, text: e.value}
                 text(obj)
             }
 

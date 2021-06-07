@@ -48,7 +48,7 @@ const authentication = () => {
       if (!userDetail) {
         res.status(403).send({ error: "Forbidden" });
       }
-      req.user.id = userDetail[0].id;
+      // req.user.id = userDetail[0].id;
       next();
       return;
     } catch (err) {

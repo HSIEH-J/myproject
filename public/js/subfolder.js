@@ -109,7 +109,7 @@ document.addEventListener("click", (e) => {
       console.log(data);
       const get = data.data;
       for (const n in get) {
-        if (get[n].folder_name === undefined) {
+        if (get[n].url) {
           console.log("===undefined===");
           const frame = document.createElement("div");
           frame.setAttribute("class", "frame bookmark");
@@ -130,7 +130,7 @@ document.addEventListener("click", (e) => {
                            </div>`;
           // eslint-disable-next-line no-undef
           page.appendChild(frame);
-        } else {
+        } else if (get[n].folder_name) {
           const addCarton = document.createElement("div");
           addCarton.setAttribute("class", "frame folderItem");
           // addCarton.setAttribute("id", "d71d8a71-7ea5-421e-88ec-ff19eb982e2b");
@@ -148,6 +148,29 @@ document.addEventListener("click", (e) => {
                                  </div>`;
           // eslint-disable-next-line no-undef
           page.appendChild(addCarton);
+        } else {
+          const noteDiv = document.createElement("div");
+          noteDiv.className = "frame";
+          noteDiv.setAttribute("draggable", "true");
+          noteDiv.setAttribute("id", get[n].id);
+          const textAreaId = parseInt(getTimeStamp()) + parseInt(n);
+          let text;
+          console.log(get[n].text);
+          if (get[n].text === null) {
+            text = "";
+          } else {
+            text = get[n].text;
+          }
+          noteDiv.innerHTML += `<textarea class="stickyNote" id=${textAreaId} type="text" maxlength ="150" oninput="input(this)">${text}</textarea>`;
+          noteDiv.innerHTML += `<div class="trashCan noteTrash">
+                                  <img src="images/trash.svg" width="35px" height="35px">
+                                </div>`;
+          page.appendChild(noteDiv);
+          if (get[n].width !== "null" && get[n].height !== "null") {
+            const noteSize = document.getElementById(textAreaId);
+            noteSize.style.width = get[n].width + "px";
+            noteSize.style.heigh = get[n].height + "px";
+          }
         }
       }
     });
@@ -170,7 +193,7 @@ document.addEventListener("click", (e) => {
           div.style.width = n.width + "px";
           div.style.height = n.height + "px";
           for (const x of n.details) {
-            if (!x.folder_name) {
+            if (x.url) {
               const frame = document.createElement("div");
               frame.setAttribute("class", "frame bookmark");
               frame.setAttribute("draggable", "true");
@@ -189,7 +212,7 @@ document.addEventListener("click", (e) => {
                                   <img src="images/trash.svg" width="35px" height="35px">
                                </div>`;
               div.appendChild(frame);
-            } else {
+            } else if (x.folder_name) {
               const addCarton = document.createElement("div");
               addCarton.setAttribute("class", "frame folderItem");
               // addCarton.setAttribute("id", "d71d8a71-7ea5-421e-88ec-ff19eb982e2b");
@@ -206,6 +229,29 @@ document.addEventListener("click", (e) => {
                                        <img src="images/trash.svg" width="35px" height="35px">
                                      </div>`;
               div.appendChild(addCarton);
+            } else {
+              console.log("123");
+              const noteDiv = document.createElement("div");
+              noteDiv.className = "frame";
+              noteDiv.setAttribute("draggable", "true");
+              noteDiv.setAttribute("id", x.id);
+              const textAreaId = parseInt(getTimeStamp()) + parseInt(n);
+              let text;
+              if (x.text === null) {
+                text = "";
+              } else {
+                text = x.text;
+              }
+              noteDiv.innerHTML += `<textarea class="stickyNote" id=${textAreaId} type="text" maxlength ="150" oninput="input(this)">${text}</textarea>`;
+              noteDiv.innerHTML += `<div class="trashCan noteTrash">
+                                      <img src="images/trash.svg" width="35px" height="35px">
+                                    </div>`;
+              div.appendChild(noteDiv);
+              // if (x.width !== "null" && x.height !== "null") {
+              //   const noteSize = document.getElementById(textAreaId);
+              //   noteSize.style.width = x.width + "px";
+              //   noteSize.style.heigh = x.height + "px";
+              // }
             }
           }
           dataArea.appendChild(div);
@@ -216,17 +262,22 @@ document.addEventListener("click", (e) => {
     parentId.setAttribute("id", "parent_id");
     parentId.style.display = "none";
     parentId.innerHTML = id;
-    page.appendChild(parentId);
+    container.appendChild(parentId);
     board.style.display = "block";
     note.style.display = "block";
   }
   if (e.target.className === "block") {
     console.log(e.target.style.width);
     console.log(e.target.style.height);
-    const data = { id: e.target.id, width: e.target.style.width, height: e.target.style.height };
-    updateBlockSize(data).then(data => {
-      console.log(data);
-    });
+    const width = e.target.style.width;
+    const height = e.target.style.height;
+    if (width || height) {
+      console.log("block size change");
+      const data = { id: e.target.id, width: width, height: height };
+      updateBlockSize(data).then(data => {
+        console.log(data);
+      });
+    }
   }
   if (e.target.parentNode.classList.contains("trashCan")) {
     console.log(e.target.parentNode.parentNode);
@@ -257,6 +308,9 @@ document.addEventListener("click", (e) => {
       } else if (e.target.parentNode.className === "trashCan blockTrash") {
         console.log("target block");
         sendData = { type: "block", id: id };
+      } else {
+        console.log("target stickyNote");
+        sendData = { type: "stickyNote", id: id };
       }
       console.log(sendData);
       removeItem(sendData).then(data => {
@@ -269,10 +323,13 @@ document.addEventListener("click", (e) => {
     container.style.width = "20vw";
     dataArea.style.width = "70vw";
     dataArea.style.display = "block";
-    addBlock.style.display = "block";
     console.log(block);
     if (block.length !== 0) {
       highlight.style.display = "none";
+      addBlock.style.display = "block";
+    } else {
+      highlight.style.display = "block";
+      addBlock.style.display = "none";
     }
   }
   if (e.target.id === "close") {
@@ -314,21 +371,21 @@ document.addEventListener("click", (e) => {
 
 note.addEventListener("click", (e) => {
   const parent = document.getElementById("parent_id");
-  const parentId = parent.id;
+  const parentId = parent.innerHTML;
   console.log(parentId);
   const noteDiv = document.createElement("div");
   noteDiv.className = "frame";
   noteDiv.setAttribute("draggable", "true");
-  const time = getTimeStamp();
   const id = getRandomNumber();
-  // noteDiv.id = time;
-  // onchange=\"changeName(this.id)\"></textarea
-  noteDiv.innerHTML += `<textarea class="stickyNote" id=${id} type="text" maxlength ="150" oninput="input(this)"></textarea>`;
+  const time = getTimeStamp();
+  noteDiv.setAttribute("id", id);
+  noteDiv.innerHTML += "<textarea class=\"stickyNote\" type=\"text\" maxlength =\"150\" oninput=\"input(this)\"></textarea>";
   noteDiv.innerHTML += `<div class="trashCan noteTrash">
                           <img src="images/trash.svg" width="35px" height="35px">
                         </div>`;
   page.appendChild(noteDiv);
-  const data = { type: "stickyNote", id: id, folder_id: parentId, timestamp: time };
+  const data = { type: "stickyNote", id: id, folder_id: parentId, time: time };
+  console.log(data);
   createItem(data).then(data => {
     console.log("insert db stickyNote");
     const response = data;

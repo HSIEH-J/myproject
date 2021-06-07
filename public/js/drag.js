@@ -4,6 +4,7 @@ page.addEventListener("dragstart", (e) => {
   console.log("dragStart");
   console.log(e.target);
   const nodes = Array.prototype.slice.call(page.children);
+  console.log(nodes);
   const index = nodes.indexOf(e.target);
   console.log(index);
   e.dataTransfer.setData("text/plain", index);
@@ -16,8 +17,11 @@ function order (arr) {
     const time = parseInt(timestamp) + parseInt(n);
     if (arr[n].className === "frame folderItem") {
       data.data.push({ type: "folder", id: arr[n].id, order: n, time: time });
-    } else {
+    } else if (arr[n].className === "frame bookmark") {
       data.data.push({ type: "bookmark", id: arr[n].id, order: n, time: time });
+    } else {
+      console.log(arr[n]);
+      data.data.push({ type: "stickyNote", id: arr[n].id, order: n, time: time });
     }
   }
   return data;
@@ -75,8 +79,10 @@ page.addEventListener("drop", (e) => {
     let type;
     if (data.draggedType === "frame folderItem") {
       type = "folder";
-    } else {
+    } else if (data.draggedType === "frame bookmark") {
       type = "bookmark";
+    } else {
+      type = "stickyNote";
     }
     if (e.target.className === "frame folderItem") {
       const subfolder = { type: type, update_id: data.draggedId, folder_id: e.target.id, time: getTimeStamp() };
@@ -101,12 +107,14 @@ page.addEventListener("drop", (e) => {
     const oldIndex = e.dataTransfer.getData("text/plain");
     let target;
     const className = e.target.className;
-    if (className === "frame folderItem" || className === "frame bookmark") {
+    if (className === "frame folderItem" || className === "frame bookmark" || className === "frame") {
       target = e.target;
     } else if (className === "title") {
       target = e.target.parentElement.parentElement.parentElement;
-    } else {
+    } else if (className === "top") {
       target = e.target.parentElement.parentElement;
+    } else {
+      target = e.target.parentElement;
     }
     const newIndex = nodes.indexOf(target);
     console.log(newIndex);
@@ -176,13 +184,17 @@ dataArea.addEventListener("drop", (e) => {
     const oldIndex = e.dataTransfer.getData("text/plain");
     const oldChild = page.children[oldIndex];
     const className = oldChild.className;
-    if (e.target.className === "frame folderItem" || e.target.className === "frame bookmark" || e.target.className === "block") {
+    if (e.target.className === "frame folderItem" || e.target.className === "frame bookmark" || e.target.className === "block" || e.target.className === "frame") {
       target = e.target;
     } else if (e.target.className === "title") {
       target = e.target.parentElement.parentElement.parentElement;
-    } else {
+    } else if (e.target.className === "top") {
       target = e.target.parentElement.parentElement;
+    } else {
+      console.log("textArea");
+      target = e.target.parentNode;
     }
+    console.log(target.parentNode);
     if (target.className === "block") {
       divId = target.id;
     } else {
@@ -199,8 +211,10 @@ dataArea.addEventListener("drop", (e) => {
       console.log(page.children[oldIndex]);
       if (className === "frame folderItem") {
         type = "folder";
-      } else {
+      } else if (className === "frame bookmark") {
         type = "bookmark";
+      } else {
+        type = "stickyNote";
       }
       const timestamp = getTimeStamp();
       const subfolder = { type: type, update_id: oldChild.id, folder_id: target.id, time: timestamp };
@@ -209,13 +223,20 @@ dataArea.addEventListener("drop", (e) => {
         console.log(response);
       });
       page.removeChild(oldChild);
-    } else if (target.className === "block" || target.className === "block") {
+    } else if (target.className === "block" || target.parentNode.className === "block") {
       // get data from page
-      target.appendChild(document.getElementById(oldChild.id));
+      if (target.className === "block") {
+        target.appendChild(document.getElementById(oldChild.id));
+      } else {
+        const parentNode = document.getElementById(target.parentNode.id);
+        parentNode.appendChild(document.getElementById(oldChild.id));
+      }
       if (className === "frame folderItem") {
         type = "folder";
-      } else {
+      } else if (className === "frame bookmark") {
         type = "bookmark";
+      } else {
+        type = "stickyNote";
       }
       console.log(type);
       console.log(divId);
@@ -230,19 +251,23 @@ dataArea.addEventListener("drop", (e) => {
     const data = JSON.parse(e.dataTransfer.getData("data"));
     console.log(data);
     const className = e.target.className;
-    if (className === "frame folderItem" || className === "frame bookmark" || className === "block") {
+    if (className === "frame folderItem" || className === "frame bookmark" || className === "block" || className === "frame") {
       target = e.target;
     } else if (className === "title") {
       target = e.target.parentElement.parentElement.parentElement;
-    } else {
+    } else if (className === "top") {
       target = e.target.parentElement.parentElement;
+    } else {
+      target = e.target.parentNode;
     }
     console.log(target);
     if (className === "frame folderItem" && target.id !== data.draggedId) {
       if (data.draggedType === "frame folderItem") {
         type = "folder";
-      } else {
+      } else if (data.draggedType === "frame bookmark") {
         type = "bookmark";
+      } else {
+        type = "stickyNote";
       }
       const timestamp = getTimeStamp();
       const subfolder = { type: type, update_id: data.draggedId, folder_id: target.id, time: timestamp };
@@ -252,18 +277,25 @@ dataArea.addEventListener("drop", (e) => {
       });
       const oldParent = document.getElementById(data.block_id);
       oldParent.removeChild(document.getElementById(data.draggedId));
-    } else if (target.className === "block" || target.parentNode === "block") {
+    } else if (target.className === "block" || target.parentNode.className === "block") {
       // get data from page
       if (target.className === "block") {
         divId = target.id;
       } else {
         divId = target.parentNode.id;
       }
-      target.appendChild(document.getElementById(data.draggedId));
+      if (target.className === "block") {
+        target.appendChild(document.getElementById(data.draggedId));
+      } else {
+        const parentNode = document.getElementById(target.parentNode.id);
+        parentNode.appendChild(document.getElementById(data.draggedId));
+      }
       if (data.draggedType === "frame folderItem") {
         type = "folder";
-      } else {
+      } else if (data.draggedType === "frame bookmark") {
         type = "bookmark";
+      } else {
+        type = "stickyNote";
       }
       console.log(type);
       const blockData = { type: type, update_id: data.draggedId, div_id: divId, time: getTimeStamp() };
