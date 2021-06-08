@@ -49,6 +49,7 @@ const importThumbnailData = async (req, res, next) => {
         console.log(socket.id);
         const msg = { id: req.body.id, title: title, thumbnail: location };
         const socketId = await cache.get(`${"socketId" + user}`);
+        console.log(socketId);
         socket.to(socketId).emit("done", msg);
       }
     };
@@ -66,7 +67,10 @@ const importThumbnailData = async (req, res, next) => {
     }
     await bookmark.insertContainerData(insert);
     const msg = { id: req.body.id, title: title, thumbnail: location };
-    socket.emit("done", msg);
+    const socketId = await cache.get(`${"socketId" + user}`);
+    console.log("done");
+    console.log(socketId);
+    socket.to(socketId).emit("done", msg);
     res.status(200).json("bookmark generated");
   }
 

@@ -56,6 +56,8 @@ io.on("connection", async (socket) => {
   console.log("a user connected", socket.id);
   if (cache.client.ready) {
     const key = "socketId" + socket.info.id;
+    console.log(key);
+    console.log(socket.id);
     await cache.set(key, socket.id);
   }
   console.log(socket.info.id);
