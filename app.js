@@ -33,7 +33,7 @@ const server = http.createServer(app);
 const io = require("./models/socket").init(server);
 
 // const dataObj = { data: [] };
-// app.set("io", io);
+app.set("io", io);
 io.use((socket, next) => {
   const { token } = socket.handshake.auth;
   if (token === null) {
