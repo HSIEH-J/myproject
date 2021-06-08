@@ -48,7 +48,8 @@ const importThumbnailData = async (req, res, next) => {
         // console.log(id);
         console.log(socket.id);
         const msg = { id: req.body.id, title: title, thumbnail: location };
-        socket.emit("done", msg);
+        const socketId = await cache.get(`${"socketId" + user}`);
+        socket.to(socketId).emit("done", msg);
       }
     };
     setInterval(test, 6000);
