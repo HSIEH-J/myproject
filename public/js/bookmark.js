@@ -26,6 +26,7 @@ const urlClick = document.getElementById("url");
 
 importUrl.addEventListener("click", () => {
   urlClick.style.display = "block";
+  box.value = "";
 });
 
 box.addEventListener("click", (e) => {
@@ -68,30 +69,30 @@ box.addEventListener("keydown", (e) => {
                               <img src="images/trash.svg" width="35px" height="35px">
                           </div>`;
       page.appendChild(frame);
-      if (parent) {
-        urlData = { id: timestamp, parent_id: parent, url: url, time: timestamp };
-      } else {
-        urlData = { id: timestamp, url: url, time: timestamp };
-      }
-      console.log(parentId);
-      console.log(parent);
-      console.log(urlData);
-      const xhr = new XMLHttpRequest();
-      xhr.onreadystatechange = function () {
-        if (xhr.readyState === 4) {
-          box.value = "";
-          if (xhr.status !== 200) {
-            alert("there's something wrong, please try again!");
-          }
-          console.log(xhr.responseText);
-        }
-      };
-      xhr.open("post", "/api/1.0/test", true);
-      xhr.setRequestHeader("Content-type", "application/json");
-      xhr.setRequestHeader("Authorization", "Bearer " + token);
-      const data = JSON.stringify(urlData);
-      console.log(data);
-      xhr.send(data);
+      // if (parent) {
+      //   urlData = { id: timestamp, parent_id: parent, url: url, time: timestamp };
+      // } else {
+      //   urlData = { id: timestamp, url: url, time: timestamp };
+      // }
+      // console.log(parentId);
+      // console.log(parent);
+      // console.log(urlData);
+      // const xhr = new XMLHttpRequest();
+      // xhr.onreadystatechange = function () {
+      //   if (xhr.readyState === 4) {
+      //     box.value = "";
+      //     if (xhr.status !== 200) {
+      //       alert("there's something wrong, please try again!");
+      //     }
+      //     console.log(xhr.responseText);
+      //   }
+      // };
+      // xhr.open("post", "/api/1.0/test", true);
+      // xhr.setRequestHeader("Content-type", "application/json");
+      // xhr.setRequestHeader("Authorization", "Bearer " + token);
+      // const data = JSON.stringify(urlData);
+      // console.log(data);
+      // xhr.send(data);
     }
   }
 });

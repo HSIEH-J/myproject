@@ -6,8 +6,10 @@
     height: 560px;
     display: flex;
     flex-wrap: wrap;
-    margin-top: 2%;
-    margin-left: 1%;
+    /* margin-top: 2%;
+    margin-left: 1%; */
+    margin: auto;
+    margin-top: 3%;
     box-shadow:1px 2px 1px 2px lightgray;
     position: relative;
    

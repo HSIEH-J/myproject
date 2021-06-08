@@ -64,6 +64,24 @@ body{
     font-family: Helvetica, sans-serif;
 }
 
+#hamburger{
+    display: flex;
+    cursor: pointer;
+    height: 8vh;
+    line-height: 100px;
+    margin-left: 5%;
+    /* margin-top: 5%; */
+}
+
+.close_button{
+    background-color: transparent;
+    outline: medium;
+    border: none;
+    font-family: Futura,Trebuchet MS,Arial,sans-serif;
+    font-size: 22px;
+    color: rgb(214,201,177)
+}
+
 .bar_item{
     cursor: pointer;
 }
@@ -97,7 +115,7 @@ body{
 
 .dropdown_hover:hover{
     background-color: Gainsboro;
-    color: SlateGrey
+    color: SlateGrey;
 }
 
 .down{
@@ -108,8 +126,6 @@ body{
 #sidebarTop{
     line-height: 8vh;
     height: 8vh;
-    border-bottom: solid 1px lightgray;
-    box-shadow:1px 2px 1px 2px lightgray;
 }
 
 #sidebarContent{
@@ -120,7 +136,7 @@ body{
     height: 5vh;
     display: flex;
     justify-content: space-evenly;
-    border-top: solid 1px lightgray;
+    border-top: solid 2px rgb(214,201,177)
 }
 
 
@@ -129,6 +145,7 @@ body{
     flex-direction: column;
     position: relative;
     width: 90vw;
+    margin-top: 1%;
     /* position: relative; */
     /* width: 90vw; */
     /* height: 100%; */
@@ -137,7 +154,7 @@ body{
 #search{
     background-image: url(../images/search.svg);
     background-repeat: no-repeat;
-    background-position: left;
+    background-position: right;
     height: 30px;
     width: 300px;
     border: solid 1px;  
@@ -145,18 +162,18 @@ body{
 }
 
 #nav{
-    border-bottom: solid 1px lightgray;
-    box-shadow:1px 2px 1px 2px lightgray;
+    border-bottom: solid 3px rgb(54, 119, 115);
     /* background-color: rgb(225, 229, 223); */
     height: 8vh;
-    color: gray;
     font-family: Futura,Trebuchet MS,Arial,sans-serif;
 }
 
 #navTop{
     display: flex;
-    justify-content: space-between;
+    justify-content:space-between;
     height: 4vh;
+    margin-left: 1%;
+    margin-right: 1%;
 }
 
 #new{
@@ -164,18 +181,20 @@ body{
 }
 
 #import{
-    border: solid 2px gray;
-    background: rgb(85, 141, 143);
-    color: whitesmoke;
+    border: solid 2px rgb(54, 119, 115);
+    background: rgb(214,201,177);
+    text-align: center;
+    /* color: rgb(214,201,177); */
     border-radius: 10%;
-    height: 30px;
-    width: 50px;
+    font-size: 20px;
+    height: 35px;
+    width: 70px;
     cursor: pointer;
 }
 
 #import:hover{
-    background: lightgray;
-    color: rgb(85, 141, 143);
+    background: rgb(54, 119, 115);
+    color: rgb(214,201,177);
 }
 
 #url{
@@ -186,33 +205,45 @@ body{
     position: absolute;
     right:20%;
     top: 80%;
+    text-align: center;
     border-radius: 2%;
-
+    line-height: 30px;
 }
 
 #navBottom{
     display: flex;
     justify-content: space-between;
-    height: 4vh
+    height: 4vh;
+    margin-left: 1%;
+    margin-right: 1%;
 }
+
+#folderNameChange{
+    font-size: 20px;
+    line-height: 40px;
+}
+
 
 .createIcon{
     cursor: pointer;
-    width: 25px;
-    height: 25px;
+    width: 45px;
+    height: 45px;
+    line-height: 53px;
 }
 
 #folderNav{
     display:flex;
     justify-content: space-between;
-    width: 150px;
-    line-height: 4vh;
+    width: 200px;
+    line-height: 50px;
+    /* line-height: 4vh; */
 }
 
 #display{
-    display: flex;
-    justify-content: space-around;
-    width: 250px;
+    /* display: flex;
+    justify-content: space-around; */
+    /* width: 250px; */
+    line-height: 53px;
     height: 4vh;
 }
 
@@ -222,7 +253,7 @@ body{
 }
 
 #dataArea{
-    display: flex;
+    /* display: flex; */
     border-left: solid 5px rgb(225, 229, 223);
     overflow: auto;
     text-align: center;
@@ -247,7 +278,10 @@ body{
 }
 
 .hover:hover{
+    border-radius: 10%;
     background-color: lightgray;
+    height: 45px;
+    cursor: pointer;
 }
 
 #box{
@@ -321,6 +355,7 @@ body{
     color: white;
     font-size: 20px;
     border: none;
+    font-family: Futura,Trebuchet MS,Arial,sans-serif; ;
     
 }
 
@@ -424,5 +459,9 @@ a:hover{
 
 .flex{
     display: flex;
+    justify-content: right;
+    font-size: 20px;
+    cursor: pointer;
+    /* text-align: right; */
 }
 

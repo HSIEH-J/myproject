@@ -128,8 +128,10 @@ page.addEventListener("drop", (e) => {
       let type;
       if (className === "frame folderItem") {
         type = "folder";
-      } else {
+      } else if (className === "frame bookmark") {
         type = "bookmark";
+      } else {
+        type = "stickyNote";
       }
       const timestamp = getTimeStamp();
       const subfolder = { type: type, update_id: oldChild.id, folder_id: newChild.id, time: timestamp };
@@ -277,7 +279,7 @@ dataArea.addEventListener("drop", (e) => {
       });
       const oldParent = document.getElementById(data.block_id);
       oldParent.removeChild(document.getElementById(data.draggedId));
-    } else if (target.className === "block" || target.parentNode.className === "block") {
+    } else if (target.className === "block") {
       // get data from page
       if (target.className === "block") {
         divId = target.id;

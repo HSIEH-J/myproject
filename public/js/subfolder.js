@@ -76,10 +76,14 @@ const addBlock = document.getElementById("addBlock");
 const highlight = document.getElementById("highlight");
 const block = document.getElementsByClassName("block");
 const parentData = document.getElementById("parentData");
+const layout = document.getElementById("display");
 document.addEventListener("click", (e) => {
   let num;
   console.log(e.target);
   if (e.target.className === "frame folderItem") {
+    layout.style.display = "flex";
+    layout.style.justifyContent = "space-around";
+    layout.style.width = "200px";
     console.log(e.target.id);
     const id = e.target.id;
     urlClick.style.display = "none";
@@ -90,7 +94,6 @@ document.addEventListener("click", (e) => {
     } else {
       folderNameChange.innerHTML = folderName;
     }
-
     console.log(folderNameChange);
     // eslint-disable-next-line no-undef
     console.log(dataArea.style.display);
@@ -322,8 +325,8 @@ document.addEventListener("click", (e) => {
     }
   }
   if (e.target.id === "boardIcon") {
-    container.style.width = "20vw";
-    dataArea.style.width = "70vw";
+    container.style.width = "30vw";
+    dataArea.style.width = "60vw";
     dataArea.style.display = "block";
     console.log(block);
     if (block.length !== 0) {

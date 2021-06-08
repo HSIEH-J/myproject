@@ -86,7 +86,7 @@ const changeFolderName = async (data) => {
 function changeName (id) {
   const inputItem = document.getElementById(id);
   const name = inputItem.value;
-  alert(name);
+  // alert(name);
   const parentId = inputItem.parentNode.parentNode.id;
   console.log(parentId);
   const data = { id: parentId, name: name };

@@ -18,7 +18,7 @@ const getThumbnail = async function (url) {
 const getTitle = async function (url) {
   console.log("getTitle");
   // get img title
-  const get = await axios.get(`http://capture.heartrails.com/api/capture/medium/?${url}`);
+  const get = await axios.get(`http://capture.heartrails.com/api/capture/medium?${url}`);
   const { data } = get;
   return data;
 };

@@ -82,3 +82,27 @@ getNestData().then(data => {
 //                   </div>
 //                 </div>
 //                 <div class="bar_item">File 3</div> -->
+
+const hamburger = document.getElementById("hamburger");
+const sidebar = document.getElementById("sidebar");
+// eslint-disable-next-line no-unused-vars
+function openSidebar () {
+  // if (dataArea.style.display === "none") {
+  //   container.style.width = "90vw";
+  // } else {
+  //   container.style.width = "20vw";
+  //   dataArea.style.width = "70vw";
+  // }
+  hamburger.style.display = "none";
+  homepage.style.display = "none";
+  sidebar.style.display = "block";
+}
+
+// eslint-disable-next-line no-unused-vars
+function closeSidebar () {
+  hamburger.style.display = "block";
+  hamburger.style.display = "flex";
+  hamburger.style.justifyContent = "right";
+  homepage.style.display = "block";
+  sidebar.style.display = "none";
+}
