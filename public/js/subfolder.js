@@ -75,6 +75,7 @@ const folderNameChange = document.getElementById("folderNameChange");
 const addBlock = document.getElementById("addBlock");
 const highlight = document.getElementById("highlight");
 const block = document.getElementsByClassName("block");
+const parentData = document.getElementById("parentData");
 document.addEventListener("click", (e) => {
   let num;
   console.log(e.target);
@@ -105,6 +106,7 @@ document.addEventListener("click", (e) => {
       container.style.width = "90vw";
     }
     page.innerHTML = "";
+    parentData.innerHTML = "";
     getData(id).then(data => {
       console.log(data);
       const get = data.data;
@@ -262,7 +264,7 @@ document.addEventListener("click", (e) => {
     parentId.setAttribute("id", "parent_id");
     parentId.style.display = "none";
     parentId.innerHTML = id;
-    container.appendChild(parentId);
+    parentData.appendChild(parentId);
     board.style.display = "block";
     note.style.display = "block";
   }
@@ -290,7 +292,7 @@ document.addEventListener("click", (e) => {
     const parent = document.getElementById(removeParent.id);
     const child = document.getElementById(id);
     // confirm("Are you want to delete this Item?");
-    const ans = confirm("Are you want to delete this Item?");
+    const ans = confirm("Are you sure you want to delete this Item?");
     if (ans) {
       if (removeChild.className === "block" || removeParent.className === "block") {
         parent.removeChild(child);

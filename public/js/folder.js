@@ -14,12 +14,13 @@ const createItem = async (data) => {
   return json;
 };
 
-let num;
 // eslint-disable-next-line no-undef
 plus.addEventListener("click", (e) => {
+  let num;
   const id = e.target.id;
   console.log(id);
   const parentId = document.getElementById("parent_id");
+  console.log(parentId);
   if (parentId) {
     num = parentId.innerHTML;
   }

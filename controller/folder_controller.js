@@ -5,8 +5,14 @@ function buildTree (list) {
   const temp = {};
   const tree = {};
   for (const i in list) {
-    temp[list[i].id] = list[i];
+    if (list[i].folder_id === "0") {
+      list[i].folder_id = 0;
+      temp[list[i].id] = list[i];
+    } else {
+      temp[list[i].id] = list[i];
+    }
   }
+  console.log(temp);
   for (const i in temp) {
     if (temp[i].folder_id) {
       if (!temp[temp[i].folder_id].children) {
@@ -24,7 +30,9 @@ function buildTree (list) {
 const getNestData = async (req, res, next) => {
   const user = req.user.id;
   const data = await folder.sidebarData(user);
+  // console.log(data);
   const temp = buildTree(data);
+  console.log(temp);
   res.send(temp);
 };
 
