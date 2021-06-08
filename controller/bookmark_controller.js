@@ -50,7 +50,7 @@ const importThumbnailData = async (req, res, next) => {
         const msg = { id: req.body.id, title: title, thumbnail: location };
         const socketId = await cache.get(`${"socketId" + user}`);
         console.log(socketId);
-        socket.to(socketId).emit("done", msg);
+        socket.connected[socketId].emit("done", msg);
       }
     };
     setInterval(test, 6000);
@@ -70,7 +70,7 @@ const importThumbnailData = async (req, res, next) => {
     const socketId = await cache.get(`${"socketId" + user}`);
     console.log("done");
     console.log(socketId);
-    socket.to(socketId).emit("done", msg);
+    socket.connected[socketId].emit("done", msg);
     res.status(200).json("bookmark generated");
   }
 
