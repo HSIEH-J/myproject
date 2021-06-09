@@ -50,7 +50,8 @@ box.addEventListener("keydown", (e) => {
       alert("You didn't enter any urls");
       urlClick.style.display = "none";
     } else {
-      const timestamp = getRandomNumber();
+      const bookmarkId = getRandomNumber();
+      const timestamp = getTimeStamp();
       const frame = document.createElement("div");
       frame.setAttribute("class", "frame bookmark");
       frame.setAttribute("draggable", "true");
@@ -70,9 +71,9 @@ box.addEventListener("keydown", (e) => {
                           </div>`;
       page.appendChild(frame);
       if (parent) {
-        urlData = { id: timestamp, parent_id: parent, url: url, time: timestamp };
+        urlData = { id: bookmarkId, parent_id: parent, url: url, time: timestamp };
       } else {
-        urlData = { id: timestamp, url: url, time: timestamp };
+        urlData = { id: bookmarkId, url: url, time: timestamp };
       }
       console.log(parentId);
       console.log(parent);
