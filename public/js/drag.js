@@ -478,7 +478,7 @@ sidebarContent.addEventListener("drop", (e) => {
     dropSidebarFolder(updateData).then(data => {
       console.log(data);
       if (type === "folder") {
-        console.log(oldSidebarFolder);
+        console.log(oldSidebarFolder.parentNode);
         const num = target.children.length;
         console.log(num);
         if (num === 0) {
@@ -497,10 +497,10 @@ sidebarContent.addEventListener("drop", (e) => {
             oldSidebarFolder.style.marginLeft = "2%";
           }
         }
-        const parent = oldSidebarFolder.parentNode;
+        console.log(oldSidebarFolder.parentNode.id);
         // append child
         target.appendChild(oldSidebarFolder);
-        console.log(parent);
+        console.log(oldSidebarFolder.parentNode.className);
         if (oldSidebarFolder.parentNode.classList.contains("parentSideBar")) {
           const sidebarLength = parseInt(parent.children.length) - parseInt(1);
           console.log(sidebarLength);
@@ -512,6 +512,7 @@ sidebarContent.addEventListener("drop", (e) => {
             parent.innerHTML = nameArr[1];
           }
         }
+
         page.removeChild(oldItem);
       } else {
         page.removeChild(oldItem);
