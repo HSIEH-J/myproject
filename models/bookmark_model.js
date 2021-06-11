@@ -113,14 +113,26 @@ const createItem = async (type, insert) => {
 
 // drag and drop
 const sequenceChange = async (data, userId) => {
-  for (const n of data) {
-    if (n.type === "bookmark") {
-      await pool.query("UPDATE bookmark SET sequence=?, timestamp=? WHERE id = ? && user_id = ?", [n.order, n.time, n.id, userId]);
-    } else if (n.type === "folder") {
-      await pool.query("UPDATE folder SET sequence=?, timestamp=? WHERE id=? && user_id = ?", [n.order, n.time, n.id, userId]);
-    } else {
-      await pool.query("UPDATE stickyNote SET sequence=?, timestamp=? WHERE id=? && user_id = ?", [n.order, n.time, n.id, userId]);
+  const conn = await pool.getConnection();
+  try {
+    await conn.query("START TRANSACTION");
+    for (const n of data) {
+      if (n.type === "bookmark") {
+        await pool.query("UPDATE bookmark SET sequence=?, timestamp=? WHERE id = ? && user_id = ?", [n.order, n.time, n.id, userId]);
+      } else if (n.type === "folder") {
+        await pool.query("UPDATE folder SET sequence=?, timestamp=? WHERE id=? && user_id = ?", [n.order, n.time, n.id, userId]);
+      } else {
+        await pool.query("UPDATE stickyNote SET sequence=?, timestamp=? WHERE id=? && user_id = ?", [n.order, n.time, n.id, userId]);
+      }
     }
+    await conn.query("COMMIT");
+    console.log("transaction start");
+  } catch (error) {
+    console.log(error);
+    await conn.query("ROLLBACK");
+  } finally {
+    await conn.release();
+    console.log("transaction end");
   }
 };
 

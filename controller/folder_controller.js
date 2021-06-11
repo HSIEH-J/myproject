@@ -12,7 +12,7 @@ function buildTree (list) {
       temp[list[i].id] = list[i];
     }
   }
-  console.log(temp);
+  // console.log(temp);
   for (const i in temp) {
     if (temp[i].folder_id) {
       if (!temp[temp[i].folder_id].children) {
@@ -32,7 +32,7 @@ const getNestData = async (req, res, next) => {
   const data = await folder.sidebarData(user);
   // console.log(data);
   const temp = buildTree(data);
-  console.log(temp);
+  // console.log(temp);
   res.send(temp);
 };
 
@@ -122,7 +122,7 @@ const getDivData = async (req, res) => {
     }
   }
   console.log("checkout dataObj");
-  console.log(dataObj);
+  // console.log(dataObj);
   res.status(200).send(dataObj);
 };
 
@@ -137,8 +137,28 @@ const changeFolderName = async (req, res) => {
 const updateBlockSize = async (req, res) => {
   const userId = req.user.id;
   const data = req.body;
-  console.log(data);
+  // console.log(data);
   await folder.updateBlockSize(data, userId);
+};
+
+const dropSidebarFolder = async (req, res) => {
+  const userId = req.user.id;
+  const data = req.body;
+  const updateId = data.update_id;
+  const folderId = data.folder_id;
+  console.log(data);
+  if (updateId === folderId) {
+    res.status(400).send({ error: "Request Error: can't insert to the same folder!" });
+    return;
+  }
+  const result = await folder.insertSidebarFolder(data, userId);
+  if (result.error) {
+    console.log("error");
+    res.status(400).send({ error: result.error });
+    return;
+  }
+  console.log("no error");
+  res.status(200).send({ message: "updated" });
 };
 
 // const cacheTest = async (req, res) => {
@@ -159,4 +179,4 @@ const updateBlockSize = async (req, res) => {
 //   await folder.insertStickyNote(data);
 // };
 
-module.exports = { getNestData, getAllFolders, insertDivTable, getDivData, changeFolderName, updateBlockSize };
+module.exports = { getNestData, getAllFolders, insertDivTable, getDivData, changeFolderName, updateBlockSize, dropSidebarFolder };

@@ -89,6 +89,20 @@ function changeName (id) {
   // alert(name);
   const parentId = inputItem.parentNode.parentNode.id;
   console.log(parentId);
+  const sidebarId = "sidebar" + " " + parentId;
+  const sidebarItem = document.getElementById(sidebarId);
+  console.log(sidebarItem);
+  if (sidebarItem.children.length === 0) {
+    sidebarItem.className = "bar_item" + " " + name;
+    sidebarItem.innerHTML = name;
+  } else {
+    sidebarItem.className = "parentSideBar" + " " + name;
+    if (sidebarItem.children[1].style.display === "block") {
+      sidebarItem.children[0].innerHTML = `<img src="images/down.svg" class="down">${name}`;
+    } else {
+      sidebarItem.children[0].innerHTML = `<img src="images/down-before.svg" class="downBefore">${name}`;
+    }
+  }
   const data = { id: parentId, name: name };
   console.log(data);
   changeFolderName(data).then(data => {

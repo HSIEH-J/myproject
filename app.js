@@ -88,6 +88,15 @@ io.on("connection", async (socket) => {
       cache.set(key, JSON.stringify(allData));
     }
   });
+  socket.on("sequence", (msg) => {
+    // console.log(msg);
+    const key = socket.info.id.toString();
+    const keyName = "sequence" + key;
+    console.log(keyName);
+    if (cache.client.ready) {
+      cache.set(keyName, JSON.stringify(msg));
+    }
+  });
   app.set("socket", socket);
 });
 

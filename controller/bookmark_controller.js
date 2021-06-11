@@ -120,7 +120,7 @@ const containerData = async (req, res, next) => {
   });
   // console.log(data);
   for (const n of data) {
-    console.log(n.folder_name);
+    // console.log(n.folder_name);
     if (n.url) {
       dataObj.data.push({ id: n.id, url: n.url, title: n.title, thumbnail: n.thumbnail });
     } else if (n.folder_name) {

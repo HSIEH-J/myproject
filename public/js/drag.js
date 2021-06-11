@@ -13,14 +13,17 @@ page.addEventListener("dragstart", (e) => {
 function order (arr) {
   const data = { data: [] };
   for (const n in arr) {
+    // console.log(n);
     const timestamp = getTimeStamp();
+    // console.log(timestamp);
     const time = parseInt(timestamp) + parseInt(n);
+    // console.log(time);
     if (arr[n].className === "frame folderItem") {
       data.data.push({ type: "folder", id: arr[n].id, order: n, time: time });
     } else if (arr[n].className === "frame bookmark") {
       data.data.push({ type: "bookmark", id: arr[n].id, order: n, time: time });
     } else {
-      console.log(arr[n]);
+      // console.log(arr[n]);
       data.data.push({ type: "stickyNote", id: arr[n].id, order: n, time: time });
     }
   }
@@ -66,6 +69,23 @@ const updatePageDiv = async (data) => {
   return json;
 };
 
+const dropSidebarFolder = async (data) => {
+  const response = await fetch("/api/1.0/drag", {
+    body: JSON.stringify(data),
+    headers: new Headers({
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`
+    }),
+    method: "POST"
+  });
+  if (response.status === 400) {
+    alert("The operation could not be completed");
+    throw new Error("The operation could not be completed");
+  }
+  const json = await response.json();
+  return json;
+};
+
 page.addEventListener("drop", (e) => {
   console.log("dropped");
   cancelDefault(e);
@@ -85,6 +105,13 @@ page.addEventListener("drop", (e) => {
       type = "stickyNote";
     }
     if (e.target.className === "frame folderItem") {
+      // sidebar change
+      if (type === "folder") {
+        console.log("sidebar data test");
+        const oldItem = document.getElementById(data.draggedId);
+        const newItem = document.getElementById(e.target.id);
+        sidebarFolderChange(oldItem, newItem);
+      }
       const subfolder = { type: type, update_id: data.draggedId, folder_id: e.target.id, time: getTimeStamp() };
       console.log(subfolder);
       insertSubFolder(subfolder).then(data => {
@@ -133,6 +160,11 @@ page.addEventListener("drop", (e) => {
       } else {
         type = "stickyNote";
       }
+      if (type === "folder") {
+        console.log("sidebar data test");
+        console.log(newChild);
+        sidebarFolderChange(oldChild, newChild);
+      }
       const timestamp = getTimeStamp();
       const subfolder = { type: type, update_id: oldChild.id, folder_id: newChild.id, time: timestamp };
       insertSubFolder(subfolder).then(data => {
@@ -144,12 +176,70 @@ page.addEventListener("drop", (e) => {
     // set new sequence
       const parentDiv = target.parentNode;
       if (newIndex < oldIndex) {
+        let dragBeforeNum;
+        let dragAfterNum;
+        if (oldChild.className === "frame folderItem") {
+          const folderItem = document.querySelectorAll(".folderItem");
+          const nodeTest = Array.prototype.slice.call(folderItem);
+          console.log(nodeTest.indexOf(oldChild));
+          dragBeforeNum = nodeTest.indexOf(oldChild);
+        }
         parentDiv.insertBefore(oldChild, newChild);
+        if (oldChild.className === "frame folderItem") {
+          const folderItem = document.querySelectorAll(".folderItem");
+          const nodeTest = Array.prototype.slice.call(folderItem);
+          dragAfterNum = nodeTest.indexOf(oldChild);
+          if (dragBeforeNum !== dragAfterNum) {
+            const oldSidebarItemId = "sidebar" + " " + oldChild.id;
+            const oldSidebarItem = document.getElementById(oldSidebarItemId);
+            const sidebarParent = oldSidebarItem.parentNode;
+            console.log(oldSidebarItem);
+            if (sidebarParent.classList.contains("parentSideBar")) {
+              const newSidebarItem = sidebarParent.children[parseInt(dragAfterNum) + parseInt(1)];
+              console.log(newSidebarItem);
+              sidebarParent.insertBefore(oldSidebarItem, newSidebarItem);
+            } else {
+              const newSidebarItem = sidebarParent.children[dragAfterNum];
+              console.log(newSidebarItem);
+              sidebarContent.insertBefore(oldSidebarItem, newSidebarItem);
+            }
+          }
+        }
       } else {
-      // parentDiv.insertBefore(page.children[newIndex], page.children[oldIndex]);
+        let dragBeforeNum;
+        let dragAfterNum;
+        if (oldChild.className === "frame folderItem") {
+          const folderItem = document.querySelectorAll(".folderItem");
+          const nodeTest = Array.prototype.slice.call(folderItem);
+          console.log(nodeTest.indexOf(oldChild));
+          dragBeforeNum = nodeTest.indexOf(oldChild);
+        }
+        // parentDiv.insertBefore(page.children[newIndex], page.children[oldIndex]);
         insertAfter(parentDiv, oldChild, newChild);
+        if (oldChild.className === "frame folderItem") {
+          const folderItem = document.querySelectorAll(".folderItem");
+          const nodeTest = Array.prototype.slice.call(folderItem);
+          dragAfterNum = nodeTest.indexOf(oldChild);
+          if (dragBeforeNum !== dragAfterNum) {
+            const oldSidebarItemId = "sidebar" + " " + oldChild.id;
+            const oldSidebarItem = document.getElementById(oldSidebarItemId);
+            const sidebarParent = oldSidebarItem.parentNode;
+            console.log(oldSidebarItem);
+            if (sidebarParent.classList.contains("parentSideBar")) {
+              const newSidebarItem = sidebarParent.children[parseInt(dragAfterNum) + parseInt(1)];
+              console.log(newSidebarItem);
+              insertAfter(sidebarParent, oldSidebarItem, newSidebarItem);
+            } else {
+              const newSidebarItem = sidebarParent.children[dragAfterNum];
+              console.log(newSidebarItem);
+              insertAfter(sidebarContent, oldSidebarItem, newSidebarItem);
+            }
+          }
+        }
       }
+      // if (oldChild.className === "frame folderItem") {
 
+      // }
       const nodes2 = Array.prototype.slice.call(page.children);
       console.log(nodes2);
       const orderData = order(nodes2);
@@ -158,6 +248,7 @@ page.addEventListener("drop", (e) => {
         const response = data;
         console.log(response);
       });
+      // socket.emit("sequence", (orderData));
     }
   }
 });
@@ -218,6 +309,11 @@ dataArea.addEventListener("drop", (e) => {
       } else {
         type = "stickyNote";
       }
+      if (type === "folder") {
+        console.log("sidebar data test");
+        const newChild = document.getElementById(target.id);
+        sidebarFolderChange(oldChild, newChild);
+      }
       const timestamp = getTimeStamp();
       const subfolder = { type: type, update_id: oldChild.id, folder_id: target.id, time: timestamp };
       insertSubFolder(subfolder).then(data => {
@@ -270,6 +366,12 @@ dataArea.addEventListener("drop", (e) => {
         type = "bookmark";
       } else {
         type = "stickyNote";
+      }
+      if (type === "folder") {
+        console.log("sidebar data test");
+        const oldChild = document.getElementById(data.draggedId);
+        const newChild = document.getElementById(target.id);
+        sidebarFolderChange(oldChild, newChild);
       }
       const timestamp = getTimeStamp();
       const subfolder = { type: type, update_id: data.draggedId, folder_id: target.id, time: timestamp };
@@ -337,6 +439,112 @@ dataArea.addEventListener("drop", (e) => {
 dataArea.addEventListener("dragenter", cancelDefault);
 dataArea.addEventListener("dragover", cancelDefault);
 
+sidebarContent.addEventListener("drop", (e) => {
+  console.log("dropped");
+  console.log(e.target);
+  if (e.target.id !== "sidebarContent") {
+    if (e.target.className === "sidebar_button") {
+      e.target.parentNode.classList.remove("dropdown_hover");
+    } else {
+      e.target.classList.remove("dropdown_hover");
+    }
+  }
+  if (e.dataTransfer.getData("data")) {
+    console.log("data from block");
+  } else {
+    console.log("data from page");
+    const data = e.dataTransfer.getData("text/plain");
+    console.log(page.children[data]);
+    // get oldFolder
+    const oldItem = page.children[data];
+    const oldSidebarFolderId = "sidebar" + " " + oldItem.id;
+    const oldSidebarFolder = document.getElementById(oldSidebarFolderId);
+    let target;
+    if (e.target.className === "sidebar_button") {
+      target = e.target.parentNode;
+    } else {
+      target = e.target;
+    }
+    console.log(target);
+    let type;
+    if (oldItem.className === "frame bookmark") {
+      type = "bookmark";
+    } else {
+      type = "folder";
+    }
+    const newParentId = target.id;
+    const newParentIdArr = newParentId.split(" ");
+    const updateData = { type: type, update_id: oldItem.id, folder_id: newParentIdArr[1], time: getTimeStamp() };
+    dropSidebarFolder(updateData).then(data => {
+      console.log(data);
+      if (type === "folder") {
+        console.log(oldSidebarFolder);
+        const num = target.children.length;
+        console.log(num);
+        if (num === 0) {
+          const nameString = target.className;
+          const nameArr = nameString.split(" ");
+          target.innerHTML = "";
+          target.innerHTML = `<button class=sidebar_button><img src="images/down-before.svg" class="downBefore">${nameArr[1]}</button>`;
+          target.className = "parentSideBar" + " " + nameArr[1];
+          console.log(target);
+          oldSidebarFolder.style.display = "none";
+        } else {
+          if (target.children[1].style.display === "none") {
+            oldSidebarFolder.style.display = "none";
+          } else {
+            oldSidebarFolder.style.display = "block";
+            oldSidebarFolder.style.marginLeft = "2%";
+          }
+        }
+        const parent = oldSidebarFolder.parentNode;
+        // append child
+        target.appendChild(oldSidebarFolder);
+        console.log(parent);
+        if (oldSidebarFolder.parentNode.classList.contains("parentSideBar")) {
+          const sidebarLength = parseInt(parent.children.length) - parseInt(1);
+          console.log(sidebarLength);
+          if (sidebarLength === 0) {
+            const nameString = parent.className;
+            const nameArr = nameString.split(" ");
+            parent.id = "sidebar" + " " + parent.id;
+            parent.className = "bar_item" + " " + nameArr[1];
+            parent.innerHTML = nameArr[1];
+          }
+        }
+        page.removeChild(oldItem);
+      } else {
+        page.removeChild(oldItem);
+      }
+    });
+  }
+});
+
+sidebarContent.addEventListener("dragenter", cancelDefault);
+sidebarContent.addEventListener("dragover", dragOver);
+sidebarContent.addEventListener("dragleave", dragLeave);
+
+function dragOver (e) {
+  cancelDefault(e);
+  if (e.target.id !== "sidebarContent") {
+    if (e.target.className === "sidebar_button") {
+      e.target.parentNode.classList.add("dropdown_hover");
+    } else {
+      e.target.classList.add("dropdown_hover");
+    }
+  }
+}
+
+function dragLeave (e) {
+  if (e.target.id !== "sidebarContent") {
+    if (e.target.className === "sidebar_button") {
+      e.target.parentNode.classList.remove("dropdown_hover");
+    } else {
+      e.target.classList.remove("dropdown_hover");
+    }
+  }
+}
+
 function cancelDefault (e) {
   e.preventDefault();
   e.stopPropagation();
@@ -350,4 +558,45 @@ function insertAfter (parent, oldElement, newElement) {
   } else {
     parent.insertBefore(oldElement, newElement.nextSibling);// 如果不是，則插入在目標元素的下一個兄弟節點的前面。也就是目標元素的後面。
   }
+}
+
+function sidebarFolderChange (oldEle, newEle) {
+  const oldFolderId = "sidebar" + " " + oldEle.id;
+  console.log(oldFolderId);
+  const oldFolderItem = document.getElementById(oldFolderId);
+  console.log(oldFolderItem);
+  const newFolderId = "sidebar" + " " + newEle.id;
+  const newFolderItem = document.getElementById(newFolderId);
+  console.log(newFolderItem);
+  const num = newFolderItem.children.length;
+  console.log(num);
+  if (num === 0) {
+    const nameString = newFolderItem.className;
+    const nameArr = nameString.split(" ");
+    newFolderItem.innerHTML = "";
+    newFolderItem.innerHTML = `<button class=sidebar_button><img src="images/down-before.svg" class="downBefore">${nameArr[1]}</button>`;
+    newFolderItem.className = "parentSideBar" + " " + nameArr[1];
+    console.log(newFolderItem);
+    oldFolderItem.style.display = "none";
+  } else {
+    if (newFolderItem.children[1].style.display === "none") {
+      oldFolderItem.style.display = "none";
+    } else {
+      oldFolderItem.style.display = "block";
+      oldFolderItem.style.marginLeft = "2%";
+    }
+  }
+  console.log(newFolderItem);
+  // append child
+  newFolderItem.appendChild(oldFolderItem);
+  // if (oldFolderItem.parentNode.classList.contains("parentSideBar")) {
+  //   const sidebarLength = parseInt(parent.children.length) - parseInt(1);
+  //   if (sidebarLength === 0) {
+  //     const nameString = parent.className;
+  //     const nameArr = nameString.split(" ");
+  //     parent.id = "sidebar" + " " + parent.id;
+  //     parent.className = "bar_item" + " " + nameArr[1];
+  //     parent.innerHTML = nameArr[1];
+  //   }
+  // }
 }

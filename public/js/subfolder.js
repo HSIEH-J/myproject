@@ -71,7 +71,7 @@ const board = document.getElementById("boardIcon");
 const note = document.getElementById("noteIcon");
 const dataArea = document.getElementById("dataArea");
 const container = document.getElementById("container");
-const folderNameChange = document.getElementById("folderNameChange");
+// const folderNameChange = document.getElementById("folderNameChange");
 const addBlock = document.getElementById("addBlock");
 const highlight = document.getElementById("highlight");
 const block = document.getElementsByClassName("block");
@@ -80,21 +80,39 @@ const layout = document.getElementById("display");
 document.addEventListener("click", (e) => {
   let num;
   console.log(e.target);
-  if (e.target.className === "frame folderItem") {
-    layout.style.display = "flex";
-    layout.style.justifyContent = "space-around";
-    layout.style.width = "200px";
-    console.log(e.target.id);
-    const id = e.target.id;
-    urlClick.style.display = "none";
-    const folderNameItem = document.getElementById(id);
-    const folderName = folderNameItem.children[1].children[0].value;
+  if (e.target.className === "frame folderItem" || e.target.className === "sidebar_button" || e.target.classList.contains("bar_item")) {
+    let id;
+    let folderName;
+    if (e.target.className === "frame folderItem") {
+      id = e.target.id;
+      const folderNameItem = document.getElementById(id);
+      folderName = folderNameItem.children[1].children[0].value;
+    } else if (e.target.className === "sidebar_button") {
+      const parent = e.target.parentNode;
+      const parentId = parent.id;
+      const parentArr = parentId.split(" ");
+      id = parentArr[1];
+      const name = parent.className.split(" ");
+      folderName = name[1];
+    } else {
+      const sidebarItemId = e.target.id;
+      const sidebarItemArr = sidebarItemId.split(" ");
+      id = sidebarItemArr[1];
+      const name = e.target.className.split(" ");
+      folderName = name[1];
+    }
     if (!folderName) {
       folderNameChange.innerHTML = "folder";
     } else {
       folderNameChange.innerHTML = folderName;
     }
     console.log(folderNameChange);
+    console.log(id);
+    layout.style.display = "flex";
+    layout.style.justifyContent = "space-around";
+    layout.style.width = "200px";
+    console.log(e.target.id);
+    urlClick.style.display = "none";
     // eslint-disable-next-line no-undef
     console.log(dataArea.style.display);
     if (e.target.className === "block" || dataArea.style.display === "block") {
@@ -267,6 +285,7 @@ document.addEventListener("click", (e) => {
     parentId.setAttribute("id", "parent_id");
     parentId.style.display = "none";
     parentId.innerHTML = id;
+    parentId.className = folderName;
     parentData.appendChild(parentId);
     board.style.display = "block";
     note.style.display = "block";
@@ -297,6 +316,25 @@ document.addEventListener("click", (e) => {
     // confirm("Are you want to delete this Item?");
     const ans = confirm("Are you sure you want to delete this Item?");
     if (ans) {
+      if (removeChild.className === "frame folderItem") {
+        const sidebarId = "sidebar" + " " + id;
+        const sidebarItem = document.getElementById(sidebarId);
+        if (sidebarItem.parentNode.classList.contains("parentSideBar")) {
+          const sidebarParentId = sidebarItem.parentNode.id;
+          const sidebarParent = sidebarItem.parentNode;
+          sidebarParent.removeChild(sidebarItem);
+          const sidebarLength = parseInt(sidebarParent.children.length) - parseInt(1);
+          if (sidebarLength === 0) {
+            const nameString = sidebarParent.className;
+            const nameArr = nameString.split(" ");
+            sidebarParent.id = "sidebar" + " " + sidebarParentId;
+            sidebarParent.className = "bar_item" + " " + nameArr[1];
+            sidebarParent.innerHTML = nameArr[1];
+          }
+        } else {
+          sidebarContent.removeChild(sidebarItem);
+        }
+      }
       if (removeChild.className === "block" || removeParent.className === "block") {
         parent.removeChild(child);
       } else {

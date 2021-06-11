@@ -11,46 +11,107 @@ const getNestData = async () => {
   return data;
 };
 
+function sideBarRender (obj, div) {
+  console.log(obj);
+  if (!obj.children) {
+    console.log("no children");
+    console.log(obj.name);
+    const item = document.createElement("div");
+    item.id = "sidebar" + " " + obj.id;
+    item.className = "bar_item" + " " + obj.name;
+    item.innerHTML = obj.name;
+    item.style.display = "none";
+    div.appendChild(item);
+  } else {
+    console.log("children");
+    const item = document.createElement("div");
+    item.id = "sidebar" + " " + obj.id;
+    item.className = "parentSideBar" + " " + obj.name;
+    item.style.display = "none";
+    item.innerHTML = `<button class=sidebar_button><img src="images/down-before.svg" class="downBefore"> ${obj.name}</button>`;
+    // item.innerHTML = obj.name;
+    div.appendChild(item);
+    for (const n in obj.children) {
+      console.log(obj.children);
+      sideBarRender(obj.children[n], item);
+    }
+  }
+}
+
 const sidebarContent = document.getElementById("sidebarContent");
 getNestData().then(data => {
   console.log(data);
-  // for (const n in data) {
-  //   if (data[n].children === undefined) {
-  //     const item = document.createElement("div");
-  //     item.innerHTML = data[n].name;
-  //     // console.log(data[n].name);
-  //     item.setAttribute("class", "bar_item");
-  //     item.setAttribute("id", data[n].id);
-  //     sidebarContent.appendChild(item);
-  //   } else {
-  //     const item = document.createElement("div");
-  //     item.innerHTML = `<button class=sidebar_button id=${data[n].id}>&blacktriangleright; ${data[n].name}</button>`;
-  //     console.log(data[n].name);
-  //     item.setAttribute("class", "dropdown_hover");
-  //     const num = parseInt(data[n].id) + parseInt(1);
-  //     item.setAttribute("id", num);
-  //     // item.setAttribute("id", data[n].id);
-  //     sidebarContent.appendChild(item);
-  //   }
-  // };
-  // sidebarContent.addEventListener("click", (e) => {
-  //   if (e.target.className !== "bar_item close_button") {
-  //     const arr = e.target.textContent.split(" ");
-  //     // console.log(arr);
-  //     e.target.innerHTML = "&blacktriangledown;" + arr[1];
-  //     const children = document.createElement("div");
-  //     children.setAttribute("class", "dropdown_content");
-  //     const parentDiv = e.target.parentNode.id;
-  //     const parent = document.getElementById(parentDiv);
-  //     const id = e.target.id;
-  //     for (const n in data[id].children) {
-  //       children.innerHTML += `<div class="bar_item down">${data[id].children[n].name}</div>`;
-  //     }
-  //     parent.appendChild(children);
-  //   }
-  // });
+  for (const n in data) {
+    console.log(data[n]);
+    sideBarRender(data[n], sidebarContent);
+    const id = "sidebar" + " " + data[n].id;
+    const parent = document.getElementById(id);
+    console.log(parent);
+    parent.style.display = "block";
+  };
 });
 
+sidebarContent.addEventListener("click", (e) => {
+  console.log(e.target);
+  console.log(e.target.parentNode);
+  const targetParent = e.target.parentNode.parentNode;
+  const children = targetParent.children;
+  const nameString = targetParent.className;
+  const nameArr = nameString.split(" ");
+  console.log(children[0]);
+  if (e.target.className === "downBefore") {
+    children[0].innerHTML = `<img src="images/down.svg" class="down">${nameArr[1]}`;
+    for (const n in children) {
+      if (n >= 1) {
+        children[n].style.display = "block";
+        children[n].style.marginLeft = "2%";
+      }
+    }
+  }
+  if (e.target.className === "down") {
+    children[0].innerHTML = `<img src="images/down-before.svg" class="downBefore">${nameArr[1]}`;
+    for (const n in children) {
+      if (n >= 1) {
+        children[n].style.display = "none";
+      }
+    }
+  }
+});
+
+// if (data[n].children === undefined) {
+//   console.log(data[n]);
+//   const item = document.createElement("div");
+//   item.innerHTML = data[n].name;
+//   // console.log(data[n].name);
+//   item.setAttribute("class", "bar_item");
+//   item.setAttribute("id", data[n].id);
+//   sidebarContent.appendChild(item);
+// } else {
+//   const item = document.createElement("div");
+//   item.innerHTML = `<button class=sidebar_button id=${data[n].id}>&blacktriangleright; ${data[n].name}</button>`;
+//   console.log(data[n].name);
+//   item.setAttribute("class", "dropdown_hover");
+//   const num = parseInt(data[n].id) + parseInt(1);
+//   item.setAttribute("id", num);
+//   // item.setAttribute("id", data[n].id);
+//   sidebarContent.appendChild(item);
+// }
+// sidebarContent.addEventListener("click", (e) => {
+//   if (e.target.className !== "bar_item close_button") {
+//     const arr = e.target.textContent.split(" ");
+//     // console.log(arr);
+//     e.target.innerHTML = "&blacktriangledown;" + arr[1];
+//     const children = document.createElement("div");
+//     children.setAttribute("class", "dropdown_content");
+//     const parentDiv = e.target.parentNode.id;
+//     const parent = document.getElementById(parentDiv);
+//     const id = e.target.id;
+//     for (const n in data[id].children) {
+//       children.innerHTML += `<div class="bar_item down">${data[id].children[n].name}</div>`;
+//     }
+//     parent.appendChild(children);
+//   }
+// });
 // nested structure
 // eslint-disable-next-line camelcase
 // const dropdown_hover = document.querySelector(".dropdown_hover");

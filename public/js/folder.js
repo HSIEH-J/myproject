@@ -20,17 +20,48 @@ plus.addEventListener("click", (e) => {
   const id = e.target.id;
   console.log(id);
   const parentId = document.getElementById("parent_id");
+  const dataId = getRandomNumber();
   console.log(parentId);
   if (parentId) {
     num = parentId.innerHTML;
   }
   console.log(num);
+  if (num) {
+    const parentSidebarId = "sidebar" + " " + num;
+    console.log(parentSidebarId);
+    const parentSideBar = document.getElementById(parentSidebarId);
+    const div = document.createElement("div");
+    div.innerHTML = "folder";
+    div.id = "sidebar" + " " + dataId;
+    div.className = "bar_item" + " " + "folder";
+    if (parentSideBar.children.length === 0) {
+      parentSideBar.innerHTML = "";
+      parentSideBar.innerHTML = `<button class=sidebar_button><img src="images/down-before.svg" class="downBefore">${parentId.className}</button>`;
+      parentSideBar.className = "parentSideBar" + " " + parentId.className;
+      console.log(parentSideBar);
+      div.style.display = "none";
+    } else {
+      if (parentSideBar.children[1].style.display === "none") {
+        div.style.display = "none";
+      } else {
+        div.style.display = "block";
+        div.style.marginLeft = "2%";
+      }
+    }
+    parentSideBar.append(div);
+  } else {
+    const div = document.createElement("div");
+    div.innerHTML = "folder";
+    div.id = "sidebar" + " " + dataId;
+    div.className = "bar_item" + " " + "folder";
+    // eslint-disable-next-line no-undef
+    sidebarContent.appendChild(div);
+  }
   // eslint-disable-next-line no-undef
   const timestamp = getTimeStamp();
   console.log(timestamp);
   const inputId = parseInt(timestamp) + parseInt(1);
   const addCarton = document.createElement("div");
-  const dataId = getRandomNumber();
   addCarton.setAttribute("class", "frame folderItem");
   // eslint-disable-next-line no-undef
   addCarton.setAttribute("id", dataId);

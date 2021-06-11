@@ -55,7 +55,7 @@ box.addEventListener("keydown", (e) => {
       const frame = document.createElement("div");
       frame.setAttribute("class", "frame bookmark");
       frame.setAttribute("draggable", "true");
-      frame.setAttribute("id", timestamp);
+      frame.setAttribute("id", bookmarkId);
       frame.innerHTML = `<a href=${url} class="thumbnailUrl" target="_blank">
                           <div class="top">
                               <div class="thumbnail">
@@ -63,7 +63,7 @@ box.addEventListener("keydown", (e) => {
                               </div>
                           </div>
                           <div class="info">
-                              <div class='title'>${"loading"}</div>
+                              <div class='title'>${"loading..."}</div>
                           </div>
                           </a>
                           <div class="trashCan bookmarkTrash">
