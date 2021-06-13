@@ -327,7 +327,7 @@ document.addEventListener("click", (e) => {
           if (sidebarLength === 0) {
             const nameString = sidebarParent.className;
             const nameArr = nameString.split(" ");
-            sidebarParent.id = "sidebar" + " " + sidebarParentId;
+            // sidebarParent.id = "sidebar" + " " + sidebarParentId;
             sidebarParent.className = "bar_item" + " " + nameArr[1];
             sidebarParent.innerHTML = nameArr[1];
           }

@@ -27,16 +27,24 @@
                         <button onclick="closeSidebar()" class="bar_item close_button">Close &laquo;</button>
                     </div>
                     <div id="sidebarContent"></div>
-                    <div id="sidebarBottom">
+                    <!-- <div id="sidebarBottom">
                         <div>Trash Can</div>
-                    </div>
+                    </div> -->
                 </div>
             </div>
              <!-- main -->
             <div id="container">
                 <div id="nav">
                     <div id="navTop">
-                        <input type="text" id="search">
+                        <div>
+                            <input type="text" id="search">
+                            <select>
+                                <option>bookmark</option>
+                                <option>folder</option>
+                                <option>stickyNote</option>
+                                <option>All</option>
+                            </select>
+                        </div>
                         <div id="new">
                             <div id="import">Import</div>
                             <div id="url" style="display: none;">
@@ -48,12 +56,12 @@
                         </div>
                     </div>
                     <div id="navBottom">
-                        <div id="folderNav">
+                        <div id="folderNav"> 
                             <div>
                                 <img src="images/folder.svg" width=35px height=35px>
                             </div>
                             <div id="folderNameChange" class="class">unsorted</div>
-                            <div>
+                            <div id="folderNav">
                                 <img src="images/plus.svg" class="hover" id="plus" width=25px height=25px>
                             </div>
                         </div>
@@ -64,12 +72,12 @@
                             <div class="hover">
                                 <img src="images/sticky-note.svg" class="createIcon" id="noteIcon" style="display: none;">
                             </div>
-                            <div class="flex hover">
+                            <!-- <div class="flex hover">
                                 <div>
                                     <img src="images/card.svg" class="changeIcon" id="cardIcon">
                                 </div>
                                 <div style="line-height: 40px;">Card</div>
-                            </div>
+                            </div> -->
                         </div>
                     </div>
                 </div>

@@ -33,6 +33,7 @@
         <script>
             window.addEventListener("message", receiveMessage, false);
             function receiveMessage (event) {
+                console.log("receive sign.html")
                 if (event.origin === "chrome-extension://koggopoanaidpohodhpdklohbngbjkif"){
                     console.log(event.origin)
                     event.source.postMessage({accessToken: localStorage.accessToken}, event.origin);

@@ -478,7 +478,9 @@ sidebarContent.addEventListener("drop", (e) => {
     dropSidebarFolder(updateData).then(data => {
       console.log(data);
       if (type === "folder") {
-        console.log(oldSidebarFolder.parentNode);
+        const oldFolderParentNode = oldSidebarFolder.parentNode;
+        console.log("old parent before append child");
+        console.log(oldFolderParentNode);
         const num = target.children.length;
         console.log(num);
         if (num === 0) {
@@ -500,16 +502,23 @@ sidebarContent.addEventListener("drop", (e) => {
         console.log(oldSidebarFolder.parentNode.id);
         // append child
         target.appendChild(oldSidebarFolder);
-        console.log(oldSidebarFolder.parentNode.className);
-        if (oldSidebarFolder.parentNode.classList.contains("parentSideBar")) {
-          const sidebarLength = parseInt(parent.children.length) - parseInt(1);
-          console.log(sidebarLength);
-          if (sidebarLength === 0) {
-            const nameString = parent.className;
-            const nameArr = nameString.split(" ");
-            parent.id = "sidebar" + " " + parent.id;
-            parent.className = "bar_item" + " " + nameArr[1];
-            parent.innerHTML = nameArr[1];
+        console.log("old parent after append child");
+        console.log(oldFolderParentNode);
+        // console.log(JSON.stringify(oldFolderParentNode.id) !== JSON.stringify("sidebarContent")); // => false
+        // console.log(oldFolderParentNode.id); //= > sidebarContent
+        // console.log(!(oldFolderParentNode.id === "sidebarContent")); // => false
+        // console.log(oldFolderParentNode.id === "sidebarContent"); // => true
+        // console.log(oldFolderParentNode.id !== "sidebarContent"); //= > false
+        if (oldFolderParentNode.id !== "sidebarContent") {
+          if (oldFolderParentNode.classList.contains("parentSideBar")) {
+            const sidebarLength = parseInt(oldFolderParentNode.children.length) - parseInt(1);
+            console.log(sidebarLength);
+            if (sidebarLength === 0) {
+              const nameString = oldFolderParentNode.className;
+              const nameArr = nameString.split(" ");
+              oldFolderParentNode.className = "bar_item" + " " + nameArr[1];
+              oldFolderParentNode.innerHTML = nameArr[1];
+            }
           }
         }
 
