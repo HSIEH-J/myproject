@@ -36,14 +36,17 @@
             <div id="container">
                 <div id="nav">
                     <div id="navTop">
-                        <div>
-                            <input type="text" id="search">
-                            <select>
+                        <div id="searchBar">
+                            <input type="text" id="search" placeholder="search...">
+                            <select id="searchSelect">
                                 <option>bookmark</option>
                                 <option>folder</option>
                                 <option>stickyNote</option>
                                 <option>All</option>
                             </select>
+                            <div id="searchImg">
+                                <img src="images/search.svg" width="30px" height="30px" onclick="searchItem()">
+                            </div>
                         </div>
                         <div id="new">
                             <div id="import">Import</div>
@@ -125,6 +128,7 @@
         <script src="js/drag.js"></script>
         <script src="js/sidebar.js"></script>
         <script src="js/subfolder.js"></script>
+        <script src="js/search.js"></script>
      
         <script src="/socket.io/socket.io.js"></script>
         <script>
