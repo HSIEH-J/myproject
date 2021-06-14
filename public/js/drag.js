@@ -496,7 +496,7 @@ sidebarContent.addEventListener("drop", (e) => {
             oldSidebarFolder.style.display = "none";
           } else {
             oldSidebarFolder.style.display = "block";
-            oldSidebarFolder.style.marginLeft = "2%";
+            oldSidebarFolder.style.marginLeft = "1.5em";
           }
         }
         console.log(oldSidebarFolder.parentNode.id);
@@ -593,7 +593,7 @@ function sidebarFolderChange (oldEle, newEle) {
       oldFolderItem.style.display = "none";
     } else {
       oldFolderItem.style.display = "block";
-      oldFolderItem.style.marginLeft = "2%";
+      oldFolderItem.style.marginLeft = "1.5em";
     }
   }
   console.log(newFolderItem);

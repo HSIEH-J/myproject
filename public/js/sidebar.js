@@ -64,7 +64,7 @@ sidebarContent.addEventListener("click", (e) => {
     for (const n in children) {
       if (n >= 1) {
         children[n].style.display = "block";
-        children[n].style.marginLeft = "2%";
+        children[n].style.marginLeft = "1.5em";
       }
     }
   }

@@ -15,6 +15,11 @@ const getSearchItem = async (type, user, param) => {
     const data1 = await pool.query("SELECT id, folder_id, folder_name FROM folder WHERE user_id = ? && remove = 0 && folder_name LIKE ?", [user, `%${param}%`]);
     const data2 = await pool.query("SELECT id, folder_id, text FROM stickyNote WHERE user_id = ? && remove = 0 && text LIKE ?", [user, `%${param}%`]);
     const concatData = data[0].concat(data1[0], data2[0]);
+    console.log("all");
+    console.log(data[0]);
+    console.log(data1[0]);
+    console.log(data2[0]);
+    console.log(concatData);
     return concatData;
   }
 };

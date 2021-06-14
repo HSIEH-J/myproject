@@ -14,13 +14,13 @@
             <div id="subtitle">Organize bookmarks</div>
             <div id="state">Sign Up</div>
             <div class="sign" id="signUp">
-                <input value="email" id="emailUp" class="input"><br>
-                <input value="password" type="password" id="pwdUp" class="input"><br>
+                <input placeholder="email" id="emailUp" class="input"><br>
+                <input placeholder="password" type="password" id="pwdUp" class="input"><br>
                 <button type="submit" onclick="register()" class="input">Submit</button>
             </div>
             <div class="sign" id="signIn" style="display: none;">
-                <input value="email" id="emailIn" class="input"><br>
-                <input value="password" type="password" id="pwdIn" class="input"><br>
+                <input placeholder="email" id="emailIn" class="input"><br>
+                <input placeholder="password" type="password" id="pwdIn" class="input"><br>
                 <button type="submit" onclick="logIn()" class="input">Submit</button>
             </div>
             <div id="exist">
@@ -28,7 +28,10 @@
                 <div style="cursor: pointer;" onclick="signChange()"><u>Log In</u></div>
             </div>  
         </div>
-
+        <div id="waitingImg">
+            <img src="images/dino.gif" width="700px" height="500px">
+            <div id="loading">Processing...</div>
+        </div>
         <script src="js/sign.js"></script>
         <script>
             window.addEventListener("message", receiveMessage, false);

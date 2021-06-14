@@ -6,7 +6,7 @@ async function getParentName (folderId) {
   const parentNameArr = [];
   for (const x in parent) {
     const newIndex = parentNum - (parseInt(x) + 1);
-    parentNameArr.push("/" + parent[newIndex].folder_name);
+    parentNameArr.push(">" + parent[newIndex].folder_name);
   }
   const parentName = parentNameArr.join("");
   return parentName;
@@ -61,6 +61,7 @@ const getSearchItem = async (req, res) => {
       }
       case "all": {
         const result = await search.getSearchItem("all", user, keyword);
+        console.log(result);
         const dataObj = { data: [] };
         for (const n of result) {
           if (n.folder_id || n.folder_id !== "0") {
@@ -87,11 +88,11 @@ const getSearchItem = async (req, res) => {
     }
   }
   const searchData = await getSearchData(select);
-  if (searchData.data.length === 0) {
-    res.status(200).json({ data: [] });
-    return;
-  }
-  res.status(200).send(searchData);
+  // if (searchData.data.length === 0) {
+  //   res.status(200).json({ data: [] });
+  //   return;
+  // }
+  res.status(200).json(searchData);
 };
 
 module.exports = { getSearchItem };

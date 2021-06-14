@@ -13,6 +13,7 @@ const getSearchData = async (param, keyword) => {
 
 const searchSelect = document.getElementById("searchSelect");
 const search = document.getElementById("search");
+const waitingImg = document.getElementById("waitingImg");
 // eslint-disable-next-line no-unused-vars
 function searchItem () {
   const param = searchSelect.value;
@@ -21,7 +22,9 @@ function searchItem () {
   parentData.innerHTML = "";
   // eslint-disable-next-line no-undef
   page.innerHTML = "";
+  waitingImg.style.display = "block";
   getSearchData(param, keyword).then(data => {
+    waitingImg.style.display = "none";
     console.log(data);
     const receiveData = data.data;
     if (receiveData.length === 0) {
@@ -29,6 +32,12 @@ function searchItem () {
     } else {
       for (const n of receiveData) {
         if (n.type === "bookmark") {
+          let parentRoute;
+          if (n.parent) {
+            parentRoute = n.parent;
+          } else {
+            parentRoute = "";
+          }
           const frame = document.createElement("div");
           frame.setAttribute("class", "frame bookmark");
           frame.setAttribute("draggable", "true");
@@ -45,13 +54,67 @@ function searchItem () {
                              </a>
                              <div class="trashCan bookmarkTrash">
                                 <img src="images/trash.svg" width="35px" height="35px">
+                             </div>
+                             <div class="textReminder">
+                                ${parentRoute}
                              </div>`;
           // eslint-disable-next-line no-undef
           page.appendChild(frame);
         } else if (n.type === "folder") {
-
+          let parentRoute;
+          if (n.parent) {
+            parentRoute = n.parent;
+          } else {
+            parentRoute = "";
+          }
+          const addCarton = document.createElement("div");
+          addCarton.setAttribute("class", "frame folderItem");
+          // addCarton.setAttribute("id", "d71d8a71-7ea5-421e-88ec-ff19eb982e2b");
+          addCarton.setAttribute("draggable", "true");
+          // addCarton.setAttribute("onclick", "folderClick(this)");
+          addCarton.setAttribute("id", `${n.id}`);
+          const inputId = parseInt(getTimeStamp()) + parseInt(n);
+          addCarton.innerHTML = `<div>
+                                    <img src="images/folder-2.png" class="newFolder">
+                                 </div>
+                                 <div>
+                                    <input type="text" class="folderName" value="${n.folder_name}" id="${inputId}" onchange="changeName(this.id)">
+                                 </div>
+                                 <div class="trashCan folderTrash">
+                                    <img src="images/trash.svg" width="35px" height="35px">
+                                 </div>
+                                 <div class="textReminder">
+                                    ${parentRoute}
+                                 </div>`;
+          // eslint-disable-next-line no-undef
+          page.appendChild(addCarton);
         } else {
-
+          let parentRoute;
+          if (n.parent) {
+            parentRoute = n.parent;
+          } else {
+            parentRoute = "";
+          }
+          const noteDiv = document.createElement("div");
+          noteDiv.className = "frame";
+          noteDiv.setAttribute("draggable", "true");
+          noteDiv.setAttribute("id", n.id);
+          const textAreaId = parseInt(getTimeStamp()) + parseInt(n);
+          let text;
+          console.log(n.text);
+          if (n.text === null) {
+            text = "";
+          } else {
+            text = n.text;
+          }
+          noteDiv.innerHTML += `<textarea class="stickyNote" id=${textAreaId} type="text" maxlength ="150" oninput="input(this)">${text}</textarea>`;
+          noteDiv.innerHTML += `<div class="trashCan noteTrash">
+                                    <img src="images/trash.svg" width="35px" height="35px">
+                                </div>
+                                <div class="textReminder">
+                                        ${parentRoute}
+                                </div>`;
+          page.appendChild(noteDiv);
         }
       }
     }

@@ -20,7 +20,9 @@ const getBookmarkData = async () => {
   return data;
 };
 
+waitingImg.style.display = "block";
 getBookmarkData().then(data => {
+  waitingImg.style.display = "none";
   const get = data.data;
   console.log(get);
   for (const n in get) {

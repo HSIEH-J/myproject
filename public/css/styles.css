@@ -80,7 +80,8 @@ body{
     border: none;
     font-family: Futura,Trebuchet MS,Arial,sans-serif;
     font-size: 22px;
-    color: rgb(214,201,177)
+    color: rgb(214,201,177);
+    cursor: pointer;
 }
 
 .downBefore{
@@ -338,8 +339,30 @@ body{
     /* position: relative; */
 }
 
+#waitingImg{
+    display: none;
+    width: 700px;
+    height: 500px;
+    margin: auto;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    right: 0px;
+    bottom: 0px;
+}
+
+#loading{
+    font-size: 35px;
+    text-align: center;
+    font-family: Futura,Trebuchet MS,Arial,sans-serif;
+}
 
 .trashCan{
+    display: none;
+    cursor: pointer;
+}
+
+.textReminder{
     display: none;
     cursor: pointer;
 }
@@ -357,8 +380,11 @@ body{
 }
 
 
-
 .frame:hover .trashCan {
+    display: block;
+}
+
+.frame:hover .textReminder {
     display: block;
 }
 

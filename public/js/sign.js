@@ -12,10 +12,14 @@ const signUpData = async (data) => {
     method: "POST"
   });
   if (response.status === 403) {
+    waitingImg.style.display = "none";
+    signBlock.style.display = "block";
     alert("Email already exists");
     throw new Error("email已存在");
   }
   if (response.status === 400) {
+    waitingImg.style.display = "none";
+    signBlock.style.display = "block";
     alert("Invalid email format");
     throw new Error("email格式錯誤");
   }
@@ -32,10 +36,14 @@ const signInData = async (data) => {
     method: "POST"
   });
   if (response.status === 403) {
+    waitingImg.style.display = "none";
+    signBlock.style.display = "block";
     alert("Please check your email or password again!");
     throw new Error("帳號或密碼不存在");
   }
   if (response.status === 400) {
+    waitingImg.style.display = "none";
+    signBlock.style.display = "block";
     alert("Invalid email format");
     throw new Error("email格式錯誤");
   }
@@ -47,22 +55,24 @@ const emailUp = document.getElementById("emailUp");
 const pwdUp = document.getElementById("pwdUp");
 const emailIn = document.getElementById("emailIn");
 const pwdIn = document.getElementById("pwdIn");
+const waitingImg = document.getElementById("waitingImg");
+const signBlock = document.getElementById("signBlock");
 
-document.addEventListener("click", (e) => {
-  const target = e.target;
-  if (target.id === "emailUp") {
-    target.value = "";
-  }
-  if (target.id === "pwdUp") {
-    target.value = "";
-  }
-  if (target.id === "emailIn") {
-    target.value = "";
-  }
-  if (target.id === "pwdIn") {
-    target.value = "";
-  }
-});
+// document.addEventListener("click", (e) => {
+//   const target = e.target;
+//   if (target.id === "emailUp") {
+//     target.value = "";
+//   }
+//   if (target.id === "pwdUp") {
+//     target.value = "";
+//   }
+//   if (target.id === "emailIn") {
+//     target.value = "";
+//   }
+//   if (target.id === "pwdIn") {
+//     target.value = "";
+//   }
+// });
 
 function register () {
   const email = emailUp.value;
@@ -74,7 +84,8 @@ function register () {
     return;
   }
   console.log("sign Up");
-  alert("Processing...");
+  signBlock.style.display = "none";
+  waitingImg.style.display = "block";
   const data = { email: email, password: pwd };
   signUpData(data).then(data => {
     console.log(data);
@@ -93,7 +104,8 @@ function logIn () {
     return;
   }
   console.log("Log In");
-  alert("Processing...");
+  signBlock.style.display = "none";
+  waitingImg.style.display = "block";
   const data = { email: email, password: pwd };
   signInData(data).then(data => {
     console.log(data);

@@ -81,6 +81,7 @@ document.addEventListener("click", (e) => {
   let num;
   console.log(e.target);
   if (e.target.className === "frame folderItem" || e.target.className === "sidebar_button" || e.target.classList.contains("bar_item")) {
+    waitingImg.style.display = "block";
     let id;
     let folderName;
     if (e.target.className === "frame folderItem") {
@@ -129,6 +130,7 @@ document.addEventListener("click", (e) => {
     page.innerHTML = "";
     parentData.innerHTML = "";
     getData(id).then(data => {
+      waitingImg.style.display = "none";
       console.log(data);
       const get = data.data;
       for (const n in get) {

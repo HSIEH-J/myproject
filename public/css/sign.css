@@ -36,6 +36,24 @@
     background-color: rgb(54,119,115)
 }
 
+#waitingImg{
+    display: none;
+    width: 700px;
+    height: 500px;
+    margin: auto;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    right: 0px;
+    bottom: 0px;
+}
+
+#loading{
+    font-size: 35px;
+    text-align: center;
+    font-family: Futura,Trebuchet MS,Arial,sans-serif;
+}
+
 .sign{
     line-height: 70px;
     margin-top: 2%
