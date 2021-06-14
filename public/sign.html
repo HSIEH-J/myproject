@@ -33,16 +33,6 @@
             <div id="loading">Processing...</div>
         </div>
         <script src="js/sign.js"></script>
-        <script>
-            window.addEventListener("message", receiveMessage, false);
-            function receiveMessage (event) {
-                console.log("receive sign.html")
-                if (event.origin === "chrome-extension://koggopoanaidpohodhpdklohbngbjkif"){
-                    console.log(event.origin)
-                    event.source.postMessage({accessToken: localStorage.accessToken}, event.origin);
-                }
-            }
-        </script>
        
     </body>
 </html>
