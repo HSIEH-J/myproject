@@ -20,6 +20,20 @@ const getBookmarkData = async () => {
   return data;
 };
 
+function overString (str) {
+  const len = 45;
+  const x = [];
+  for (n in str) {
+    if (n > len) {
+      x.push(" ...");
+      return x;
+    } else {
+      x.push(str[n]);
+    }
+  }
+  return x;
+}
+
 waitingImg.style.display = "block";
 getBookmarkData().then(data => {
   waitingImg.style.display = "none";
@@ -28,6 +42,9 @@ getBookmarkData().then(data => {
   for (const n in get) {
     if (get[n].folder_name === undefined) {
       console.log("===undefined===");
+      console.log(get[n].title.length);
+      const overTitle = overString(get[n].title);
+      const newTitle = overTitle.join("");
       const frame = document.createElement("div");
       frame.setAttribute("class", "frame bookmark");
       frame.setAttribute("draggable", "true");
@@ -39,7 +56,7 @@ getBookmarkData().then(data => {
                               </div>
                           </div>
                           <div class="info">
-                              <div class='title'>${get[n].title}</div>
+                              <div class='title'>${newTitle}</div>
                           </div>
                          </a>
                          <div class="trashCan bookmarkTrash">

@@ -18,11 +18,23 @@ const waitingImg = document.getElementById("waitingImg");
 function searchItem () {
   const param = searchSelect.value;
   const keyword = search.value;
+  const prevFolder = document.getElementById("parent_id");
+  if (prevFolder) {
+    console.log(prevFolder);
+    const prevId = prevFolder.innerHTML;
+    const prevSidebarId = "sidebar" + " " + prevId;
+    const prevSidebarItem = document.getElementById(prevSidebarId);
+    prevSidebarItem.style.background = "";
+  }
   // eslint-disable-next-line no-undef
   parentData.innerHTML = "";
   // eslint-disable-next-line no-undef
   page.innerHTML = "";
+  folderNameChange.innerHTML = "search result";
   waitingImg.style.display = "block";
+  board.style.display = "none";
+  note.style.display = "none";
+  plusIcon.style.display = "none";
   getSearchData(param, keyword).then(data => {
     waitingImg.style.display = "none";
     console.log(data);
@@ -38,6 +50,8 @@ function searchItem () {
           } else {
             parentRoute = "";
           }
+          const overTitle = overString(n.title);
+          const newTitle = overTitle.join("");
           const frame = document.createElement("div");
           frame.setAttribute("class", "frame bookmark");
           frame.setAttribute("draggable", "true");
@@ -49,7 +63,7 @@ function searchItem () {
                                   </div>
                               </div>
                               <div class="info">
-                                  <div class='title'>${n.title}</div>
+                                  <div class='title'>${newTitle}</div>
                               </div>
                              </a>
                              <div class="trashCan bookmarkTrash">

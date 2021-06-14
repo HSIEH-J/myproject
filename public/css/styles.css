@@ -115,9 +115,9 @@ body{
     background-color: CadetBlue;
 }
 
-.parentSideBar:hover {
+/* .parentSideBar:hover {
     background-color: CadetBlue;
-}
+} */
 
 .sidebar_button{
     border: none;
@@ -288,21 +288,23 @@ body{
 
 .createIcon{
     cursor: pointer;
-    width: 45px;
-    height: 45px;
-    line-height: 53px;
+    width: 35px;
+    height: 35px;
 }
 
 #folderNav{
     display:flex;
     justify-content: space-between;
     align-items: center;
+    width: 80px;
 }
 
 #display{
     display: flex;
-    justify-content: space-around;
+    justify-content: space-between;
     align-items: center;
+    width: 120px;
+    /* line-height: 5vh; */
 }
 
 .changeIcon{
@@ -313,6 +315,7 @@ body{
 #dataArea{
     /* display: flex; */
     border-left: solid 5px rgb(225, 229, 223);
+    background-color: #DCE1DE;
     overflow: auto;
     text-align: center;
     position: relative;
@@ -325,7 +328,8 @@ body{
 }
 
 #click{
-    background: rgb(225, 229, 223);
+    background: rgb(54, 119, 115);
+    color: white;
     font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif ;
     border-radius: 3%;
 }
@@ -338,7 +342,6 @@ body{
 .hover:hover{
     border-radius: 10%;
     background-color: lightgray;
-    height: 45px;
     cursor: pointer;
 }
 
@@ -350,8 +353,12 @@ body{
 #page{
     display: flex;
     flex-wrap: wrap;
+    /* flex: 1; */
+    justify-content: center;
     height: 90vh;
+    /* min-height: 0px; */
     overflow: auto;
+    /* max-height: 90vh; */
     /* position: relative; */
 }
 
@@ -379,6 +386,11 @@ body{
 }
 
 .textReminder{
+    position: absolute;
+    bottom: -12px;
+    right: -10px;
+    border-radius: 5%;
+    background-color: rgb(214,201,177);;
     display: none;
     cursor: pointer;
 }
@@ -537,7 +549,7 @@ a{
 
 a:hover{
     text-decoration: underline;
-    color: rgb(241,90,36);
+    color: rgb(85, 141, 143);
 }
 
 .flex{

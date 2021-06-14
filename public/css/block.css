@@ -2,8 +2,8 @@
     border: 5px solid gray;
     resize: both;
     overflow: auto;
-    width: 800px;
-    height: 560px;
+    width: 1235px;
+    height: 670px;
     display: flex;
     flex-wrap: wrap;
     /* margin-top: 2%;
@@ -11,6 +11,9 @@
     margin: auto;
     margin-top: 3%;
     box-shadow:1px 2px 1px 2px lightgray;
+    background-color: white;
+    border-radius: 1%;
+    z-index: 289;
     position: relative;
    
 }
@@ -18,7 +21,7 @@
 .stickyNote{
     height: 250px;
     width: 250px;
-    background-color: rgb(251,176,59);
+    background-color: rgb(255, 176, 79);
     text-align: start;
     border: none;
     outline: medium;
@@ -34,7 +37,8 @@
 .blockTrash{
     position: absolute;
     right: 1%;
-    top:1%
+    top:1%;
+    z-index: 999;
 }
 
 .block:hover .trashCan{

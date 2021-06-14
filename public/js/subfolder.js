@@ -69,14 +69,15 @@ const createBlock = async (data) => {
 // eslint-disable-next-line no-unused-vars
 const board = document.getElementById("boardIcon");
 const note = document.getElementById("noteIcon");
+const plusIcon = document.getElementById("plusIcon");
 const dataArea = document.getElementById("dataArea");
 const container = document.getElementById("container");
-// const folderNameChange = document.getElementById("folderNameChange");
+const folderNameChange = document.getElementById("folderNameChange");
 const addBlock = document.getElementById("addBlock");
 const highlight = document.getElementById("highlight");
 const block = document.getElementsByClassName("block");
 const parentData = document.getElementById("parentData");
-const layout = document.getElementById("display");
+// const layout = document.getElementById("display");
 document.addEventListener("click", (e) => {
   let num;
   console.log(e.target);
@@ -84,23 +85,42 @@ document.addEventListener("click", (e) => {
     waitingImg.style.display = "block";
     let id;
     let folderName;
+    const prevFolder = document.getElementById("parent_id");
+    if (prevFolder) {
+      console.log(prevFolder);
+      const prevId = prevFolder.innerHTML;
+      const prevSidebarId = "sidebar" + " " + prevId;
+      const prevSidebarItem = document.getElementById(prevSidebarId);
+      prevSidebarItem.style.background = "";
+    }
     if (e.target.className === "frame folderItem") {
       id = e.target.id;
+      // get folderName
       const folderNameItem = document.getElementById(id);
       folderName = folderNameItem.children[1].children[0].value;
+      const sidebarFolderId = "sidebar" + " " + id;
+      const sidebarItem = document.getElementById(sidebarFolderId);
+      // current location
+      sidebarItem.style.background = "CadetBlue";
     } else if (e.target.className === "sidebar_button") {
+      // get folderName
       const parent = e.target.parentNode;
       const parentId = parent.id;
       const parentArr = parentId.split(" ");
       id = parentArr[1];
       const name = parent.className.split(" ");
       folderName = name[1];
+      // current location
+      parent.style.background = "CadetBlue";
     } else {
+      // get folderName
       const sidebarItemId = e.target.id;
       const sidebarItemArr = sidebarItemId.split(" ");
       id = sidebarItemArr[1];
       const name = e.target.className.split(" ");
       folderName = name[1];
+      // current location
+      e.target.style.background = "CadetBlue";
     }
     if (!folderName) {
       folderNameChange.innerHTML = "folder";
@@ -109,9 +129,9 @@ document.addEventListener("click", (e) => {
     }
     console.log(folderNameChange);
     console.log(id);
-    layout.style.display = "flex";
-    layout.style.justifyContent = "space-around";
-    layout.style.width = "200px";
+    // layout.style.display = "flex";
+    // layout.style.justifyContent = "space-around";
+    // layout.style.width = "200px";
     console.log(e.target.id);
     urlClick.style.display = "none";
     // eslint-disable-next-line no-undef
@@ -136,6 +156,8 @@ document.addEventListener("click", (e) => {
       for (const n in get) {
         if (get[n].url) {
           console.log("===undefined===");
+          const overTitle = overString(get[n].title);
+          const newTitle = overTitle.join("");
           const frame = document.createElement("div");
           frame.setAttribute("class", "frame bookmark");
           frame.setAttribute("draggable", "true");
@@ -147,7 +169,7 @@ document.addEventListener("click", (e) => {
                                 </div>
                             </div>
                             <div class="info">
-                                <div class='title'>${get[n].title}</div>
+                                <div class='title'>${newTitle}</div>
                             </div>
                            </a>
                            <div class="trashCan bookmarkTrash">
@@ -219,6 +241,8 @@ document.addEventListener("click", (e) => {
           div.style.height = n.height + "px";
           for (const x of n.details) {
             if (x.url) {
+              const overTitle = overString(x.title);
+              const newTitle = overTitle.join("");
               const frame = document.createElement("div");
               frame.setAttribute("class", "frame bookmark");
               frame.setAttribute("draggable", "true");
@@ -230,7 +254,7 @@ document.addEventListener("click", (e) => {
                                       </div>
                                   </div>
                                   <div class="info">
-                                      <div class='title'>${x.title}</div>
+                                      <div class='title'>${newTitle}</div>
                                   </div>
                                </a>
                                <div class="trashCan bookmarkTrash">
@@ -291,6 +315,7 @@ document.addEventListener("click", (e) => {
     parentData.appendChild(parentId);
     board.style.display = "block";
     note.style.display = "block";
+    plusIcon.style.display = "block";
   }
   if (e.target.className === "block") {
     console.log(e.target.style.width);

@@ -61,20 +61,23 @@
                     </div>
                     <div id="navBottom">
                         <div id="folderNav"> 
-                            <div>
+                            <!-- <div>
                                 <img src="images/folder.svg" width=35px height=35px>
+                            </div> -->
+                            <div>
+                                <img src="images/plus.svg" class="hover" id="plus" width=20px height=20px>
                             </div>
                             <div id="folderNameChange" class="class">homepage</div>
-                            <div id="folderNav">
-                                <img src="images/plus.svg" class="hover" id="plus" width=25px height=25px>
-                            </div>
                         </div>
                         <div id="display">
-                            <div class="hover">
+                            <div>
+                                <img src="images/plus.svg" id="plusIcon" width=20px height=20px style="display: none;">
+                            </div>
+                            <div>
                                 <img src="images/board.svg" class="createIcon" id="boardIcon" style="display: none;">
                             </div>
-                            <div class="hover">
-                                <img src="images/sticky-note.svg" class="createIcon" id="noteIcon" style="display: none;">
+                            <div>
+                                <img src="images/note.svg" class="createIcon" id="noteIcon" style="display: none;">
                             </div>
                             <!-- <div class="flex hover">
                                 <div>
@@ -155,7 +158,9 @@
                 const title = frame.children[0].children[1].children[0];
                 console.log(title)
                 img.src = msg.thumbnail;
-                title.innerHTML = msg.title;
+                const overTitle = overString(msg.title);
+                const newTitle = overTitle.join("");
+                title.innerHTML = newTitle;
                 console.log(msg.title.length)
             })
             //socket token
