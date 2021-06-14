@@ -1,6 +1,9 @@
 const express = require("express");
 const app = express();
 const cache = require("./util/cache");
+const cors = require("cors");
+
+app.use(cors());
 // env
 require("dotenv").config();
 
