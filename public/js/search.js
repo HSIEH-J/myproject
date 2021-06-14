@@ -30,7 +30,7 @@ function searchItem () {
   parentData.innerHTML = "";
   // eslint-disable-next-line no-undef
   page.innerHTML = "";
-  folderNameChange.innerHTML = "search result";
+  folderNameChange.innerHTML = "result";
   waitingImg.style.display = "block";
   board.style.display = "none";
   note.style.display = "none";
