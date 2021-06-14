@@ -167,3 +167,8 @@ function closeSidebar () {
   homepage.style.display = "block";
   sidebar.style.display = "none";
 }
+
+function logOut () {
+  localStorage.removeItem("accessToken");
+  location.href = "/sign.html";
+}

@@ -29,14 +29,14 @@ const insertContainerData = async function (insert) {
   return result;
 };
 
-// const checkUrl = async function (url) {
-//   const check = await pool.query("SELECT url FROM bookmark WHERE url = ? FOR UPDATE", url);
-//   if (check[0].length !== 0) {
-//     return false;
-//   } else {
-//     return true;
-//   }
-// };
+const checkUrl = async function (url) {
+  const check = await pool.query("SELECT url FROM bookmark WHERE url = ?", url);
+  if (check[0].length !== 0) {
+    return { error: "url already exists" };
+  } else {
+    return true;
+  }
+};
 
 // get first level bookmarks
 const getContainerData = async function (id) {
@@ -231,5 +231,6 @@ module.exports = {
   getSubfolderBookmarkData,
   updateBlock,
   removeAllItem,
-  getSubfolderStickyNote
+  getSubfolderStickyNote,
+  checkUrl
 };

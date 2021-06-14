@@ -11,9 +11,29 @@ const importThumbnailData = async (req, res, next) => {
   const time = req.body.time;
   const user = req.user.id;
   console.log(req.body);
-  // if (cache.client.ready) {
-  //   await cache.set("url", JSON.stringify(url));
-  // }
+  if (!url) {
+    res.status(400).json({ Request: "url is required!" });
+    return;
+  }
+  if (cache.client.ready) {
+    const key = "url" + user;
+    const prevUrl = await cache.get(key);
+    if (prevUrl) {
+      if (prevUrl === url) {
+        res.status(400).json("duplicated url");
+        return;
+      } else {
+        await cache.set(key, JSON.stringify(url));
+      }
+    } else {
+      await cache.set(key, JSON.stringify(url));
+    }
+  }
+  const check = await bookmark.checkUrl(url);
+  if (check.error) {
+    res.status(400).json("duplicated url");
+    return;
+  }
   let insert;
   const titleData = await bookmark.getTitle(url);
   console.log(titleData);

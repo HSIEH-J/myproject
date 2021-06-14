@@ -8,7 +8,8 @@ body{
     display: flex;
     justify-content: space-between;
     margin: auto;
-    font-family: Futura,Trebuchet MS,Arial,sans-serif;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif ;
+    font-size: 20px;
     line-height: 67px;
     margin-top: 1%;
     margin-bottom: 2%;
@@ -21,12 +22,13 @@ body{
     width: 1500px;
     height: 800px;
     margin: auto;
+    position: absolute;
     border-radius: 5%;
     position: relative;
 }
 
 button{
-    font-family: Futura,Trebuchet MS,Arial,sans-serif;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif ;
 }
 
 #background{
@@ -64,8 +66,8 @@ button{
     top: 80%;
     left: 5%;
     right: 5%;
-    font-family: Futura,Trebuchet MS,Arial,sans-serif;
-    font-size: 20px;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif ;
+    font-size: 25px;
 }
 
 @media screen and (max-width: 1800px) {

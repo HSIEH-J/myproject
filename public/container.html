@@ -24,7 +24,8 @@
                         <div class="bar_item" id="homepage">Homepage</div>
                     </div> -->
                     <div id="sidebarTop">
-                        <button onclick="closeSidebar()" class="close_button">Close &laquo;</button>
+                        <div id="logOut" onclick="logOut()">Log out</div>
+                        <div onclick="closeSidebar()" class="close_button">&laquo;</div>
                     </div>
                     <div id="sidebarContent"></div>
                     <!-- <div id="sidebarBottom">
@@ -53,7 +54,7 @@
                             <div id="url" style="display: none;">
                                 <div>
                                     <div style="text-align: left; margin-left: 3%; margin-top:3%;">URL</div>
-                                    <input id="box" type="text" value="please enter URL">
+                                    <input id="box" type="text" placeholder="https://">
                                 </div>
                             </div>
                         </div>
@@ -63,7 +64,7 @@
                             <div>
                                 <img src="images/folder.svg" width=35px height=35px>
                             </div>
-                            <div id="folderNameChange" class="class">unsorted</div>
+                            <div id="folderNameChange" class="class">homepage</div>
                             <div id="folderNav">
                                 <img src="images/plus.svg" class="hover" id="plus" width=25px height=25px>
                             </div>
@@ -155,6 +156,7 @@
                 console.log(title)
                 img.src = msg.thumbnail;
                 title.innerHTML = msg.title;
+                console.log(msg.title.length)
             })
             //socket token
             

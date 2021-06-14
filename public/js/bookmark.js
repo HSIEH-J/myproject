@@ -26,11 +26,6 @@ const urlClick = document.getElementById("url");
 
 importUrl.addEventListener("click", () => {
   urlClick.style.display = "block";
-  box.value = "";
-});
-
-box.addEventListener("click", (e) => {
-  box.value = "";
 });
 
 box.addEventListener("keydown", (e) => {
@@ -83,7 +78,9 @@ box.addEventListener("keydown", (e) => {
         if (xhr.readyState === 4) {
           box.value = "";
           if (xhr.status !== 200) {
-            alert("there's something wrong, please try again!");
+            alert(xhr.responseText);
+            const bookmark = document.getElementById(bookmarkId);
+            page.removeChild(bookmark);
           }
           console.log(xhr.responseText);
         }
