@@ -48,7 +48,7 @@ function searchItem () {
           if (n.parent) {
             parentRoute = n.parent;
           } else {
-            parentRoute = "";
+            parentRoute = "homepage";
           }
           const overTitle = overString(n.title);
           const newTitle = overTitle.join("");
@@ -79,7 +79,7 @@ function searchItem () {
           if (n.parent) {
             parentRoute = n.parent;
           } else {
-            parentRoute = "";
+            parentRoute = "homepage";
           }
           const addCarton = document.createElement("div");
           addCarton.setAttribute("class", "frame folderItem");
@@ -107,7 +107,7 @@ function searchItem () {
           if (n.parent) {
             parentRoute = n.parent;
           } else {
-            parentRoute = "";
+            parentRoute = "homepage";
           }
           const noteDiv = document.createElement("div");
           noteDiv.className = "frame";
