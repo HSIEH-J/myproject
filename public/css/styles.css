@@ -315,7 +315,7 @@ body{
 #dataArea{
     /* display: flex; */
     border-left: solid 5px rgb(225, 229, 223);
-    background-color: #DCE1DE;
+    background-color: lightgray;
     overflow: auto;
     text-align: center;
     position: relative;
