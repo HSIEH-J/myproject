@@ -100,7 +100,7 @@ const importThumbnailData = async (req, res, next) => {
   // }
 };
 
-// container.html get the folders and the bookmarks
+// container.html get the folders and the bookmarks data
 const containerData = async (req, res, next) => {
   const { id } = req.query;
   const user = req.user.id;
