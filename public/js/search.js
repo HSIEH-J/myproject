@@ -72,6 +72,7 @@ function searchItem () {
                              <div class="textReminder">
                                 ${parentRoute}
                              </div>`;
+          frame.title = n.title;
           // eslint-disable-next-line no-undef
           page.appendChild(frame);
         } else if (n.type === "folder") {

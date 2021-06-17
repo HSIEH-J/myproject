@@ -16,6 +16,27 @@ function getRandomNumber () {
   });
 }
 
+const createBookmark = async (data) => {
+  const response = await fetch("/api/1.0/test", {
+    body: JSON.stringify(data),
+    headers: new Headers({
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`
+    }),
+    method: "POST"
+  });
+  if (response.status === 500) {
+    alert("there's something wrong... Please try later");
+    throw Error("there's something wrong");
+  }
+  if (response.status !== 200) {
+    alert("please check your url again");
+    throw Error("please check your url again");
+  }
+  const json = await response.json();
+  return json;
+};
+
 const box = document.getElementById("box");
 const importUrl = document.getElementById("import");
 const urlClick = document.getElementById("url");
@@ -36,61 +57,66 @@ box.addEventListener("keydown", (e) => {
   }
   console.log(parent);
   let urlData;
-  console.log(e.code);
   if (e.code === "Enter") {
     urlClick.style.display = "none";
-    console.log(e.code);
     const url = box.value;
     if (!url) {
       alert("You didn't enter any urls");
       urlClick.style.display = "none";
     } else {
-      const bookmarkId = getRandomNumber();
-      const timestamp = getTimeStamp();
-      const frame = document.createElement("div");
-      frame.setAttribute("class", "frame bookmark");
-      frame.setAttribute("draggable", "true");
-      frame.setAttribute("id", bookmarkId);
-      frame.innerHTML = `<a href=${url} class="thumbnailUrl" target="_blank">
-                          <div class="top">
-                              <div class="thumbnail">
-                                  <img src="./images/default.svg" width=250 class="default">
-                              </div>
-                          </div>
-                          <div class="info">
-                              <div class='title'>${"loading..."}</div>
-                          </div>
-                          </a>
-                          <div class="trashCan bookmarkTrash">
-                              <img src="images/trash.svg" width="35px" height="35px">
-                          </div>`;
-      page.appendChild(frame);
       if (parent) {
-        urlData = { id: bookmarkId, parent_id: parent, url: url, time: timestamp };
+        urlData = { parent_id: parent, url: url };
       } else {
-        urlData = { id: bookmarkId, url: url, time: timestamp };
+        urlData = { url: url };
       }
-      console.log(parentId);
-      console.log(parent);
-      console.log(urlData);
-      const xhr = new XMLHttpRequest();
-      xhr.onreadystatechange = function () {
-        if (xhr.readyState === 4) {
-          box.value = "";
-          if (xhr.status !== 200) {
-            alert(xhr.responseText);
-            const bookmark = document.getElementById(bookmarkId);
-            page.removeChild(bookmark);
-          }
-          console.log(xhr.responseText);
+      box.value = "";
+      createBookmark(urlData).then(data => {
+        console.log(data);
+        if (data.id) {
+          console.log("append first");
+          const frame = document.createElement("div");
+          frame.setAttribute("class", "frame bookmark");
+          frame.setAttribute("draggable", "true");
+          frame.id = data.id;
+          frame.innerHTML = `<a href=${url} class="thumbnailUrl" target="_blank">
+                              <div class="top">
+                                  <div class="thumbnail">
+                                      <img src="./images/default.svg" width=250 class="default">
+                                  </div>
+                              </div>
+                              <div class="info">
+                                  <div class='title'>${"Loading..."}</div>
+                              </div>
+                              </a>
+                              <div class="trashCan bookmarkTrash">
+                                  <img src="images/trash.svg" width="35px" height="35px">
+                              </div>`;
+          page.appendChild(frame);
+        } else {
+          console.log("done");
+          const receiveData = data.data[0];
+          const overTitle = overString(receiveData.title);
+          const newTitle = overTitle.join("");
+          const frame = document.createElement("div");
+          frame.setAttribute("class", "frame bookmark");
+          frame.setAttribute("draggable", "true");
+          frame.id = receiveData.id;
+          frame.innerHTML = `<a href=${url} class="thumbnailUrl" target="_blank">
+                              <div class="top">
+                                  <div class="thumbnail">
+                                      <img src="${receiveData.thumbnail}">
+                                  </div>
+                              </div>
+                              <div class="info">
+                                  <div class='title'>${newTitle}</div>
+                              </div>
+                              </a>
+                              <div class="trashCan bookmarkTrash">
+                                  <img src="images/trash.svg" width="35px" height="35px">
+                              </div>`;
+          page.appendChild(frame);
         }
-      };
-      xhr.open("post", "/api/1.0/test", true);
-      xhr.setRequestHeader("Content-type", "application/json");
-      xhr.setRequestHeader("Authorization", "Bearer " + token);
-      const data = JSON.stringify(urlData);
-      console.log(data);
-      xhr.send(data);
+      });
     }
   }
 });

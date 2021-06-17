@@ -314,6 +314,7 @@ body{
 
 #dataArea{
     /* display: flex; */
+    height: 100vh;
     border-left: solid 5px rgb(225, 229, 223);
     background-color: WhiteSmoke;
     overflow: auto;

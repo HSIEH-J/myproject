@@ -175,6 +175,7 @@ document.addEventListener("click", (e) => {
                            <div class="trashCan bookmarkTrash">
                               <img src="images/trash.svg" width="35px" height="35px">
                            </div>`;
+          frame.title = get[n].title;
           // eslint-disable-next-line no-undef
           page.appendChild(frame);
         } else if (get[n].folder_name) {
@@ -260,6 +261,7 @@ document.addEventListener("click", (e) => {
                                <div class="trashCan bookmarkTrash">
                                   <img src="images/trash.svg" width="35px" height="35px">
                                </div>`;
+              frame.title = x.title;
               div.appendChild(frame);
             } else if (x.folder_name) {
               const addCarton = document.createElement("div");
@@ -443,23 +445,19 @@ note.addEventListener("click", (e) => {
   const parent = document.getElementById("parent_id");
   const parentId = parent.innerHTML;
   console.log(parentId);
-  const noteDiv = document.createElement("div");
-  noteDiv.className = "frame";
-  noteDiv.setAttribute("draggable", "true");
-  const id = getRandomNumber();
-  const time = getTimeStamp();
-  noteDiv.setAttribute("id", id);
-  noteDiv.innerHTML += "<textarea class=\"stickyNote\" type=\"text\" maxlength =\"150\" oninput=\"input(this)\"></textarea>";
-  noteDiv.innerHTML += `<div class="trashCan noteTrash">
-                          <img src="images/trash.svg" width="35px" height="35px">
-                        </div>`;
-  page.appendChild(noteDiv);
-  const data = { type: "stickyNote", id: id, folder_id: parentId, time: time };
+  const data = { type: "stickyNote", folder_id: parentId };
   console.log(data);
   createItem(data).then(data => {
-    console.log("insert db stickyNote");
-    const response = data;
-    console.log(response);
+    console.log(data);
+    const noteDiv = document.createElement("div");
+    noteDiv.className = "frame";
+    noteDiv.setAttribute("draggable", "true");
+    noteDiv.setAttribute("id", data.id);
+    noteDiv.innerHTML += "<textarea class=\"stickyNote\" type=\"text\" maxlength =\"150\" oninput=\"input(this)\"></textarea>";
+    noteDiv.innerHTML += `<div class="trashCan noteTrash">
+                          <img src="images/trash.svg" width="35px" height="35px">
+                        </div>`;
+    page.appendChild(noteDiv);
   });
 });
 

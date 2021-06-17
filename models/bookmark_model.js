@@ -2,7 +2,6 @@ const axios = require("axios");
 const sharp = require("sharp");
 const { pool } = require("./mysql");
 const aws = require("aws-sdk");
-const cache = require("../util/cache");
 
 aws.config.update({ accessKeyId: process.env.S3_ID, secretAccessKey: process.env.S3_PWD });
 
@@ -24,9 +23,13 @@ const getTitle = async function (url) {
 };
 
 // insert bookmark into bookmark table
-const insertContainerData = async function (insert) {
+const insertBookmark = async function (insert) {
   const result = await pool.query("INSERT INTO bookmark SET ?", insert);
-  return result;
+  return result[0];
+};
+
+const updateBookmark = async function (title, location, id) {
+  await pool.query("UPDATE bookmark SET title = ?, thumbnail = ? WHERE id = ?", [title, location, id]);
 };
 
 const checkUrl = async function (url) {
@@ -39,30 +42,22 @@ const checkUrl = async function (url) {
 };
 
 // get first level bookmarks
-const getContainerData = async function (id) {
-  const data = await pool.query("SELECT id, url, title, thumbnail, sequence, timestamp FROM bookmark WHERE folder_id IS NULL && user_id =? && remove = 0", id);
-  return data[0];
+const getMainData = async (userId) => {
+  const bookmark = await pool.query("SELECT id, url, title, thumbnail, sequence, timestamp FROM bookmark WHERE folder_id IS NULL && user_id =? && remove = 0", userId);
+  const folder = await pool.query("SELECT id, folder_name, sequence, timestamp FROM folder WHERE folder_id = '0' && user_id=? && remove = 0", userId);
+  const data = [...bookmark[0], ...folder[0]];
+  return data;
 };
 
-// get first level folders
-const getFolderData = async function (id) {
-  const data = await pool.query("SELECT id, folder_name, sequence, timestamp FROM folder WHERE folder_id = '0' && user_id=? && remove = 0", id);
-  return data[0];
-};
-
-// get subfolder folders
+// get subfolder data
 const getSubfolderData = async (id, userId) => {
-  const bookmark = await pool.query("SELECT * FROM bookmark WHERE folder_id = ? && user_id = ? && div_id IS NULL && remove = 0", [id, userId]);
-  return bookmark[0];
+  const bookmarkData = await pool.query("SELECT * FROM bookmark WHERE folder_id = ? && user_id = ? && div_id IS NULL && remove = 0", [id, userId]);
+  const folderData = await pool.query("SELECT * FROM folder WHERE folder_id = ? && user_id = ? && div_id IS NULL && remove = 0", [id, userId]);
+  const data = [...bookmarkData[0], ...folderData[0]];
+  return data;
 };
 
-// get subfolder bookmarks
-const getSubfolderBookmarkData = async (id, userId) => {
-  const folder = await pool.query("SELECT * FROM folder WHERE folder_id = ? && user_id = ? && div_id IS NULL && remove = 0", [id, userId]);
-  return folder[0];
-};
-
-const getSubfolderStickyNote = async (id, userId) => {
+const getStickyNote = async (id, userId) => {
   const data = await pool.query("SELECT * FROM stickyNote WHERE folder_id = ? && user_id = ? && div_id IS NULL && remove = 0", [id, userId]);
   return data[0];
 };
@@ -84,9 +79,7 @@ const getLocation = (s3, params) => {
 
 const uploadS3 = async function (url, time) {
   // generate img name
-  // const urlArr = url.split("/");
   const name = time + ".jpeg";
-  console.log(name);
   // get buffer
   const optimized = await getThumbnail(url);
   // set s3
@@ -219,18 +212,17 @@ const removeAllItem = async (type, id, userId) => {
 
 module.exports = {
   getThumbnail,
-  insertContainerData,
+  insertBookmark,
+  updateBookmark,
   getTitle,
   uploadS3,
-  getContainerData,
+  getMainData,
+  getSubfolderData,
+  getStickyNote,
   createItem,
-  getFolderData,
   sequenceChange,
   insertIntoSubfolder,
-  getSubfolderData,
-  getSubfolderBookmarkData,
   updateBlock,
   removeAllItem,
-  getSubfolderStickyNote,
   checkUrl
 };

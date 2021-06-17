@@ -1,103 +1,82 @@
 const bookmark = require("../models/bookmark_model");
 const cache = require("../util/cache");
+const util = require("../util/util");
 
-// when user insert a url
-const importThumbnailData = async (req, res, next) => {
-  const socket = req.app.get("socket");
-  const io = req.app.get("io");
-  // try {
-  // get url
-  const url = req.body.url;
-  const time = req.body.time;
-  const user = req.user.id;
-  console.log(req.body);
-  if (!url) {
-    res.status(400).json({ Request: "url is required!" });
-    return;
-  }
-  if (cache.client.ready) {
-    const key = "url" + user;
-    const prevUrl = await cache.get(key);
-    if (prevUrl) {
-      if (prevUrl === url) {
-        res.status(400).json("duplicated url");
-        return;
-      } else {
-        await cache.set(key, JSON.stringify(url));
-      }
-    } else {
-      await cache.set(key, JSON.stringify(url));
+const getThumbnail = async (req, res, next) => {
+  try {
+    const io = req.app.get("io");
+    const id = util.getRandomNumber();
+    const time = util.getTimeStamp();
+    const url = req.body.url.trim();
+    const user = req.user.id;
+    if (!url || !(url.trim())) {
+      res.status(400).json({ error: "url is required!" });
+      return;
     }
-  }
-  const check = await bookmark.checkUrl(url);
-  if (check.error) {
-    res.status(400).json("duplicated url");
-    return;
-  }
-  let insert;
-  const titleData = await bookmark.getTitle(url);
-  console.log(titleData);
-  // get url title => check if status = done
-  // if not => get API every 3's util the status is done
-  if (titleData.status === "error") {
-    res.status(401).json("wrong format");
-    return;
-  }
-  if (titleData.status !== "done") {
-    const test = async function () {
-      let titleData = await bookmark.getTitle(url);
-      console.log(titleData);
-      if (titleData.status !== "done") {
-        console.log("===setTimeout===");
-        titleData = await bookmark.getTitle(url);
-        console.log(titleData);
-      } else {
-        clearInterval(this);
-        const title = titleData.title;
-        console.log(title);
-        const location = await bookmark.uploadS3(url, time);
-        console.log(location);
-        if (!req.body.parent_id) {
-          console.log("no folder id");
-          insert = { id: req.body.id, user_id: user, url: url, title: title, thumbnail: location, timestamp: time, remove: 0 };
+    const cacheKey = "url" + user;
+    if (cache.client.ready) {
+      const prevUrl = JSON.parse(await cache.get(cacheKey));
+      if (prevUrl) {
+        if (prevUrl === url) {
+          res.status(400).json({ error: "duplicated url" });
+          return;
         } else {
-          console.log("folder id");
-          insert = { id: req.body.id, user_id: user, folder_id: req.body.parent_id, url: url, title: title, thumbnail: location, timestamp: time, remove: 0 };
+          await cache.set(cacheKey, JSON.stringify(url));
         }
-        const result = await bookmark.insertContainerData(insert);
-        console.log(result[0]);
-        // console.log(id);
-        console.log(socket.id);
-        const msg = { id: req.body.id, title: title, thumbnail: location };
-        const socketId = await cache.get(`${"socketId" + user}`);
-        console.log(socketId);
-        io.to(socketId).emit("done", msg);
+      } else {
+        await cache.set(cacheKey, JSON.stringify(url));
       }
-    };
-    setInterval(test, 6000);
-    res.status(200).json("waiting for incoming thumbnail");
-  } else {
-    const title = titleData.title;
-    console.log(title);
-    const location = await bookmark.uploadS3(url, time);
-    console.log(location);
-    if (!req.body.parent_id) {
-      insert = { id: req.body.id, user_id: user, url: url, title: title, thumbnail: location, timestamp: time, remove: 0 };
-    } else {
-      insert = { id: req.body.id, user_id: user, folder_id: req.body.parent_id, url: url, title: title, thumbnail: location, timestamp: time, remove: 0 };
     }
-    await bookmark.insertContainerData(insert);
-    const msg = { id: req.body.id, title: title, thumbnail: location };
-    const socketId = await cache.get(`${"socketId" + user}`);
-    console.log("done");
-    console.log(socketId);
-    io.to(socketId).emit("done", msg);
-    res.status(200).json("bookmark generated");
+    const check = await bookmark.checkUrl(url);
+    if (check.error) {
+      res.status(400).json({ error: "duplicated url" });
+      return;
+    }
+    // get url title => check if status = done
+    // if not => call API every 3's util the status is done
+    const titleData = await bookmark.getTitle(url);
+    if (titleData.status === "error") {
+      res.status(401).json({ error: "wrong format" });
+      return;
+    }
+    if (titleData.status !== "done") {
+      let insert;
+      if (!req.body.parent_id) {
+        insert = { id: id, user_id: user, url: url, timestamp: time, remove: 0 };
+      } else {
+        insert = { id: id, user_id: user, folder_id: req.body.parent_id, url: url, timestamp: time, remove: 0 };
+      }
+      await bookmark.insertBookmark(insert);
+      const test = async function () {
+        const titleData = await bookmark.getTitle(url);
+        if (titleData.status === "done") {
+          clearInterval(this);
+          const title = titleData.title;
+          const location = await bookmark.uploadS3(url, time);
+          await bookmark.updateBookmark(title, location, id);
+          const msg = { id: id, title: title, thumbnail: location };
+          const socketId = await cache.get(`${"socketId" + user}`);
+          io.to(socketId).emit("done", msg);
+        }
+      };
+      setInterval(test, 6000);
+      res.status(200).json({ id: id });
+    } else {
+      let insert;
+      const title = titleData.title;
+      const location = await bookmark.uploadS3(url, time);
+      if (!req.body.parent_id) {
+        insert = { id: id, user_id: user, url: url, title: title, thumbnail: location, timestamp: time, remove: 0 };
+      } else {
+        insert = { id: id, user_id: user, folder_id: req.body.parent_id, url: url, title: title, thumbnail: location, timestamp: time, remove: 0 };
+      }
+      await bookmark.insertBookmark(insert);
+      res.status(200).json({ data: [{ id: id, title: title, thumbnail: location }] });
+    }
+  } catch (err) {
+    console.log(err);
+    next(err);
   }
-
-  // } catch (err) {
-  //   next(err);
-  // }
 };
 
 // container.html get the folders and the bookmarks data
@@ -108,26 +87,23 @@ const containerData = async (req, res, next) => {
   const dataObj = { data: [] };
   let data;
   if (id === undefined) {
-    const mark = await bookmark.getContainerData(user);
-    const folder = await bookmark.getFolderData(user);
-    data = mark.concat(folder);
+    data = await bookmark.getMainData(user);
   } else {
-    const mark = await bookmark.getSubfolderBookmarkData(id, user);
-    const folder = await bookmark.getSubfolderData(id, user);
-    const note = await bookmark.getSubfolderStickyNote(id, user);
+    const receiveData = await bookmark.getSubfolderData(id, user);
+    const note = await bookmark.getStickyNote(id, user);
     const cacheData = await cache.get(user);
     const dataTrans = JSON.parse(cacheData);
     if (dataTrans) {
-      const a = dataTrans.filter(el => el[1].folder_id === id);
-      for (const n of note) {
-        for (const x of a) {
-          if (x[0] === n.id) {
-            n.text = x[1].text;
+      const folderData = dataTrans.filter(el => el[1].folder_id === id);
+      for (const child of note) {
+        for (const content of folderData) {
+          if (content[0] === child.id) {
+            child.text = content[1].text;
           }
         }
       }
     }
-    data = mark.concat(folder, note);
+    data = [...receiveData, ...note];
   }
   data.sort((a, b) => {
     if (a.timestamp > b.timestamp) {
@@ -152,27 +128,28 @@ const containerData = async (req, res, next) => {
   res.send(dataObj);
 };
 
-// when user create a new folder
-const insertItem = async (req, res, next) => {
-  console.log(req.body);
-  const id = req.body.id;
-  const time = req.body.time;
-  const folderId = req.body.folder_id;
-  const type = req.body.type;
-  console.log(id);
-  const user = req.user.id;
-  let insert;
-  if (type === "folder") {
-    const name = req.body.name;
-    insert = { id: id, user_id: user, folder_name: name, folder_id: folderId, timestamp: time, remove: 0 };
-  } else if (type === "stickyNote") {
-    insert = { id: id, user_id: user, folder_id: folderId, timestamp: time, remove: 0 };
+// create folder, stickyNote
+const createItem = async (req, res, next) => {
+  try {
+    const id = util.getRandomNumber();
+    const time = util.getTimeStamp();
+    const folderId = req.body.folder_id;
+    const type = req.body.type;
+    const user = req.user.id;
+    let insert;
+    if (type === "folder") {
+      insert = { id: id, user_id: user, folder_name: "folder", folder_id: folderId, timestamp: time, remove: 0 };
+    } else if (type === "stickyNote") {
+      insert = { id: id, user_id: user, folder_id: folderId, timestamp: time, remove: 0 };
+    }
+    await bookmark.createItem(type, insert);
+    res.status(200).json({ id: id });
+  } catch (err) {
+    console.log(err);
+    next(err);
   }
-  await bookmark.createItem(type, insert);
-  res.status(200).json("inserted");
 };
 
-// when user drag a folder or a bookmark
 const sequenceChange = async (req, res, next) => {
   const data = req.body.data;
   const user = req.user.id;
@@ -207,4 +184,4 @@ const removeItem = async (req, res) => {
 
 // when user drag a folder or a bookmark into a folder
 
-module.exports = { importThumbnailData, containerData, insertItem, sequenceChange, insertIntoSubfolder, updateBlock, removeItem };
+module.exports = { getThumbnail, containerData, createItem, sequenceChange, insertIntoSubfolder, updateBlock, removeItem };

@@ -31,7 +31,6 @@ app.use("/api/1.0",
 
 // socket i.o
 const http = require("http");
-const { JsonWebTokenError } = require("jsonwebtoken");
 const server = http.createServer(app);
 
 const io = require("./models/socket").init(server);
@@ -106,7 +105,7 @@ io.on("connection", async (socket) => {
 
 // eslint-disable-next-line node/handle-callback-err
 app.use((err, req, res, next) => {
-  res.status(500).send("server error");
+  res.status(500).send({ error: "server error" });
 });
 
 server.listen(port, () => {

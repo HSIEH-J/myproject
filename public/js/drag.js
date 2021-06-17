@@ -295,11 +295,6 @@ dataArea.addEventListener("drop", (e) => {
     }
     console.log("plain text index");
     console.log(divId);
-    const blockLength = document.getElementById(divId).children.length;
-    console.log(typeof (blockLength));
-    // if (blockLength === 6) {
-    //   alert("Beyond limit! The board can only contain 6 items. Please create a new one!");
-    // } else {
     if (target.className === "frame folderItem" && target.id !== oldChild.id) {
       console.log(page.children[oldIndex]);
       if (className === "frame folderItem") {
@@ -381,7 +376,7 @@ dataArea.addEventListener("drop", (e) => {
       });
       const oldParent = document.getElementById(data.block_id);
       oldParent.removeChild(document.getElementById(data.draggedId));
-    } else if (target.className === "block") {
+    } else if (target.className === "block" || target.parentNode.className === "block") {
       // get data from page
       if (target.className === "block") {
         divId = target.id;

@@ -62,6 +62,7 @@ getBookmarkData().then(data => {
                          <div class="trashCan bookmarkTrash">
                             <img src="images/trash.svg" width="35px" height="35px">
                          </div>`;
+      frame.title = get[n].title;
       page.appendChild(frame);
     } else {
       const addCarton = document.createElement("div");

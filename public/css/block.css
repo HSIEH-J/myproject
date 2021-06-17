@@ -9,13 +9,20 @@
     /* margin-top: 2%;
     margin-left: 1%; */
     margin: auto;
-    margin-top: 3%;
+    margin-top: 10%;
     box-shadow:1px 2px 1px 2px lightgray;
     background-color: white;
     border-radius: 1%;
     z-index: 289;
     position: relative;
    
+}
+
+.blockName{
+    width: 1235px;
+    height: 30px;
+    border: none;
+    outline: medium;
 }
 
 .stickyNote{
