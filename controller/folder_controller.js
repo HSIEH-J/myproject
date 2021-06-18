@@ -30,26 +30,8 @@ function buildTree (list) {
 const getNestData = async (req, res, next) => {
   const user = req.user.id;
   const data = await folder.sidebarData(user);
-  // console.log(data);
   const temp = buildTree(data);
-  // console.log(temp);
   res.send(temp);
-};
-
-const getAllFolders = async (req, res) => {
-  const id = req.user.id;
-  const folders = await folder.getAllFolders(id);
-  const data = [];
-  for (const n of folders) {
-    data.push({ folder_id: n.id, name: n.folder_name });
-  }
-  res.json(data);
-};
-
-const insertDivTable = async (req, res) => {
-  const id = req.user.id;
-  const data = { id: req.body.div_id, user_id: id, folder_id: req.body.folder_id, timestamp: req.body.time, remove: 0 };
-  await folder.insertDivTable(data);
 };
 
 const getDivData = async (req, res) => {
@@ -161,22 +143,4 @@ const dropSidebarFolder = async (req, res) => {
   res.status(200).send({ message: "updated" });
 };
 
-// const cacheTest = async (req, res) => {
-//   const userId = req.user.id;
-//   if (cache.client.ready) {
-//     const data = await cache.get(userId);
-//     console.log(data);
-//     const receiveData = JSON.parse(data);
-//     await folder.updateStickyNote(receiveData, userId);
-//   }
-// };
-
-// const insertStickyNote = async (req, res) => {
-//   const userId = req.user.id;
-//   // const receiveData = req.body;
-//   console.log(data);
-//   const data = { id: msg.id, user_id: user, folder_id: 0, timestamp: timestamp, remove: 0 };
-//   await folder.insertStickyNote(data);
-// };
-
-module.exports = { getNestData, getAllFolders, insertDivTable, getDivData, changeFolderName, updateBlockSize, dropSidebarFolder };
+module.exports = { getNestData, getDivData, changeFolderName, updateBlockSize, dropSidebarFolder };

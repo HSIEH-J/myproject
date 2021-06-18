@@ -41,24 +41,48 @@ const checkUrl = async function (url) {
   }
 };
 
+const getFolder = async (insert, requirement = {}) => {
+  const condition = { sql: "" };
+  if (requirement.type === "getMainData") {
+    condition.sql = "WHERE folder_id = '0' && user_id=? && remove = 0 ORDER BY timestamp";
+  } else {
+    condition.sql = "WHERE folder_id = ? && user_id = ? && div_id IS NULL && remove = 0";
+  }
+  const folderQuery = "SELECT id, folder_name, sequence, timestamp FROM folder " + condition.sql;
+  const folder = await pool.query(folderQuery, insert);
+  return folder[0];
+};
+
+const getBookmark = async (insert, requirement = {}) => {
+  const condition = { sql: "" };
+  if (requirement.type === "getMainData") {
+    condition.sql = "WHERE folder_id IS NULL && user_id =? && remove = 0";
+  } else {
+    condition.sql = "WHERE folder_id = ? && user_id = ? && div_id IS NULL && remove = 0";
+  }
+  const bookmarkQuery = "SELECT id, url, title, thumbnail, sequence, timestamp FROM bookmark " + condition.sql;
+  const bookmark = await pool.query(bookmarkQuery, insert);
+  return bookmark[0];
+};
+
 // get first level bookmarks
 const getMainData = async (userId) => {
-  const bookmark = await pool.query("SELECT id, url, title, thumbnail, sequence, timestamp FROM bookmark WHERE folder_id IS NULL && user_id =? && remove = 0", userId);
-  const folder = await pool.query("SELECT id, folder_name, sequence, timestamp FROM folder WHERE folder_id = '0' && user_id=? && remove = 0", userId);
-  const data = [...bookmark[0], ...folder[0]];
+  const bookmark = await getBookmark([userId], { type: "getMainData" });
+  const folder = await getFolder([userId], { type: "getMainData" });
+  const data = [...bookmark, ...folder];
   return data;
 };
 
 // get subfolder data
 const getSubfolderData = async (id, userId) => {
-  const bookmarkData = await pool.query("SELECT * FROM bookmark WHERE folder_id = ? && user_id = ? && div_id IS NULL && remove = 0", [id, userId]);
-  const folderData = await pool.query("SELECT * FROM folder WHERE folder_id = ? && user_id = ? && div_id IS NULL && remove = 0", [id, userId]);
-  const data = [...bookmarkData[0], ...folderData[0]];
+  const bookmarkData = await getBookmark([id, userId], { type: "getSubfolderData" });
+  const folderData = await getFolder([id, userId], { type: "getSubfolderData" });
+  const data = [...bookmarkData, ...folderData];
   return data;
 };
 
 const getStickyNote = async (id, userId) => {
-  const data = await pool.query("SELECT * FROM stickyNote WHERE folder_id = ? && user_id = ? && div_id IS NULL && remove = 0", [id, userId]);
+  const data = await pool.query("SELECT id, text FROM stickyNote WHERE folder_id = ? && user_id = ? && div_id IS NULL && remove = 0", [id, userId]);
   return data[0];
 };
 
@@ -97,10 +121,24 @@ const uploadS3 = async function (url, time) {
 };
 
 const createItem = async (type, insert) => {
-  if (type === "folder") {
-    await pool.query("INSERT INTO folder set ?", insert);
-  } else if (type === "stickyNote") {
-    await pool.query("INSERT INTO stickyNote set ?", insert);
+  const conn = await pool.getConnection();
+  try {
+    await conn.query("START TRANSACTION");
+    if (type === "folder") {
+      await pool.query("INSERT INTO folder set ?", insert);
+    } else if (type === "stickyNote") {
+      await pool.query("INSERT INTO stickyNote set ?", insert);
+    } else {
+      await pool.query("INSERT INTO block set ?", insert);
+    }
+    await conn.query("COMMIT");
+    return true;
+  } catch (error) {
+    console.log(error);
+    await conn.query("ROLLBACK");
+    return { error: error };
+  } finally {
+    await conn.release();
   }
 };
 
@@ -119,94 +157,126 @@ const sequenceChange = async (data, userId) => {
       }
     }
     await conn.query("COMMIT");
-    console.log("transaction start");
+    return true;
   } catch (error) {
     console.log(error);
     await conn.query("ROLLBACK");
+    return { error: error };
   } finally {
     await conn.release();
-    console.log("transaction end");
   }
 };
 
 // drag and drop
-const insertIntoSubfolder = async (data, userId) => {
-  if (data.type === "bookmark") {
-    console.log("===bookmark===");
-    if (!data.div_id) {
-      await pool.query("UPDATE bookmark SET div_id = NULL, folder_id=?, timestamp=? WHERE id=? && user_id = ?", [data.folder_id, data.time, data.update_id, userId]);
+// race condition
+const insertIntoAnotherItem = async (data, userId) => {
+  const conn = await pool.getConnection();
+  try {
+    await conn.query("START TRANSACTION");
+    if (data.type === "bookmark") {
+      if (!data.div_id) {
+        await pool.query("UPDATE bookmark SET div_id = NULL, folder_id=?, timestamp=? WHERE id=? && user_id = ?", [data.folder_id, data.time, data.update_id, userId]);
+      } else {
+        await pool.query("UPDATE bookmark SET div_id=?, timestamp=? WHERE id=? && user_id = ?", [data.div_id, data.time, data.update_id, userId]);
+      }
+    } else if (data.type === "folder") {
+      if (!data.div_id) {
+        await pool.query("UPDATE folder SET div_id = NULL,folder_id=?, timestamp=? WHERE id=?  && user_id = ?", [data.folder_id, data.time, data.update_id, userId]);
+      } else {
+        await pool.query("UPDATE folder SET div_id=?, timestamp=? WHERE id=?  && user_id = ?", [data.div_id, data.time, data.update_id, userId]);
+      }
     } else {
-      await pool.query("UPDATE bookmark SET div_id=?, timestamp=? WHERE id=? && user_id = ?", [data.div_id, data.time, data.update_id, userId]);
+      if (!data.div_id) {
+        await pool.query("UPDATE stickyNote SET div_id = NULL,folder_id=?, timestamp=? WHERE id=?  && user_id = ?", [data.folder_id, data.time, data.update_id, userId]);
+      } else {
+        await pool.query("UPDATE stickyNote SET div_id=?, timestamp=? WHERE id=?  && user_id = ?", [data.div_id, data.time, data.update_id, userId]);
+      }
     }
-  } else if (data.type === "folder") {
-    if (!data.div_id) {
-      await pool.query("UPDATE folder SET div_id = NULL,folder_id=?, timestamp=? WHERE id=?  && user_id = ?", [data.folder_id, data.time, data.update_id, userId]);
-    } else {
-      await pool.query("UPDATE folder SET div_id=?, timestamp=? WHERE id=?  && user_id = ?", [data.div_id, data.time, data.update_id, userId]);
-    }
-  } else {
-    if (!data.div_id) {
-      await pool.query("UPDATE stickyNote SET div_id = NULL,folder_id=?, timestamp=? WHERE id=?  && user_id = ?", [data.folder_id, data.time, data.update_id, userId]);
-    } else {
-      await pool.query("UPDATE stickyNote SET div_id=?, timestamp=? WHERE id=?  && user_id = ?", [data.div_id, data.time, data.update_id, userId]);
-    }
+    await conn.query("COMMIT");
+    return true;
+  } catch (error) {
+    console.log(error);
+    await conn.query("ROLLBACK");
+    return { error: error };
+  } finally {
+    await conn.release();
   }
 };
 
-const updateBlock = async (data, id) => {
-  if (data.type === "bookmark") {
-    console.log("===bookmark===");
-    await pool.query("UPDATE bookmark SET div_id = NULL, timestamp=? WHERE id=? && user_id = ?", [data.time, data.update_id, id]);
-  } else if (data.type === "folder") {
-    await pool.query("UPDATE folder SET div_id = NULL, timestamp=? WHERE id=? && user_id = ?", [data.time, data.update_id, id]);
-  } else {
-    await pool.query("UPDATE stickyNote SET div_id = NULL, timestamp=? WHERE id=? && user_id = ?", [data.time, data.update_id, id]);
+const removeFromBlock = async (data, id) => {
+  const conn = await pool.getConnection();
+  try {
+    await conn.query("START TRANSACTION");
+    if (data.type === "bookmark") {
+      await pool.query("UPDATE bookmark SET div_id = NULL, timestamp=? WHERE id=? && user_id = ?", [data.time, data.update_id, id]);
+    } else if (data.type === "folder") {
+      await pool.query("UPDATE folder SET div_id = NULL, timestamp=? WHERE id=? && user_id = ?", [data.time, data.update_id, id]);
+    } else {
+      await pool.query("UPDATE stickyNote SET div_id = NULL, timestamp=? WHERE id=? && user_id = ?", [data.time, data.update_id, id]);
+    }
+    await conn.query("COMMIT");
+    return true;
+  } catch (error) {
+    console.log(error);
+    await conn.query("ROLLBACK");
+    return { error: error };
+  } finally {
+    await conn.release();
   }
 };
 
-const removeAllItem = async (type, id, userId) => {
-  console.log(type);
-  if (type === "bookmark") {
-    await pool.query("UPDATE bookmark SET remove = 1  WHERE id=? && user_id = ?", [id, userId]);
-  } else if (type === "folder") {
-    await pool.query("UPDATE folder SET remove = 1 WHERE id=? && user_id = ?", [id, userId]);
-    await pool.query("UPDATE bookmark SET remove = 1  WHERE folder_id= ? && user_id = ?", [id, userId]);
-    await pool.query("UPDATE block SET remove = 1  WHERE folder_id = ? && user_id = ?", [id, userId]);
-    await pool.query("UPDATE stickyNote SET remove = 1  WHERE folder_id = ? && user_id = ?", [id, userId]);
-    const folder = await pool.query("WITH RECURSIVE cte (id, folder_name, folder_id) AS (select id, folder_name, folder_id from folder WHERE folder_id = ? UNION ALL SELECT t1.id, t1.folder_name, t1.folder_id FROM folder t1 INNER JOIN cte ON t1.folder_id = cte.id) SELECT id, folder_id FROM cte", [id]);
-    if (folder[0].length !== 0) {
-      for (const n of folder[0]) {
-        await pool.query("UPDATE folder SET remove = 1 WHERE id=?", [n.id]);
-        await pool.query("UPDATE bookmark SET remove = 1 WHERE folder_id = ?", [n.id]);
-        await pool.query("UPDATE block SET remove = 1 WHERE folder_id = ?", [n.id]);
-        await pool.query("UPDATE stickyNote SET remove = 1 WHERE folder_id = ?", [n.id]);
+const findAllParentFolder = async (id) => {
+  const data = await pool.query("WITH RECURSIVE cte (id, folder_name, folder_id) AS (select id, folder_name, folder_id from folder WHERE folder_id = ? UNION ALL SELECT t1.id, t1.folder_name, t1.folder_id FROM folder t1 INNER JOIN cte ON t1.folder_id = cte.id) SELECT id, folder_id FROM cte", [id]);
+  return data[0];
+};
+
+const removeAllFolder = async (id) => {
+  await pool.query("UPDATE folder SET remove = 1 WHERE id=?", [id]);
+  await pool.query("UPDATE bookmark SET remove = 1 WHERE folder_id = ?", [id]);
+  await pool.query("UPDATE block SET remove = 1 WHERE folder_id = ?", [id]);
+  await pool.query("UPDATE stickyNote SET remove = 1 WHERE folder_id = ?", [id]);
+};
+
+const removeItem = async (type, id) => {
+  const conn = await pool.getConnection();
+  try {
+    await conn.query("START TRANSACTION");
+    if (type === "bookmark") {
+      await pool.query("UPDATE bookmark SET remove = 1  WHERE id=?", [id]);
+    } else if (type === "folder") {
+      await removeAllFolder(id);
+      const folder = await findAllParentFolder(id);
+      if (folder.length !== 0) {
+        for (const item of folder) {
+          await removeAllFolder(item.id);
+        }
       }
+    } else if (type === "block") {
+      await pool.query("UPDATE block SET remove = 1  WHERE id = ?", [id]);
+      await pool.query("UPDATE bookmark SET remove = 1  WHERE div_id = ?", [id]);
+      await pool.query("UPDATE folder SET remove = 1  WHERE div_id = ?", [id]);
+      await pool.query("UPDATE stickyNote SET remove = 1  WHERE div_id = ?", [id]);
+      const allParentFolder = await pool.query("SELECT id FROM folder WHERE div_id = ?", [id]);
+      if (allParentFolder[0].length !== 0) {
+        const data = [];
+        for (const item of allParentFolder[0]) {
+          const folder = await findAllParentFolder(item.id);
+          data.push({ id: folder[0].id });
+        }
+        for (const item of data) {
+          await removeAllFolder(item.id);
+        }
+      }
+    } else {
+      await pool.query("UPDATE stickyNote SET remove = 1  WHERE id=?", [id]);
     }
-  } else if (type === "block") {
-    await pool.query("UPDATE block SET remove = 1  WHERE id = ? && user_id = ?", [id, userId]);
-    await pool.query("UPDATE bookmark SET remove = 1  WHERE div_id = ? && user_id = ?", [id, userId]);
-    await pool.query("UPDATE folder SET remove = 1  WHERE div_id = ? && user_id = ?", [id, userId]);
-    await pool.query("UPDATE stickyNote SET remove = 1  WHERE div_id = ? && user_id = ?", [id, userId]);
-    console.log(id);
-    const all = await pool.query("SELECT id FROM folder WHERE div_id = ?", [id]);
-    console.log("all");
-    console.log(all[0]);
-    const data = [];
-    if (all[0].length !== 0) {
-      for (const n of all[0]) {
-        const folder = await pool.query("WITH RECURSIVE cte (id, folder_name, folder_id) AS (select id, folder_name, folder_id from folder WHERE folder_id = ? UNION ALL SELECT t1.id, t1.folder_name, t1.folder_id FROM folder t1 INNER JOIN cte ON t1.folder_id = cte.id) SELECT id, folder_id FROM cte", [n.id]);
-        data.push(folder);
-      }
-      console.log(data);
-      for (const n of data) {
-        await pool.query("UPDATE folder SET remove = 1 WHERE id=?", [n.id]);
-        await pool.query("UPDATE bookmark SET remove = 1 WHERE folder_id = ?", [n.id]);
-        await pool.query("UPDATE block SET remove = 1 WHERE folder_id = ?", [n.id]);
-        await pool.query("UPDATE stickyNote SET remove = 1 WHERE folder_id = ?", [n.id]);
-      }
-    }
-  } else {
-    await pool.query("UPDATE stickyNote SET remove = 1  WHERE id=? && user_id = ?", [id, userId]);
+    await conn.query("COMMIT");
+    return true;
+  } catch (error) {
+    await conn.query("ROLLBACK");
+    return { error: error };
+  } finally {
+    await conn.release();
   }
 };
 
@@ -221,8 +291,10 @@ module.exports = {
   getStickyNote,
   createItem,
   sequenceChange,
-  insertIntoSubfolder,
-  updateBlock,
-  removeAllItem,
-  checkUrl
+  insertIntoAnotherItem,
+  removeFromBlock,
+  removeItem,
+  checkUrl,
+  findAllParentFolder,
+  getFolder
 };

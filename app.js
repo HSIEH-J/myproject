@@ -105,6 +105,7 @@ io.on("connection", async (socket) => {
 
 // eslint-disable-next-line node/handle-callback-err
 app.use((err, req, res, next) => {
+  console.log("app err");
   res.status(500).send({ error: "server error" });
 });
 

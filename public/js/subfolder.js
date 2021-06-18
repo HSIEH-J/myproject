@@ -49,21 +49,18 @@ const updateBlockSize = async (data) => {
   return json;
 };
 
-const createBlock = async (data) => {
-  const response = await fetch("/api/1.0/block", {
-    body: JSON.stringify(data),
-    headers: new Headers({
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`
-    }),
-    method: "POST"
-  });
-  const json = await response.json();
-  return json;
-};
-// document.addEventListener("click", (e) => {
-//   console.log(e.target);
-// });
+// const createBlock = async (data) => {
+//   const response = await fetch("/api/1.0/block", {
+//     body: JSON.stringify(data),
+//     headers: new Headers({
+//       "Content-Type": "application/json",
+//       Authorization: `Bearer ${token}`
+//     }),
+//     method: "POST"
+//   });
+//   const json = await response.json();
+//   return json;
+// };
 
 // // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-unused-vars
@@ -154,7 +151,7 @@ document.addEventListener("click", (e) => {
       console.log(data);
       const get = data.data;
       for (const n in get) {
-        if (get[n].url) {
+        if (get[n].type === "bookmark") {
           console.log("===undefined===");
           const overTitle = overString(get[n].title);
           const newTitle = overTitle.join("");
@@ -178,7 +175,7 @@ document.addEventListener("click", (e) => {
           frame.title = get[n].title;
           // eslint-disable-next-line no-undef
           page.appendChild(frame);
-        } else if (get[n].folder_name) {
+        } else if (get[n].type === "folder") {
           const addCarton = document.createElement("div");
           addCarton.setAttribute("class", "frame folderItem");
           // addCarton.setAttribute("id", "d71d8a71-7ea5-421e-88ec-ff19eb982e2b");
@@ -418,19 +415,16 @@ document.addEventListener("click", (e) => {
     }
     console.log(num);
     highlight.style.display = "none";
-    const BlockDiv = document.createElement("div");
-    const time = getTimeStamp();
-    const divId = getRandomNumber();
-    BlockDiv.setAttribute("class", "block");
-    BlockDiv.setAttribute("draggable", "true");
-    BlockDiv.innerHTML = `<div class="trashCan blockTrash">
+    const data = { type: "block", folder_id: num };
+    createItem(data).then(data => {
+      const BlockDiv = document.createElement("div");
+      BlockDiv.setAttribute("class", "block");
+      BlockDiv.setAttribute("draggable", "true");
+      BlockDiv.innerHTML = `<div class="trashCan blockTrash">
                             <img src="images/trash.svg" width="35px" height="35px">
                           </div>`;
-    BlockDiv.id = divId;
-    dataArea.appendChild(BlockDiv);
-    const data = { div_id: divId, folder_id: num, time: time };
-    createBlock(data).then(data => {
-      console.log(data);
+      BlockDiv.id = data.id;
+      dataArea.appendChild(BlockDiv);
     });
   }
   if (e.target.className === "stickyNote") {
@@ -460,8 +454,3 @@ note.addEventListener("click", (e) => {
     page.appendChild(noteDiv);
   });
 });
-
-// const sticky = document.querySelector("stickyNote");
-// sticky.addEventListener("input", (e) => {
-//   console.log(e.target);
-// });

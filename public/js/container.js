@@ -40,7 +40,7 @@ getBookmarkData().then(data => {
   const get = data.data;
   console.log(get);
   for (const n in get) {
-    if (get[n].folder_name === undefined) {
+    if (get[n].type === "bookmark") {
       console.log("===undefined===");
       console.log(get[n].title.length);
       const overTitle = overString(get[n].title);

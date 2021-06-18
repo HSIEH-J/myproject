@@ -1,31 +1,17 @@
 const { pool } = require("./mysql");
+const { getFolder, findAllParentFolder } = require("./bookmark_model");
 
-const sidebarData = async (id) => {
-  const parent = await pool.query("SELECT id, folder_name, folder_id, timestamp FROM folder WHERE folder_id = '0' && user_id = ? && remove = 0 ORDER BY timestamp", id);
-  // console.log(parent[0]);
+const sidebarData = async (userId) => {
+  const parent = await getFolder([userId], { type: "getMainData" });
   const data = [];
-  for (const n of parent[0]) {
+  console.log(parent);
+  for (const n of parent) {
     data.push({ id: n.id, name: n.folder_name, folder_id: n.folder_id, time: n.timestamp });
-    const folderData = await pool.query("WITH RECURSIVE cte (id, folder_name, folder_id, timestamp, remove) AS (select id, folder_name, folder_id, timestamp, remove from folder WHERE folder_id = ?  UNION ALL SELECT t1.id, t1.folder_name, t1.folder_id , t1.timestamp, t1.remove FROM folder t1 INNER JOIN cte ON t1.folder_id = cte.id) SELECT * FROM cte WHERE remove = 0 ORDER BY timestamp", n.id);
-    const arr = folderData[0];
-    arr.forEach(e => data.push({ id: e.id, name: e.folder_name, folder_id: e.folder_id, time: e.timestamp }));
+    const folders = await findAllParentFolder(n.id);
+    folders.forEach(e => data.push({ id: e.id, name: e.folder_name, folder_id: e.folder_id, time: e.timestamp }));
   }
-  // console.log(data);
   return data;
 };
-
-const getAllFolders = async (id) => {
-  const folders = await pool.query("SELECT id, folder_name FROM folder WHERE user_id = ?", id);
-  return folders[0];
-};
-
-const insertDivTable = async (data) => {
-  await pool.query("INSERT INTO block SET ?", data);
-};
-
-// const insertStickyNote = async (data) => {
-//   await pool.query("INSERT INTO stickyNote SET ?", data);
-// };
 
 const getBlockData = async (user, folder) => {
   const data = await pool.query("SELECT bookmark.div_id, bookmark.id AS bookmark_id, bookmark.url, bookmark.title, bookmark.thumbnail, bookmark.timestamp, block.timestamp AS divTime, block.width, block.height FROM bookmark INNER JOIN block ON bookmark.div_id = block.id WHERE bookmark.user_id = ? && bookmark.folder_id = ? && bookmark.remove = 0 ORDER BY bookmark.timestamp;", [user, folder]);
@@ -96,4 +82,4 @@ const insertSidebarFolder = async (data, user) => {
 //   return concatData;
 // };
 
-module.exports = { sidebarData, getAllFolders, insertDivTable, getBlockData, changeFolderName, updateBlockSize, updateStickyNote, insertSidebarFolder };
+module.exports = { sidebarData, getBlockData, changeFolderName, updateBlockSize, updateStickyNote, insertSidebarFolder };
