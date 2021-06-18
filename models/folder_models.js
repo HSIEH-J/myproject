@@ -1,37 +1,74 @@
 const { pool } = require("./mysql");
-const { getFolder, findAllParentFolder } = require("./bookmark_model");
+const { getFolder, findAllParentFolder, getBookmark, getStickyNote } = require("./bookmark_model");
+const { sortData } = require("../util/util");
+const cache = require("../util/cache");
 
 const sidebarData = async (userId) => {
-  const parent = await getFolder([userId], { type: "getMainData" });
-  const data = [];
-  console.log(parent);
-  for (const n of parent) {
-    data.push({ id: n.id, name: n.folder_name, folder_id: n.folder_id, time: n.timestamp });
-    const folders = await findAllParentFolder(n.id);
-    folders.forEach(e => data.push({ id: e.id, name: e.folder_name, folder_id: e.folder_id, time: e.timestamp }));
+  const conn = await pool.getConnection();
+  try {
+    await conn.query("START TRANSACTION");
+    const parent = await getFolder([userId], { type: "getMainData" });
+    const data = [];
+    console.log(parent);
+    for (const n of parent) {
+      data.push({ id: n.id, name: n.folder_name, folder_id: n.folder_id, time: n.timestamp });
+      const folders = await findAllParentFolder(n.id);
+      folders.forEach(e => data.push({ id: e.id, name: e.folder_name, folder_id: e.folder_id, time: e.timestamp }));
+    }
+    await conn.query("COMMIT");
+    return data;
+  } catch (error) {
+    console.log(error);
+    await conn.query("ROLLBACK");
+    return { error: error };
+  } finally {
+    await conn.release();
   }
-  return data;
 };
 
-const getBlockData = async (user, folder) => {
-  const data = await pool.query("SELECT bookmark.div_id, bookmark.id AS bookmark_id, bookmark.url, bookmark.title, bookmark.thumbnail, bookmark.timestamp, block.timestamp AS divTime, block.width, block.height FROM bookmark INNER JOIN block ON bookmark.div_id = block.id WHERE bookmark.user_id = ? && bookmark.folder_id = ? && bookmark.remove = 0 ORDER BY bookmark.timestamp;", [user, folder]);
-  const folderData = await pool.query("SELECT folder.folder_name, folder.id AS subfolder_id, folder.sequence, folder.timestamp, block.id AS div_id, block.timestamp AS divTime, block.width, block.height FROM folder INNER JOIN block ON folder.div_id = block.id WHERE folder.user_id = ? && folder.folder_id = ?  && folder.remove = 0 ORDER BY folder.timestamp", [user, folder]);
-  const noteData = await pool.query("SELECT stickyNote.text, stickyNote.id AS note_id, stickyNote.sequence, stickyNote.timestamp, block.id AS div_id, block.timestamp AS divTime, block.width, block.height FROM stickyNote INNER JOIN block ON stickyNote.div_id = block.id WHERE stickyNote.user_id = ? && stickyNote.folder_id = ?  && stickyNote.remove = 0 ORDER BY stickyNote.timestamp", [user, folder]);
-  const concatData = data[0].concat(folderData[0], noteData[0]);
-  concatData.sort((a, b) => {
-    if (a.timestamp > b.timestamp) {
-      return 1;
+const organizeData = async (arr, userId) => {
+  const results = await Promise.all(arr.map(async (el) => {
+    if (el.url) {
+      return { type: "bookmark", id: el.id, url: el.url, title: el.title, thumbnail: el.thumbnail };
+    } else if (el.folder_name) {
+      return { type: "folder", id: el.id, folder_name: el.folder_name };
+    } else {
+      const cacheData = await cache.get(userId);
+      const dataTrans = JSON.parse(cacheData);
+      if (dataTrans) {
+        const folderData = dataTrans.filter(item => item[0] === el.id);
+        if (folderData.length !== 0) {
+          console.log(folderData);
+          el.text = folderData[0][1].text;
+        }
+      }
+      return { type: "stickyNote", id: el.id, text: el.text };
     }
-    if (a.timestamp < b.timestamp) {
-      return -1;
-    }
-    return 0;
-  });
-  return concatData;
+  }));
+  return results;
 };
 
-const changeFolderName = async (name, id, userId) => {
-  await pool.query("UPDATE folder SET folder_name = ? WHERE id=? && user_id = ?", [name, id, userId]);
+const getBlockData = async (folderId, userId) => {
+  try {
+    const blockIds = await pool.query("SELECT id, timestamp, width, height FROM block WHERE folder_id = ? ORDER BY timestamp", [folderId]);
+    const blocks = {};
+    for (const item of blockIds[0]) {
+      const bookmarkData = await getBookmark([item.id], { type: "getBlockData" });
+      const folderData = await getFolder([item.id], { type: "getBlockData" });
+      const noteData = await getStickyNote([item.id], { type: "getBlockData" });
+      const concatData = [...bookmarkData, ...folderData, ...noteData];
+      sortData(concatData);
+      const receiveOrganizeData = await organizeData(concatData, userId);
+      blocks[item.id] = { id: item.id, timestamp: item.timestamp, width: item.width, height: item.height, children: receiveOrganizeData };
+    }
+    return blocks;
+  } catch (error) {
+    return { error: error };
+  }
+};
+
+const changeFolderName = async (name, id) => {
+  await pool.query("UPDATE folder SET folder_name = ? WHERE id = ?", [name, id]);
 };
 
 const updateBlockSize = async (data, user) => {
@@ -73,13 +110,4 @@ const insertSidebarFolder = async (data, user) => {
     await conn.release();
   }
 };
-// const getBlockData = async (folder, user) => {
-//   const bookmarkData = await pool.query("WITH div_data AS (SELECT * FROM bookmark WHERE folder_id = ? && user_id = ? && div_id IS NOT NULL) SELECT * FROM div_data INNER JOIN block ON block.id = div_data.div_id ORDER BY div_data.timestamp;", [folder, user]);
-//   const folderData = await pool.query("WITH div_data AS (SELECT * FROM folder WHERE folder_id = ? && user_id = ? && div_id IS NOT NULL) SELECT * FROM div_data INNER JOIN block ON block.id = div_data.div_id ORDER BY div_data.timestamp;", [folder, user]);
-//   console.log(bookmarkData[0]);
-//   console.log(folderData[0]);
-//   const concatData = bookmarkData[0].concat(folderData[0]);
-//   return concatData;
-// };
-
 module.exports = { sidebarData, getBlockData, changeFolderName, updateBlockSize, updateStickyNote, insertSidebarFolder };

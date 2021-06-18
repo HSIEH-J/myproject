@@ -1,5 +1,4 @@
 const folder = require("../models/folder_models");
-const cache = require("../util/cache");
 
 function buildTree (list) {
   const temp = {};
@@ -28,84 +27,33 @@ function buildTree (list) {
 }
 
 const getNestData = async (req, res, next) => {
-  const user = req.user.id;
-  const data = await folder.sidebarData(user);
-  const temp = buildTree(data);
-  res.send(temp);
+  try {
+    const user = req.user.id;
+    const data = await folder.sidebarData(user);
+    if (data.error) {
+      throw new Error(data.error);
+    }
+    const temp = buildTree(data);
+    res.status(200).json(temp);
+  } catch (err) {
+    console.log(err);
+    next(err);
+  }
 };
 
-const getDivData = async (req, res) => {
-  const { id } = req.query;
-  const user = req.user.id;
-  const data = await folder.getBlockData(user, id);
-  const cacheData = await cache.get(user);
-  const dataTrans = JSON.parse(cacheData);
-  // console.log(data);
-  const dataObj = { data: [] };
-  for (const n of data) {
-    const y = n.div_id;
-    const x = dataObj.data.map((item) => {
-      return item.div_id;
-    }).indexOf(y);
-    if (x === -1) {
-      if (n.url) {
-        dataObj.data.push({
-          div_id: n.div_id,
-          time: n.divTime,
-          width: n.width,
-          height: n.height,
-          details: [{ id: n.bookmark_id, url: n.url, title: n.title, thumbnail: n.thumbnail, time: n.bookmarkTime }]
-        });
-      } else if (n.folder_name) {
-        dataObj.data.push({
-          div_id: n.div_id,
-          time: n.divTime,
-          width: n.width,
-          height: n.height,
-          details: [{ id: n.subfolder_id, folder_name: n.folder_name }]
-        });
-      } else {
-        dataObj.data.push({
-          div_id: n.div_id,
-          time: n.divTime,
-          width: n.width,
-          height: n.height,
-          details: [{ id: n.note_id, text: n.text }]
-        });
-      }
-    } else {
-      if (n.url) {
-        dataObj.data[x].details.push({ id: n.bookmark_id, url: n.url, title: n.title, thumbnail: n.thumbnail, time: n.bookmarkTime });
-      } else if (n.folder_name) {
-        dataObj.data[x].details.push({ id: n.subfolder_id, folder_name: n.folder_name });
-      } else {
-        console.log(n.note_id);
-        dataObj.data[x].details.push({ id: n.note_id, text: n.text });
-      }
+const getDivData = async (req, res, next) => {
+  try {
+    const { id } = req.query;
+    const user = req.user.id;
+    const data = await folder.getBlockData(id, user);
+    if (data.error) {
+      throw new Error(data.error);
     }
+    res.status(200).send(data);
+  } catch (err) {
+    console.log(err);
+    next(err);
   }
-  dataObj.data.sort((a, b) => {
-    if (a.time > b.time) {
-      return 1;
-    }
-    if (a.time < b.time) {
-      return -1;
-    }
-    return 0;
-  });
-  if (dataTrans) {
-    const a = dataTrans.filter(el => el[1].folder_id === id);
-    for (const n of dataObj.data.details) {
-      for (const x of a) {
-        if (x[0] === n.id) {
-          n.text = x[1].text;
-        }
-      }
-    }
-  }
-  console.log("checkout dataObj");
-  // console.log(dataObj);
-  res.status(200).send(dataObj);
 };
 
 const changeFolderName = async (req, res) => {

@@ -75,4 +75,26 @@ const getTimeStamp = () => {
   return timestamp;
 };
 
-module.exports = { uploadS3, s3, authentication, getRandomNumber, getTimeStamp };
+const sortData = (data) => {
+  data.sort((a, b) => {
+    if (a.timestamp > b.timestamp) {
+      return 1;
+    }
+    if (a.timestamp < b.timestamp) {
+      return -1;
+    }
+    return 0;
+  });
+};
+
+const getCacheStickyNoteData = (noteData, folderData) => {
+  for (const child of noteData) {
+    for (const content of folderData) {
+      if (content[0] === child.id) {
+        child.text = content[1].text;
+      }
+    }
+  }
+};
+
+module.exports = { uploadS3, s3, authentication, getRandomNumber, getTimeStamp, sortData, getCacheStickyNoteData };

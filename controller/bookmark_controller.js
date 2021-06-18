@@ -2,26 +2,6 @@ const bookmark = require("../models/bookmark_model");
 const cache = require("../util/cache");
 const util = require("../util/util");
 
-const getCacheStickyNoteData = (noteData, folderData) => {
-  for (const child of noteData) {
-    for (const content of folderData) {
-      if (content[0] === child.id) {
-        child.text = content[1].text;
-      }
-    }
-  }
-};
-
-// const sortData = (a, b) => {
-//   if (a.timestamp > b.timestamp) {
-//     return 1;
-//   }
-//   if (a.timestamp < b.timestamp) {
-//     return -1;
-//   }
-//   return 0;
-// };
-
 const getThumbnail = async (req, res, next) => {
   try {
     const io = req.app.get("io");
@@ -109,36 +89,27 @@ const getContentData = async (req, res, next) => {
     if (!id) {
       data = await bookmark.getMainData(user);
     } else {
-      const receiveData = await bookmark.getSubfolderData(id, user);
-      const noteData = await bookmark.getStickyNote(id, user);
+      const receiveData = await bookmark.getSubfolderData(id);
+      const noteData = await bookmark.getStickyNote([id], { type: "getSubfolderData" });
       const cacheData = await cache.get(user);
       const dataTrans = JSON.parse(cacheData);
       if (dataTrans) {
         const folderData = dataTrans.filter(el => el[1].folder_id === id);
-        getCacheStickyNoteData(noteData, folderData);
+        util.getCacheStickyNoteData(noteData, folderData);
       }
       data = [...receiveData, ...noteData];
     }
-    data.sort((a, b) => {
-      if (a.timestamp > b.timestamp) {
-        return 1;
-      }
-      if (a.timestamp < b.timestamp) {
-        return -1;
-      }
-      return 0;
-    });
-    for (const n of data) {
-      // console.log(n.folder_name);
-      if (n.url) {
-        response.data.push({ type: "bookmark", id: n.id, url: n.url, title: n.title, thumbnail: n.thumbnail });
-      } else if (n.folder_name) {
-        response.data.push({ type: "folder", id: n.id, folder_name: n.folder_name });
+    util.sortData(data);
+    data.forEach(item => {
+      if (item.url) {
+        response.data.push({ type: "bookmark", id: item.id, url: item.url, title: item.title, thumbnail: item.thumbnail });
+      } else if (item.folder_name) {
+        response.data.push({ type: "folder", id: item.id, folder_name: item.folder_name });
       } else {
-        response.data.push({ type: "stickyNote", id: n.id, text: n.text });
+        response.data.push({ type: "stickyNote", id: item.id, text: item.text });
       }
-    }
-    res.send(response);
+    });
+    res.status(200).send(response);
   } catch (err) {
     console.log(err);
     next(err);

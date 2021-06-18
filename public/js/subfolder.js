@@ -222,23 +222,25 @@ document.addEventListener("click", (e) => {
     // render dataArea
     getBlockData(id).then(data => {
     // console.log(block.length);
-      console.log(data.data);
-      if (data.data.length === 0 && block.length === 0) {
+      console.log(data);
+      console.log(!data);
+      if (!data && block.length === 0) {
         console.log("highlight block");
         highlight.style.display = "block";
       } else {
-        for (const n of data.data) {
+        for (const n in data) {
+          console.log(data[n]);
           const div = document.createElement("div");
           div.setAttribute("class", "block");
-          div.setAttribute("id", n.div_id);
+          div.setAttribute("id", data[n].id);
           div.setAttribute("draggable", "true");
           div.innerHTML = `<div class="trashCan blockTrash">
                               <img src="images/trash.svg" width="35px" height="35px" class="trashCan blockTrash">
                            </div>`;
-          div.style.width = n.width + "px";
-          div.style.height = n.height + "px";
-          for (const x of n.details) {
-            if (x.url) {
+          div.style.width = data[n].width + "px";
+          div.style.height = data[n].height + "px";
+          for (const x of data[n].children) {
+            if (x.type === "bookmark") {
               const overTitle = overString(x.title);
               const newTitle = overTitle.join("");
               const frame = document.createElement("div");
@@ -260,7 +262,7 @@ document.addEventListener("click", (e) => {
                                </div>`;
               frame.title = x.title;
               div.appendChild(frame);
-            } else if (x.folder_name) {
+            } else if (x.type === "folder") {
               const addCarton = document.createElement("div");
               addCarton.setAttribute("class", "frame folderItem");
               // addCarton.setAttribute("id", "d71d8a71-7ea5-421e-88ec-ff19eb982e2b");
@@ -295,11 +297,6 @@ document.addEventListener("click", (e) => {
                                       <img src="images/trash.svg" width="35px" height="35px">
                                     </div>`;
               div.appendChild(noteDiv);
-              // if (x.width !== "null" && x.height !== "null") {
-              //   const noteSize = document.getElementById(textAreaId);
-              //   noteSize.style.width = x.width + "px";
-              //   noteSize.style.heigh = x.height + "px";
-              // }
             }
           }
           dataArea.appendChild(div);
