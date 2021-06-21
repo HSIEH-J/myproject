@@ -49,7 +49,7 @@ const getDivData = async (req, res, next) => {
     if (data.error) {
       throw new Error(data.error);
     }
-    res.status(200).send(data);
+    res.status(200).json(data);
   } catch (err) {
     console.log(err);
     next(err);
@@ -69,6 +69,7 @@ const updateBlockSize = async (req, res) => {
   const data = req.body;
   // console.log(data);
   await folder.updateBlockSize(data, userId);
+  res.status(200).json("updated");
 };
 
 const dropSidebarFolder = async (req, res) => {
@@ -81,7 +82,7 @@ const dropSidebarFolder = async (req, res) => {
     res.status(400).send({ error: "Request Error: can't insert to the same folder!" });
     return;
   }
-  const result = await folder.insertSidebarFolder(data, userId);
+  const result = await folder.insertIntoSidebarFolder(data, userId);
   if (result.error) {
     console.log("error");
     res.status(400).send({ error: result.error });

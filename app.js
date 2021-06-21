@@ -1,20 +1,21 @@
 const express = require("express");
+// env
+require("dotenv").config();
 const app = express();
 const cache = require("./util/cache");
 const cors = require("cors");
+const { PORT_TEST, PORT, NODE_ENV } = process.env;
+
+// set port
+const port = NODE_ENV === "test" ? PORT_TEST : PORT;
 
 app.use(cors());
-// env
-require("dotenv").config();
 
 // token authentication
 const { TOKEN_SECRET } = process.env;
 const jwt = require("jsonwebtoken");
 
 app.set("json spaces", 2);
-
-// set port
-const port = process.env.PORT;
 
 app.use(express.static("public"));
 app.use(express.json());
@@ -112,3 +113,5 @@ app.use((err, req, res, next) => {
 server.listen(port, () => {
   console.log(`bookmark app.js is listening on port ${port}...`);
 });
+
+module.exports = app;

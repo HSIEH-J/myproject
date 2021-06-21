@@ -42,3 +42,5 @@
         console.log(a)
     })
 </script>
+
+ //"test": "echo \"Error: no test specified\" && exit 1",

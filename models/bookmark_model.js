@@ -42,41 +42,41 @@ const checkUrl = async function (url) {
 };
 
 const getFolder = async (insert, requirement = {}) => {
-  const condition = { sql: "" };
+  const condition = { binding: "" };
   if (requirement.type === "getMainData") {
-    condition.sql = "WHERE folder_id = '0' && user_id=? && remove = 0 ORDER BY timestamp";
+    condition.binding = "WHERE folder_id = '0' && user_id=? && remove = 0 ORDER BY timestamp";
   } else if (requirement.type === "getSubfolderData") {
-    condition.sql = "WHERE folder_id = ? && div_id IS NULL && remove = 0 ORDER BY timestamp";
+    condition.binding = "WHERE folder_id = ? && div_id IS NULL && remove = 0 ORDER BY timestamp";
   } else {
-    condition.sql = "WHERE div_id = ? && remove = 0 ORDER BY timestamp";
+    condition.binding = "WHERE div_id = ? && remove = 0 ORDER BY timestamp";
   }
-  const folderQuery = "SELECT id, folder_name, sequence, timestamp FROM folder " + condition.sql;
+  const folderQuery = "SELECT id, folder_name, sequence, timestamp FROM folder " + condition.binding;
   const folder = await pool.query(folderQuery, insert);
   return folder[0];
 };
 
 const getBookmark = async (insert, requirement = {}) => {
-  const condition = { sql: "" };
+  const condition = { binding: "" };
   if (requirement.type === "getMainData") {
-    condition.sql = "WHERE folder_id IS NULL && user_id =? && remove = 0 ORDER BY timestamp";
+    condition.binding = "WHERE folder_id IS NULL && user_id =? && remove = 0 ORDER BY timestamp";
   } else if (requirement.type === "getSubfolderData") {
-    condition.sql = "WHERE folder_id = ? && div_id IS NULL && remove = 0 ORDER BY timestamp";
+    condition.binding = "WHERE folder_id = ? && div_id IS NULL && remove = 0 ORDER BY timestamp";
   } else {
-    condition.sql = "WHERE div_id = ? && remove = 0 ORDER BY timestamp";
+    condition.binding = "WHERE div_id = ? && remove = 0 ORDER BY timestamp";
   }
-  const bookmarkQuery = "SELECT id, url, title, thumbnail, sequence, timestamp FROM bookmark " + condition.sql;
+  const bookmarkQuery = "SELECT id, url, title, thumbnail, sequence, timestamp FROM bookmark " + condition.binding;
   const bookmark = await pool.query(bookmarkQuery, insert);
   return bookmark[0];
 };
 
 const getStickyNote = async (insert, requirement = {}) => {
-  const condition = { sql: "" };
+  const condition = { binding: "" };
   if (requirement.type === "getSubfolderData") {
-    condition.sql = "WHERE folder_id = ? && div_id IS NULL && remove = 0 ORDER BY timestamp";
+    condition.binding = "WHERE folder_id = ? && div_id IS NULL && remove = 0 ORDER BY timestamp";
   } else {
-    condition.sql = "WHERE div_id = ? && remove = 0 ORDER BY timestamp";
+    condition.binding = "WHERE div_id = ? && remove = 0 ORDER BY timestamp";
   }
-  const stickyNoteQuery = "SELECT id, text, sequence, timestamp FROM stickyNote " + condition.sql;
+  const stickyNoteQuery = "SELECT id, text, sequence, timestamp FROM stickyNote " + condition.binding;
   const stickyNote = await pool.query(stickyNoteQuery, insert);
   return stickyNote[0];
 };
@@ -178,7 +178,20 @@ const sequenceChange = async (data) => {
   }
 };
 
-// drag and drop
+const updateItemAfterChange = async (updateData, requirement = {}) => {
+  const condition = { binding: "" };
+  if (requirement.type === "insertIntoFolder") {
+    condition.binding = "div_id = NULL, folder_id = ?, timestamp = ?";
+  } else if (requirement.type === "insertIntoBlock") {
+    condition.binding = "div_id = ?, timestamp = ?";
+  } else {
+    condition.binding = "div_id = NULL, timestamp = ?";
+  }
+  const itemQuery = "UPDATE " + requirement.table + " SET " + condition.binding + "  WHERE id = ?";
+  await pool.query(itemQuery, updateData);
+};
+
+// insert into another folder or block
 // race condition
 const insertIntoAnotherItem = async (data) => {
   const conn = await pool.getConnection();
@@ -186,21 +199,21 @@ const insertIntoAnotherItem = async (data) => {
     await conn.query("START TRANSACTION");
     if (data.type === "bookmark") {
       if (!data.div_id) {
-        await pool.query("UPDATE bookmark SET div_id = NULL, folder_id = ?, timestamp = ? WHERE id = ?", [data.folder_id, data.time, data.update_id]);
+        await updateItemAfterChange([data.folder_id, data.time, data.update_id], { type: "insertIntoFolder", table: "bookmark" });
       } else {
-        await pool.query("UPDATE bookmark SET div_id = ?, timestamp = ? WHERE id = ?", [data.div_id, data.time, data.update_id]);
+        await updateItemAfterChange([data.div_id, data.time, data.update_id], { type: "insertIntoBlock", table: "bookmark" });
       }
     } else if (data.type === "folder") {
       if (!data.div_id) {
-        await pool.query("UPDATE folder SET div_id = NULL, folder_id = ?, timestamp = ? WHERE id = ?", [data.folder_id, data.time, data.update_id]);
+        await updateItemAfterChange([data.folder_id, data.time, data.update_id], { type: "insertIntoFolder", table: "folder" });
       } else {
-        await pool.query("UPDATE folder SET div_id = ?, timestamp = ? WHERE id = ?", [data.div_id, data.time, data.update_id]);
+        await updateItemAfterChange([data.div_id, data.time, data.update_id], { type: "insertIntoBlock", table: "folder" });
       }
     } else {
       if (!data.div_id) {
-        await pool.query("UPDATE stickyNote SET div_id = NULL, folder_id = ?, timestamp = ? WHERE id = ?", [data.folder_id, data.time, data.update_id]);
+        await updateItemAfterChange([data.folder_id, data.time, data.update_id], { type: "insertIntoFolder", table: "stickyNote" });
       } else {
-        await pool.query("UPDATE stickyNote SET div_id = ?, timestamp = ? WHERE id = ?", [data.div_id, data.time, data.update_id]);
+        await updateItemAfterChange([data.div_id, data.time, data.update_id], { type: "insertIntoBlock", table: "stickyNote" });
       }
     }
     await conn.query("COMMIT");
@@ -219,11 +232,11 @@ const removeFromBlock = async (data) => {
   try {
     await conn.query("START TRANSACTION");
     if (data.type === "bookmark") {
-      await pool.query("UPDATE bookmark SET div_id = NULL, timestamp = ? WHERE id = ?", [data.time, data.update_id]);
+      await updateItemAfterChange([data.time, data.update_id], { type: "removeFromBlock", table: "bookmark" });
     } else if (data.type === "folder") {
-      await pool.query("UPDATE folder SET div_id = NULL, timestamp = ? WHERE id = ?", [data.time, data.update_id]);
+      await updateItemAfterChange([data.time, data.update_id], { type: "removeFromBlock", table: "folder" });
     } else {
-      await pool.query("UPDATE stickyNote SET div_id = NULL, timestamp = ? WHERE id = ?", [data.time, data.update_id]);
+      await updateItemAfterChange([data.time, data.update_id], { type: "removeFromBlock", table: "stickyNote" });
     }
     await conn.query("COMMIT");
     return true;
@@ -308,5 +321,6 @@ module.exports = {
   checkUrl,
   findAllParentFolder,
   getFolder,
-  getBookmark
+  getBookmark,
+  updateItemAfterChange
 };

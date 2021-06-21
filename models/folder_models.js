@@ -1,5 +1,5 @@
 const { pool } = require("./mysql");
-const { getFolder, findAllParentFolder, getBookmark, getStickyNote } = require("./bookmark_model");
+const { getFolder, findAllParentFolder, getBookmark, getStickyNote, updateItemAfterChange } = require("./bookmark_model");
 const { sortData } = require("../util/util");
 const cache = require("../util/cache");
 
@@ -71,8 +71,8 @@ const changeFolderName = async (name, id) => {
   await pool.query("UPDATE folder SET folder_name = ? WHERE id = ?", [name, id]);
 };
 
-const updateBlockSize = async (data, user) => {
-  await pool.query("UPDATE block SET width = ?, height = ? WHERE id=? && user_id = ?", [data.width, data.height, data.id, user]);
+const updateBlockSize = async (data) => {
+  await pool.query("UPDATE block SET width = ?, height = ? WHERE id=?", [data.width, data.height, data.id]);
 };
 
 const updateStickyNote = async (data, user) => {
@@ -81,7 +81,7 @@ const updateStickyNote = async (data, user) => {
   }
 };
 
-const insertSidebarFolder = async (data, user) => {
+const insertIntoSidebarFolder = async (data) => {
   const conn = await pool.getConnection();
   try {
     await conn.query("START TRANSACTION");
@@ -94,9 +94,9 @@ const insertSidebarFolder = async (data, user) => {
       if (traceParent[0].length !== 0) {
         return { error: "The operation could not be completed" };
       }
-      await conn.query("UPDATE folder SET div_id = NULL , folder_id = ? WHERE id = ? && user_id = ?", [data.folder_id, data.update_id, user]);
+      await updateItemAfterChange([data.folder_id, data.time, data.update_id], { type: "insertIntoFolder", table: "folder" });
     } else {
-      await pool.query("UPDATE bookmark SET div_id = NULL, folder_id=?, timestamp=? WHERE id=? && user_id = ?", [data.folder_id, data.time, data.update_id, user]);
+      await updateItemAfterChange([data.folder_id, data.time, data.update_id], { type: "insertIntoFolder", table: "bookmark" });
     }
     console.log("no error model");
     await conn.query("COMMIT");
@@ -110,4 +110,4 @@ const insertSidebarFolder = async (data, user) => {
     await conn.release();
   }
 };
-module.exports = { sidebarData, getBlockData, changeFolderName, updateBlockSize, updateStickyNote, insertSidebarFolder };
+module.exports = { sidebarData, getBlockData, changeFolderName, updateBlockSize, updateStickyNote, insertIntoSidebarFolder };
