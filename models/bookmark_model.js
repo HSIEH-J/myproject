@@ -291,6 +291,22 @@ const removeItem = async (type, id) => {
   }
 };
 
+const verifyUserData = async (user, id, table) => {
+  const condition = { table: "" };
+  if (table === "bookmark") {
+    condition.table = "bookmark";
+  } else if (table === "folder") {
+    condition.table = "folder";
+  } else if (table === "stickyNote") {
+    condition.table = "stickyNote";
+  } else {
+    condition.table = "block";
+  }
+  const checkQuery = "SELECT * FROM " + condition.table + " WHERE user_id = ? && id = ?";
+  const result = await pool.query(checkQuery, [user, id]);
+  return result[0];
+};
+
 module.exports = {
   getThumbnail,
   insertBookmark,
@@ -308,5 +324,6 @@ module.exports = {
   checkUrl,
   findAllParentFolder,
   getFolder,
-  getBookmark
+  getBookmark,
+  verifyUserData
 };

@@ -38,7 +38,7 @@ const organizeData = async (arr, userId) => {
       if (dataTrans) {
         const folderData = dataTrans.filter(item => item[0] === el.id);
         if (folderData.length !== 0) {
-          console.log(folderData);
+          // console.log(folderData);
           el.text = folderData[0][1].text;
         }
       }
@@ -71,13 +71,25 @@ const changeFolderName = async (name, id) => {
   await pool.query("UPDATE folder SET folder_name = ? WHERE id = ?", [name, id]);
 };
 
-const updateBlockSize = async (data, user) => {
-  await pool.query("UPDATE block SET width = ?, height = ? WHERE id=? && user_id = ?", [data.width, data.height, data.id, user]);
+const updateBlockSize = async (data) => {
+  await pool.query("UPDATE block SET width = ?, height = ? WHERE id=?", [data.width, data.height, data.id]);
 };
 
-const updateStickyNote = async (data, user) => {
-  for (const n of data) {
-    await pool.query("UPDATE stickyNote SET text = ? WHERE id=? && user_id = ?", [n[1], n[0], user]);
+const updateStickyNote = async (data) => {
+  const conn = await pool.getConnection();
+  try {
+    await conn.query("START TRANSACTION");
+    for (const n of data) {
+      await pool.query("UPDATE stickyNote SET text = ? WHERE id=?", [n[1], n[0]]);
+    }
+    await conn.query("COMMIT");
+    return true;
+  } catch (error) {
+    console.log(error);
+    await conn.query("ROLLBACK");
+    return { error: error };
+  } finally {
+    await conn.release();
   }
 };
 
