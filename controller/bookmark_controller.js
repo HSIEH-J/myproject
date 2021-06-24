@@ -36,7 +36,7 @@ const getThumbnail = async (req, res, next) => {
     // if not => call API every 6's util the status is done
     const titleData = await bookmark.getTitle(url);
     if (titleData.status === "error") {
-      res.status(401).json({ error: "wrong format" });
+      res.status(400).json({ error: "wrong format" });
       return;
     }
     if (titleData.status !== "done") {
@@ -89,6 +89,12 @@ const getContentData = async (req, res, next) => {
     if (!id) {
       data = await bookmark.getMainData(user);
     } else {
+      // confirm whether the folder belongs to the user
+      const checkQualification = await bookmark.verifyUserData(user, id, "folder");
+      if (checkQualification.length === 0) {
+        res.status(403).send({ error: "Forbidden" });
+        return;
+      }
       const receiveData = await bookmark.getSubfolderData(id);
       const noteData = await bookmark.getStickyNote([id], { type: "getSubfolderData" });
       const cacheData = await cache.get(user);
@@ -124,6 +130,12 @@ const createItem = async (req, res, next) => {
     const folderId = req.body.folder_id;
     const type = req.body.type;
     const user = req.user.id;
+    // confirm whether the folder belongs to the user
+    const checkQualification = await bookmark.verifyUserData(user, folderId, "folder");
+    if (checkQualification.length === 0) {
+      res.status(403).send({ error: "Forbidden" });
+      return;
+    }
     let insert;
     if (type === "folder") {
       insert = { id: id, user_id: user, folder_name: "folder", folder_id: folderId, timestamp: time, remove: 0 };
@@ -144,8 +156,8 @@ const createItem = async (req, res, next) => {
 const sequenceChange = async (req, res, next) => {
   try {
     const data = req.body.data;
-    const user = req.user.id;
-    const result = await bookmark.sequenceChange(data, user);
+    // const user = req.user.id;
+    const result = await bookmark.sequenceChange(data);
     if (result.error) {
       throw new Error(result.error);
     }
@@ -160,9 +172,9 @@ const sequenceChange = async (req, res, next) => {
 const insertIntoAnotherItem = async (req, res, next) => {
   try {
     const data = req.body;
-    const user = req.user.id;
+    // const user = req.user.id;
     console.log(data);
-    const result = await bookmark.insertIntoAnotherItem(data, user);
+    const result = await bookmark.insertIntoAnotherItem(data);
     if (result.error) {
       throw new Error(result.error);
     }
@@ -176,9 +188,8 @@ const insertIntoAnotherItem = async (req, res, next) => {
 const removeFromBlock = async (req, res, next) => {
   try {
     const data = req.body;
-    const user = req.user.id;
-    console.log(data);
-    const result = await bookmark.removeFromBlock(data, user);
+    // const user = req.user.id
+    const result = await bookmark.removeFromBlock(data);
     if (result.error) {
       throw new Error(result.error);
     }
@@ -193,7 +204,7 @@ const removeItem = async (req, res, next) => {
   try {
     const type = req.body.type;
     const id = req.body.id;
-    const user = req.user.id;
+    // const user = req.user.id;
     const result = await bookmark.removeItem(type, id);
     if (result.error) {
       throw new Error(result.error);

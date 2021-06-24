@@ -1,25 +1,35 @@
 const { pool } = require("./mysql");
 
+const searchBookmark = async (user, param) => {
+  const data = await pool.query("SELECT id, folder_id, url, title, thumbnail FROM bookmark WHERE user_id = ? && remove = 0 && title LIKE ?", [user, `%${param}%`]);
+  return data[0];
+};
+
+const searchFolder = async (user, param) => {
+  const data = await pool.query("SELECT id, folder_id, folder_name FROM folder WHERE user_id = ? && remove = 0 && folder_name LIKE ?", [user, `%${param}%`]);
+  return data[0];
+};
+
+const searchStickyNote = async (user, param) => {
+  const data = await pool.query("SELECT id, folder_id, text FROM stickyNote WHERE user_id = ? && remove = 0 && text LIKE ?", [user, `%${param}%`]);
+  return data[0];
+};
+
 const getSearchItem = async (type, user, param) => {
   if (type === "bookmark") {
-    const data = await pool.query("SELECT id, folder_id, url, title, thumbnail FROM bookmark WHERE user_id = ? && remove = 0 && title LIKE ?", [user, `%${param}%`]);
-    return data[0];
+    const bookmarks = await searchBookmark(user, param);
+    return bookmarks;
   } else if (type === "folder") {
-    const data = await pool.query("SELECT id, folder_id, folder_name FROM folder WHERE user_id = ? && remove = 0 && folder_name LIKE ?", [user, `%${param}%`]);
-    return data[0];
+    const folders = await searchFolder(user, param);
+    return folders;
   } else if (type === "stickyNote") {
-    const data = await pool.query("SELECT id, folder_id, text FROM stickyNote WHERE user_id = ? && remove = 0 && text LIKE ?", [user, `%${param}%`]);
-    return data[0];
+    const stickyNotes = await searchStickyNote(user, param);
+    return stickyNotes;
   } else {
-    const data = await pool.query("SELECT id, folder_id, url, title, thumbnail FROM bookmark WHERE user_id = ? && remove = 0 && title LIKE ?", [user, `%${param}%`]);
-    const data1 = await pool.query("SELECT id, folder_id, folder_name FROM folder WHERE user_id = ? && remove = 0 && folder_name LIKE ?", [user, `%${param}%`]);
-    const data2 = await pool.query("SELECT id, folder_id, text FROM stickyNote WHERE user_id = ? && remove = 0 && text LIKE ?", [user, `%${param}%`]);
-    const concatData = data[0].concat(data1[0], data2[0]);
-    console.log("all");
-    console.log(data[0]);
-    console.log(data1[0]);
-    console.log(data2[0]);
-    console.log(concatData);
+    const bookmarks = await searchBookmark(user, param);
+    const folders = await searchFolder(user, param);
+    const stickyNotes = await searchStickyNote(user, param);
+    const concatData = [...bookmarks[0], ...folders[0], ...stickyNotes[0]];
     return concatData;
   }
 };
