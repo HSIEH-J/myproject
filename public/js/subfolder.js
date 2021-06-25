@@ -9,6 +9,10 @@ const getData = async (id) => {
     }),
     method: "GET"
   });
+  if (response.status !== 200) {
+    alert("There's something wrong...");
+    throw new Error("error");
+  }
   return await response.json();
 };
 
@@ -20,6 +24,10 @@ const getBlockData = async (id) => {
     }),
     method: "GET"
   });
+  if (response.status !== 200) {
+    alert("There's something wrong...");
+    throw new Error("error");
+  }
   return await response.json();
 };
 
@@ -32,6 +40,10 @@ const removeItem = async (data) => {
     }),
     method: "POST"
   });
+  if (response.status !== 200) {
+    alert("There's something wrong...");
+    throw new Error("error");
+  }
   const json = await response.json();
   return json;
 };
@@ -45,6 +57,10 @@ const updateBlockSize = async (data) => {
     }),
     method: "POST"
   });
+  if (response.status !== 200) {
+    alert("There's something wrong...");
+    throw new Error("error");
+  }
   const json = await response.json();
   return json;
 };
@@ -88,7 +104,8 @@ document.addEventListener("click", (e) => {
       const prevId = prevFolder.innerHTML;
       const prevSidebarId = "sidebar" + " " + prevId;
       const prevSidebarItem = document.getElementById(prevSidebarId);
-      prevSidebarItem.style.background = "";
+      // prevSidebarItem.style.background = "";
+      prevSidebarItem.classList.remove("dropdown_hover");
     }
     if (e.target.className === "frame folderItem") {
       id = e.target.id;
@@ -98,7 +115,7 @@ document.addEventListener("click", (e) => {
       const sidebarFolderId = "sidebar" + " " + id;
       const sidebarItem = document.getElementById(sidebarFolderId);
       // current location
-      sidebarItem.style.background = "CadetBlue";
+      sidebarItem.classList.add("dropdown_hover");
     } else if (e.target.className === "sidebar_button") {
       // get folderName
       const parent = e.target.parentNode;
@@ -108,7 +125,8 @@ document.addEventListener("click", (e) => {
       const name = parent.className.split(" ");
       folderName = name[1];
       // current location
-      parent.style.background = "CadetBlue";
+      // parent.style.background = "CadetBlue";
+      parent.classList.add("dropdown_hover");
     } else {
       // get folderName
       const sidebarItemId = e.target.id;
@@ -117,7 +135,8 @@ document.addEventListener("click", (e) => {
       const name = e.target.className.split(" ");
       folderName = name[1];
       // current location
-      e.target.style.background = "CadetBlue";
+      // e.target.style.background = "CadetBlue";
+      e.target.classList.add("dropdown_hover");
     }
     if (!folderName) {
       folderNameChange.innerHTML = "folder";
@@ -336,14 +355,13 @@ document.addEventListener("click", (e) => {
     const id = removeChild.id;
     const parent = document.getElementById(removeParent.id);
     const child = document.getElementById(id);
-    // confirm("Are you want to delete this Item?");
     const ans = confirm("Are you sure you want to delete this Item?");
     if (ans) {
       if (removeChild.className === "frame folderItem") {
         const sidebarId = "sidebar" + " " + id;
         const sidebarItem = document.getElementById(sidebarId);
         if (sidebarItem.parentNode.classList.contains("parentSideBar")) {
-          const sidebarParentId = sidebarItem.parentNode.id;
+          // const sidebarParentId = sidebarItem.parentNode.id;
           const sidebarParent = sidebarItem.parentNode;
           sidebarParent.removeChild(sidebarItem);
           const sidebarLength = parseInt(sidebarParent.children.length) - parseInt(1);
@@ -358,6 +376,27 @@ document.addEventListener("click", (e) => {
           sidebarContent.removeChild(sidebarItem);
         }
       }
+      if (removeChild.className === "block") {
+        for (const n of removeChild.children) {
+          if (n.className === "frame folderItem") {
+            const sidebarId = "sidebar" + " " + n.id;
+            const sidebarItem = document.getElementById(sidebarId);
+            if (sidebarItem.parentNode.classList.contains("parentSideBar")) {
+              // const sidebarParentId = sidebarItem.parentNode.id;
+              const sidebarParent = sidebarItem.parentNode;
+              sidebarParent.removeChild(sidebarItem);
+              const sidebarLength = parseInt(sidebarParent.children.length) - parseInt(1);
+              if (sidebarLength === 0) {
+                const nameString = sidebarParent.className;
+                const nameArr = nameString.split(" ");
+                // sidebarParent.id = "sidebar" + " " + sidebarParentId;
+                sidebarParent.className = "bar_item" + " " + nameArr[1];
+                sidebarParent.innerHTML = nameArr[1];
+              }
+            }
+          }
+        }
+      }
       if (removeChild.className === "block" || removeParent.className === "block") {
         parent.removeChild(child);
       } else {
@@ -366,23 +405,15 @@ document.addEventListener("click", (e) => {
       }
       let sendData;
       if (e.target.parentNode.className === "trashCan bookmarkTrash") {
-        console.log("target bookmark");
         sendData = { type: "bookmark", id: id };
       } else if (e.target.parentNode.className === "trashCan folderTrash") {
-        console.log("target folder");
         sendData = { type: "folder", id: id };
       } else if (e.target.parentNode.className === "trashCan blockTrash") {
-        console.log("target block");
         sendData = { type: "block", id: id };
       } else {
-        console.log("target stickyNote");
         sendData = { type: "stickyNote", id: id };
       }
-      console.log(sendData);
-      removeItem(sendData).then(data => {
-        console.log("removed");
-        console.log(data);
-      });
+      removeItem(sendData);
     }
   }
   if (e.target.id === "boardIcon") {

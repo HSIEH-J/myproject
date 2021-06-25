@@ -7,15 +7,16 @@ const getNestData = async () => {
     }),
     method: "GET"
   });
+  if (response.status !== 200) {
+    alert("There's something wrong...");
+    throw new Error("error");
+  }
   const data = await response.json();
   return data;
 };
 
 function sideBarRender (obj, div) {
-  console.log(obj);
   if (!obj.children) {
-    console.log("no children");
-    console.log(obj.name);
     const item = document.createElement("div");
     item.id = "sidebar" + " " + obj.id;
     item.className = "bar_item" + " " + obj.name;
@@ -23,7 +24,6 @@ function sideBarRender (obj, div) {
     item.style.display = "none";
     div.appendChild(item);
   } else {
-    console.log("children");
     const item = document.createElement("div");
     item.id = "sidebar" + " " + obj.id;
     item.className = "parentSideBar" + " " + obj.name;
@@ -32,7 +32,6 @@ function sideBarRender (obj, div) {
     // item.innerHTML = obj.name;
     div.appendChild(item);
     for (const n in obj.children) {
-      console.log(obj.children);
       sideBarRender(obj.children[n], item);
     }
   }
@@ -40,31 +39,25 @@ function sideBarRender (obj, div) {
 
 const sidebarContent = document.getElementById("sidebarContent");
 getNestData().then(data => {
-  console.log(data);
   for (const n in data) {
-    console.log(data[n]);
     sideBarRender(data[n], sidebarContent);
     const id = "sidebar" + " " + data[n].id;
     const parent = document.getElementById(id);
-    console.log(parent);
     parent.style.display = "block";
   };
 });
 
 sidebarContent.addEventListener("click", (e) => {
-  console.log(e.target);
-  console.log(e.target.parentNode);
   const targetParent = e.target.parentNode.parentNode;
   const children = targetParent.children;
   const nameString = targetParent.className;
   const nameArr = nameString.split(" ");
-  console.log(children[0]);
   if (e.target.className === "downBefore") {
     children[0].innerHTML = `<img src="images/down.svg" class="down">${nameArr[1]}`;
     for (const n in children) {
       if (n >= 1) {
         children[n].style.display = "block";
-        children[n].style.marginLeft = "1.5em";
+        children[n].style.marginLeft = "1.5%";
       }
     }
   }
@@ -78,82 +71,10 @@ sidebarContent.addEventListener("click", (e) => {
   }
 });
 
-// if (data[n].children === undefined) {
-//   console.log(data[n]);
-//   const item = document.createElement("div");
-//   item.innerHTML = data[n].name;
-//   // console.log(data[n].name);
-//   item.setAttribute("class", "bar_item");
-//   item.setAttribute("id", data[n].id);
-//   sidebarContent.appendChild(item);
-// } else {
-//   const item = document.createElement("div");
-//   item.innerHTML = `<button class=sidebar_button id=${data[n].id}>&blacktriangleright; ${data[n].name}</button>`;
-//   console.log(data[n].name);
-//   item.setAttribute("class", "dropdown_hover");
-//   const num = parseInt(data[n].id) + parseInt(1);
-//   item.setAttribute("id", num);
-//   // item.setAttribute("id", data[n].id);
-//   sidebarContent.appendChild(item);
-// }
-// sidebarContent.addEventListener("click", (e) => {
-//   if (e.target.className !== "bar_item close_button") {
-//     const arr = e.target.textContent.split(" ");
-//     // console.log(arr);
-//     e.target.innerHTML = "&blacktriangledown;" + arr[1];
-//     const children = document.createElement("div");
-//     children.setAttribute("class", "dropdown_content");
-//     const parentDiv = e.target.parentNode.id;
-//     const parent = document.getElementById(parentDiv);
-//     const id = e.target.id;
-//     for (const n in data[id].children) {
-//       children.innerHTML += `<div class="bar_item down">${data[id].children[n].name}</div>`;
-//     }
-//     parent.appendChild(children);
-//   }
-// });
-// nested structure
-// eslint-disable-next-line camelcase
-// const dropdown_hover = document.querySelector(".dropdown_hover");
-// // eslint-disable-next-line camelcase
-// const dropdown_content = document.querySelector(".dropdown_content");
-// // eslint-disable-next-line camelcase
-// const sidebar_button = document.querySelector(".sidebar_button");
-// // dropdown_hover.addEventListener("mouseenter", (e) => {
-//   e.target.style.background = "Gainsboro";
-//   sidebar_button.style.color = "SlateGrey";
-//   dropdown_content.style.display = "block";
-//   dropdown_content.style.background = "WhiteSmoke";
-//   dropdown_content.style.color = "sliver";
-// });
-
-// dropdown_hover.addEventListener("mouseleave", (e) => {
-//   e.target.style.background = "transparent";
-//   sidebar_button.style.color = "WhiteSmoke";
-//   // dropdown_content.style.display = "none";
-// });
-
-// <!-- <div class="bar_item">File 1</div>
-//                 <div class="bar_item">File 2</div>
-//                 <div class="dropdown_hover">
-//                   <button class="sidebar_button">Carton &blacktriangledown;</button>
-//                   <div class="dropdown_content" style="display: none">
-//                     <div class="bar_item down">File 1</div>
-//                     <div class="bar_item down">File 2</div>
-//                   </div>
-//                 </div>
-//                 <div class="bar_item">File 3</div> -->
-
 const hamburger = document.getElementById("hamburger");
 const sidebar = document.getElementById("sidebar");
 // eslint-disable-next-line no-unused-vars
 function openSidebar () {
-  // if (dataArea.style.display === "none") {
-  //   container.style.width = "90vw";
-  // } else {
-  //   container.style.width = "20vw";
-  //   dataArea.style.width = "70vw";
-  // }
   hamburger.style.display = "none";
   homepage.style.display = "none";
   sidebar.style.display = "block";

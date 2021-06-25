@@ -11,7 +11,7 @@ const searchFolder = async (user, param) => {
 };
 
 const searchStickyNote = async (user, param) => {
-  const data = await pool.query("SELECT id, folder_id, text FROM stickyNote WHERE user_id = ? && remove = 0 && text LIKE ?", [user, `%${param}%`]);
+  const data = await pool.query("SELECT id, folder_id, text FROM sticky_note WHERE user_id = ? && remove = 0 && text LIKE ?", [user, `%${param}%`]);
   return data[0];
 };
 

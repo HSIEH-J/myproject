@@ -1,3 +1,5 @@
+/* eslint-disable no-undef */
+/* eslint-disable no-unused-vars */
 function getTimeStamp () {
   const date = Date.now() + performance.now();
   const timestamp = Math.floor(date / 1000); ;
@@ -41,10 +43,6 @@ const box = document.getElementById("box");
 const importUrl = document.getElementById("import");
 const urlClick = document.getElementById("url");
 
-// document.addEventListener("click", (e) => {
-//   console.log(e.target);
-// });
-
 importUrl.addEventListener("click", () => {
   urlClick.style.display = "block";
 });
@@ -55,7 +53,6 @@ box.addEventListener("keydown", (e) => {
   if (parentId) {
     parent = parentId.innerHTML;
   }
-  console.log(parent);
   let urlData;
   if (e.code === "Enter") {
     urlClick.style.display = "none";
@@ -71,9 +68,7 @@ box.addEventListener("keydown", (e) => {
       }
       box.value = "";
       createBookmark(urlData).then(data => {
-        console.log(data);
         if (data.id) {
-          console.log("append first");
           const frame = document.createElement("div");
           frame.setAttribute("class", "frame bookmark");
           frame.setAttribute("draggable", "true");
@@ -93,7 +88,7 @@ box.addEventListener("keydown", (e) => {
                               </div>`;
           page.appendChild(frame);
         } else {
-          console.log("done");
+          console.log("here");
           const receiveData = data.data[0];
           const overTitle = overString(receiveData.title);
           const newTitle = overTitle.join("");
@@ -104,7 +99,7 @@ box.addEventListener("keydown", (e) => {
           frame.innerHTML = `<a href=${url} class="thumbnailUrl" target="_blank">
                               <div class="top">
                                   <div class="thumbnail">
-                                      <img src="${receiveData.thumbnail}">
+                                      <img src="${receiveData.thumbnail}" width=250>
                                   </div>
                               </div>
                               <div class="info">
@@ -120,7 +115,3 @@ box.addEventListener("keydown", (e) => {
     }
   }
 });
-
-// document.addEventListener("mouseover", (e) => {
-//   console.log(e.target);
-// });

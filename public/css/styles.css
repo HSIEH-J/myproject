@@ -109,14 +109,15 @@ body{
     cursor: pointer;
     height: 45px;
     line-height: 45px;
+    /* width: 10vw; */
 }
 
 .bar_item:hover{
     background-color: CadetBlue;
 }
 
-/* .parentSideBar:hover {
-    background-color: CadetBlue;
+/* .parentSideBar {
+    width: ;
 } */
 
 .sidebar_button{
@@ -132,8 +133,9 @@ body{
     /* text-align: left; */
 }
 
-.dropdown_hover{
+.dropdown_hover::first-line{
     background-color: CadetBlue;
+    width: 600px;
 }
 
 /* .down{

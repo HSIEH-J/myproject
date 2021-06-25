@@ -1,6 +1,7 @@
 const bookmark = require("../models/bookmark_model");
 const cache = require("../util/cache");
 const util = require("../util/util");
+cache.del("url16");
 
 const getThumbnail = async (req, res, next) => {
   try {
@@ -30,6 +31,10 @@ const getThumbnail = async (req, res, next) => {
     const check = await bookmark.checkUrl(url);
     if (check.error) {
       res.status(400).json({ error: "duplicated url" });
+      return;
+    }
+    if (check.bookmark) {
+      res.status(200).json({ data: [{ id: check.bookmark.id, title: check.bookmark.title, thumbnail: check.bookmark.thumbnail }] });
       return;
     }
     // get url title => check if status = done
@@ -131,10 +136,12 @@ const createItem = async (req, res, next) => {
     const type = req.body.type;
     const user = req.user.id;
     // confirm whether the folder belongs to the user
-    const checkQualification = await bookmark.verifyUserData(user, folderId, "folder");
-    if (checkQualification.length === 0) {
-      res.status(403).send({ error: "Forbidden" });
-      return;
+    if (folderId !== 0) {
+      const checkQualification = await bookmark.verifyUserData(user, folderId, "folder");
+      if (checkQualification.length === 0) {
+        res.status(403).send({ error: "Forbidden" });
+        return;
+      }
     }
     let insert;
     if (type === "folder") {
@@ -188,7 +195,8 @@ const insertIntoAnotherItem = async (req, res, next) => {
 const removeFromBlock = async (req, res, next) => {
   try {
     const data = req.body;
-    // const user = req.user.id
+    const user = req.user.id;
+    cache.del(`url+${user}`);
     const result = await bookmark.removeFromBlock(data);
     if (result.error) {
       throw new Error(result.error);
@@ -204,7 +212,8 @@ const removeItem = async (req, res, next) => {
   try {
     const type = req.body.type;
     const id = req.body.id;
-    // const user = req.user.id;
+    const user = req.user.id;
+    cache.del(`url+${user}`);
     const result = await bookmark.removeItem(type, id);
     if (result.error) {
       throw new Error(result.error);
@@ -215,7 +224,5 @@ const removeItem = async (req, res, next) => {
     next(err);
   }
 };
-
-// when user drag a folder or a bookmark into a folder
 
 module.exports = { getThumbnail, getContentData, createItem, sequenceChange, insertIntoAnotherItem, removeFromBlock, removeItem };

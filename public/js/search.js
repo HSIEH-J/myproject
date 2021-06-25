@@ -7,6 +7,10 @@ const getSearchData = async (param, keyword) => {
     }),
     method: "GET"
   });
+  if (response.status !== 200) {
+    alert("There's something wrong...");
+    throw new Error("error");
+  }
   const data = await response.json();
   return data;
 };

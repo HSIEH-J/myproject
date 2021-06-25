@@ -60,19 +60,14 @@ io.on("connection", async (socket) => {
   console.log("a user connected", socket.id);
   if (cache.client.ready) {
     const key = "socketId" + socket.info.id;
-    console.log(key);
-    console.log(socket.id);
     await cache.set(key, socket.id);
   }
-  console.log(socket.info.id);
   socket.on("disconnect", async () => {
     console.log("Connection disconnected", socket.id);
-    console.log(socket.info.id);
     const id = socket.info.id;
     if (cache.client.ready) {
       const data = await cache.get(id);
       if (data) {
-        // console.log(data);
         const receiveData = JSON.parse(data);
         await require("./models/folder_models").updateStickyNote(receiveData, id);
         await cache.del(id);
@@ -80,8 +75,6 @@ io.on("connection", async (socket) => {
     }
   });
   socket.on("stickyNote", (msg) => {
-    // console.log(socket.info);
-    console.log(msg);
     const key = socket.info.id.toString();
     const stickyNoteId = msg.id;
     cacheMap.set(stickyNoteId, { folder_id: msg.folder_id, text: msg.text });
@@ -93,10 +86,8 @@ io.on("connection", async (socket) => {
     }
   });
   socket.on("sequence", (msg) => {
-    // console.log(msg);
     const key = socket.info.id.toString();
     const keyName = "sequence" + key;
-    console.log(keyName);
     if (cache.client.ready) {
       cache.set(keyName, JSON.stringify(msg));
     }

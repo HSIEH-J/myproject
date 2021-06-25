@@ -6,10 +6,15 @@ const createItem = async (data) => {
     body: JSON.stringify(data),
     headers: new Headers({
       "Content-Type": "application/json",
+      // eslint-disable-next-line no-undef
       Authorization: `Bearer ${token}`
     }),
     method: "POST"
   });
+  if (response.status !== 200) {
+    alert("There's something wrong...");
+    throw new Error("error");
+  }
   const json = await response.json();
   return json;
 };
@@ -55,7 +60,7 @@ plus.addEventListener("click", (e) => {
           div.style.display = "none";
         } else {
           div.style.display = "block";
-          div.style.marginLeft = "1.5em";
+          div.style.marginLeft = "1.5%";
         }
       }
       parentSideBar.append(div);

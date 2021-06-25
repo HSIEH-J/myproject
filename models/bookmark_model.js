@@ -33,8 +33,12 @@ const updateBookmark = async function (title, location, id) {
 };
 
 const checkUrl = async function (url) {
-  const check = await pool.query("SELECT url FROM bookmark WHERE url = ?", url);
+  const check = await pool.query("SELECT * FROM bookmark WHERE url = ?", url);
   if (check[0].length !== 0) {
+    if (check[0][0].remove === 1) {
+      await pool.query("UPDATE bookmark set remove = 0 where id = ?", [check[0][0].id]);
+      return { bookmark: { id: check[0][0].id, title: check[0][0].title, thumbnail: check[0][0].thumbnail } };
+    }
     return { error: "url already exists" };
   } else {
     return true;
@@ -76,7 +80,7 @@ const getStickyNote = async (insert, requirement = {}) => {
   } else {
     condition.binding = "WHERE div_id = ? && remove = 0 ORDER BY timestamp";
   }
-  const stickyNoteQuery = "SELECT id, text, sequence, timestamp FROM stickyNote " + condition.binding;
+  const stickyNoteQuery = "SELECT id, text, sequence, timestamp FROM sticky_note " + condition.binding;
   const stickyNote = await pool.query(stickyNoteQuery, insert);
   return stickyNote[0];
 };
@@ -138,7 +142,7 @@ const createItem = async (type, insert) => {
     if (type === "folder") {
       await pool.query("INSERT INTO folder set ?", insert);
     } else if (type === "stickyNote") {
-      await pool.query("INSERT INTO stickyNote set ?", insert);
+      await pool.query("INSERT INTO sticky_note set ?", insert);
     } else {
       await pool.query("INSERT INTO block set ?", insert);
     }
@@ -164,7 +168,7 @@ const sequenceChange = async (data) => {
       } else if (n.type === "folder") {
         await pool.query("UPDATE folder SET sequence = ?, timestamp = ? WHERE id = ?", [n.order, n.time, n.id]);
       } else {
-        await pool.query("UPDATE stickyNote SET sequence = ?, timestamp = ? WHERE id = ?", [n.order, n.time, n.id]);
+        await pool.query("UPDATE sticky_note SET sequence = ?, timestamp = ? WHERE id = ?", [n.order, n.time, n.id]);
       }
     }
     await conn.query("COMMIT");
@@ -211,9 +215,9 @@ const insertIntoAnotherItem = async (data) => {
       }
     } else {
       if (!data.div_id) {
-        await updateItemAfterChange([data.folder_id, data.time, data.update_id], { type: "insertIntoFolder", table: "stickyNote" });
+        await updateItemAfterChange([data.folder_id, data.time, data.update_id], { type: "insertIntoFolder", table: "sticky_note" });
       } else {
-        await updateItemAfterChange([data.div_id, data.time, data.update_id], { type: "insertIntoBlock", table: "stickyNote" });
+        await updateItemAfterChange([data.div_id, data.time, data.update_id], { type: "insertIntoBlock", table: "sticky_note" });
       }
     }
     await conn.query("COMMIT");
@@ -236,7 +240,7 @@ const removeFromBlock = async (data) => {
     } else if (data.type === "folder") {
       await updateItemAfterChange([data.time, data.update_id], { type: "removeFromBlock", table: "folder" });
     } else {
-      await updateItemAfterChange([data.time, data.update_id], { type: "removeFromBlock", table: "stickyNote" });
+      await updateItemAfterChange([data.time, data.update_id], { type: "removeFromBlock", table: "sticky_note" });
     }
     await conn.query("COMMIT");
     return true;
@@ -258,7 +262,7 @@ const removeAllFolder = async (id) => {
   await pool.query("UPDATE folder SET remove = 1 WHERE id = ?", [id]);
   await pool.query("UPDATE bookmark SET remove = 1 WHERE folder_id = ?", [id]);
   await pool.query("UPDATE block SET remove = 1 WHERE folder_id = ?", [id]);
-  await pool.query("UPDATE stickyNote SET remove = 1 WHERE folder_id = ?", [id]);
+  await pool.query("UPDATE sticky_note SET remove = 1 WHERE folder_id = ?", [id]);
 };
 
 const removeItem = async (type, id) => {
@@ -279,20 +283,21 @@ const removeItem = async (type, id) => {
       await pool.query("UPDATE block SET remove = 1  WHERE id = ?", [id]);
       await pool.query("UPDATE bookmark SET remove = 1  WHERE div_id = ?", [id]);
       await pool.query("UPDATE folder SET remove = 1  WHERE div_id = ?", [id]);
-      await pool.query("UPDATE stickyNote SET remove = 1  WHERE div_id = ?", [id]);
+      await pool.query("UPDATE sticky_note SET remove = 1  WHERE div_id = ?", [id]);
       const allParentFolder = await pool.query("SELECT id FROM folder WHERE div_id = ?", [id]);
       if (allParentFolder[0].length !== 0) {
         const data = [];
         for (const item of allParentFolder[0]) {
           const folder = await findAllParentFolder(item.id);
-          data.push({ id: folder[0].id });
+          folder.forEach(el => data.push({ id: el.id }));
         }
+        console.log(data);
         for (const item of data) {
           await removeAllFolder(item.id);
         }
       }
     } else {
-      await pool.query("UPDATE stickyNote SET remove = 1  WHERE id=?", [id]);
+      await pool.query("UPDATE sticky_note SET remove = 1  WHERE id=?", [id]);
     }
     await conn.query("COMMIT");
     return true;
@@ -310,8 +315,8 @@ const verifyUserData = async (user, id, table) => {
     condition.table = "bookmark";
   } else if (table === "folder") {
     condition.table = "folder";
-  } else if (table === "stickyNote") {
-    condition.table = "stickyNote";
+  } else if (table === "sticky_note") {
+    condition.table = "sticky_note";
   } else {
     condition.table = "block";
   }
@@ -338,5 +343,6 @@ module.exports = {
   findAllParentFolder,
   getFolder,
   getBookmark,
-  verifyUserData
+  verifyUserData,
+  updateItemAfterChange
 };

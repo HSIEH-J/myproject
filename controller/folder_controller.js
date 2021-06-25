@@ -1,4 +1,6 @@
 const folder = require("../models/folder_models");
+const { verifyUserData } = require("../models/bookmark_model");
+const validator = require("validator");
 
 function buildTree (list) {
   const temp = {};
@@ -62,14 +64,18 @@ const changeFolderName = async (req, res, next) => {
     const folderId = req.body.id;
     const name = req.body.name;
     // confirm whether the folder belongs to the user
-    const checkQualification = await folder.verifyUserData(user, folderId, "folder");
+    const checkQualification = await verifyUserData(user, folderId, "folder");
     if (checkQualification.length === 0) {
       res.status(403).send({ error: "Forbidden" });
       return;
     }
+    if (validator.isEmpty(name)) {
+      res.status(400).send({ error: "folder name is required" });
+    }
     await folder.changeFolderName(name, folderId);
     res.status(200).json({ message: "updated" });
   } catch (err) {
+    console.log(err);
     next(err);
   }
 };
@@ -79,7 +85,7 @@ const updateBlockSize = async (req, res, next) => {
     const user = req.user.id;
     const data = req.body;
     // confirm whether the block belongs to the user
-    const checkQualification = await folder.verifyUserData(user, data.id, "block");
+    const checkQualification = await verifyUserData(user, data.id, "block");
     if (checkQualification.length === 0) {
       res.status(403).send({ error: "Forbidden" });
       return;
@@ -87,22 +93,23 @@ const updateBlockSize = async (req, res, next) => {
     await folder.updateBlockSize(data);
     res.status(200).json({ message: "updated" });
   } catch (err) {
+    console.log(err);
     next(err);
   }
 };
 
 const dropSidebarFolder = async (req, res, next) => {
   try {
-    const userId = req.user.id;
+    const user = req.user.id;
     const data = req.body;
     const updateId = data.update_id;
     const folderId = data.folder_id;
     console.log(data);
     if (updateId === folderId) {
-      res.status(400).send({ error: "Request Error: can't insert to the same folder!" });
+      res.status(400).send({ error: "can't insert to the same folder!" });
       return;
     }
-    const result = await folder.insertSidebarFolder(data, userId);
+    const result = await folder.insertIntoSidebarFolder(data, user);
     if (result.error) {
       res.status(400).send({ error: result.error });
       return;

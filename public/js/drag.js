@@ -39,11 +39,15 @@ const sequenceUpdate = async (data) => {
     }),
     method: "POST"
   });
+  if (response.status !== 200) {
+    alert("There's something wrong...");
+    throw new Error("error");
+  }
   const json = await response.json();
   return json;
 };
 
-const insertSubFolder = async (data) => {
+const insertIntoSubFolder = async (data) => {
   const response = await fetch("/api/1.0/subfolder", {
     body: JSON.stringify(data),
     headers: new Headers({
@@ -52,6 +56,10 @@ const insertSubFolder = async (data) => {
     }),
     method: "POST"
   });
+  if (response.status !== 200) {
+    alert("There's something wrong...");
+    throw new Error("error");
+  }
   const json = await response.json();
   return json;
 };
@@ -65,6 +73,10 @@ const updatePageDiv = async (data) => {
     }),
     method: "POST"
   });
+  if (response.status !== 200) {
+    alert("There's something wrong...");
+    throw new Error("error");
+  }
   const json = await response.json();
   return json;
 };
@@ -81,6 +93,10 @@ const dropSidebarFolder = async (data) => {
   if (response.status === 400) {
     alert("The operation could not be completed");
     throw new Error("The operation could not be completed");
+  }
+  if (response.status !== 200) {
+    alert("There's something wrong...");
+    throw new Error("error");
   }
   const json = await response.json();
   return json;
@@ -114,7 +130,7 @@ page.addEventListener("drop", (e) => {
       }
       const subfolder = { type: type, update_id: data.draggedId, folder_id: e.target.id, time: getTimeStamp() };
       console.log(subfolder);
-      insertSubFolder(subfolder).then(data => {
+      insertIntoSubFolder(subfolder).then(data => {
         const response = data;
         console.log(response);
       });
@@ -167,7 +183,7 @@ page.addEventListener("drop", (e) => {
       }
       const timestamp = getTimeStamp();
       const subfolder = { type: type, update_id: oldChild.id, folder_id: newChild.id, time: timestamp };
-      insertSubFolder(subfolder).then(data => {
+      insertIntoSubFolder(subfolder).then(data => {
         const response = data;
         console.log(response);
       });
@@ -311,7 +327,7 @@ dataArea.addEventListener("drop", (e) => {
       }
       const timestamp = getTimeStamp();
       const subfolder = { type: type, update_id: oldChild.id, folder_id: target.id, time: timestamp };
-      insertSubFolder(subfolder).then(data => {
+      insertIntoSubFolder(subfolder).then(data => {
         const response = data;
         console.log(response);
       });
@@ -335,7 +351,7 @@ dataArea.addEventListener("drop", (e) => {
       console.log(divId);
       const blockData = { type: type, update_id: oldChild.id, div_id: divId, time: getTimeStamp() };
       console.log(blockData);
-      insertSubFolder(blockData).then(data => {
+      insertIntoSubFolder(blockData).then(data => {
         console.log(data);
       });
     }
@@ -370,7 +386,7 @@ dataArea.addEventListener("drop", (e) => {
       }
       const timestamp = getTimeStamp();
       const subfolder = { type: type, update_id: data.draggedId, folder_id: target.id, time: timestamp };
-      insertSubFolder(subfolder).then(data => {
+      insertIntoSubFolder(subfolder).then(data => {
         const response = data;
         console.log(response);
       });
@@ -399,7 +415,7 @@ dataArea.addEventListener("drop", (e) => {
       console.log(type);
       const blockData = { type: type, update_id: data.draggedId, div_id: divId, time: getTimeStamp() };
       console.log(blockData);
-      insertSubFolder(blockData).then(data => {
+      insertIntoSubFolder(blockData).then(data => {
         console.log(data);
       });
     } else {
@@ -491,7 +507,7 @@ sidebarContent.addEventListener("drop", (e) => {
             oldSidebarFolder.style.display = "none";
           } else {
             oldSidebarFolder.style.display = "block";
-            oldSidebarFolder.style.marginLeft = "1.5em";
+            oldSidebarFolder.style.marginLeft = "1.5%";
           }
         }
         console.log(oldSidebarFolder.parentNode.id);
@@ -534,6 +550,12 @@ function dragOver (e) {
   if (e.target.id !== "sidebarContent") {
     if (e.target.className === "sidebar_button") {
       e.target.parentNode.classList.add("dropdown_hover");
+      // const node = e.target.parentNode;
+      // for (const n in node.children) {
+      //   if (n > 0) {
+      //     node.children[n].style.backgroundColor = "rgb(54,119,115)";
+      //   }
+      // }
     } else {
       e.target.classList.add("dropdown_hover");
     }
@@ -588,7 +610,7 @@ function sidebarFolderChange (oldEle, newEle) {
       oldFolderItem.style.display = "none";
     } else {
       oldFolderItem.style.display = "block";
-      oldFolderItem.style.marginLeft = "1.5em";
+      oldFolderItem.style.marginLeft = "1.5%";
     }
   }
   console.log(newFolderItem);

@@ -1,6 +1,5 @@
 /* eslint-disable no-undef */
 const token = localStorage.getItem("accessToken");
-// console.log(token);
 
 if (!token) {
   alert("請先登入");
@@ -16,6 +15,10 @@ const getBookmarkData = async () => {
     }),
     method: "GET"
   });
+  if (response.status !== 200) {
+    alert("There's something wrong...");
+    throw new Error("error");
+  }
   const data = await response.json();
   return data;
 };
@@ -38,11 +41,8 @@ waitingImg.style.display = "block";
 getBookmarkData().then(data => {
   waitingImg.style.display = "none";
   const get = data.data;
-  console.log(get);
   for (const n in get) {
     if (get[n].type === "bookmark") {
-      console.log("===undefined===");
-      console.log(get[n].title.length);
       const overTitle = overString(get[n].title);
       const newTitle = overTitle.join("");
       const frame = document.createElement("div");
@@ -99,33 +99,38 @@ const changeFolderName = async (data) => {
     }),
     method: "POST"
   });
+  if (response.status !== 200) {
+    alert("There's something wrong...");
+    throw new Error("error");
+  }
   const json = await response.json();
   return json;
 };
 
+// eslint-disable-next-line no-unused-vars
 function changeName (id) {
   const inputItem = document.getElementById(id);
   const name = inputItem.value;
-  // alert(name);
-  const parentId = inputItem.parentNode.parentNode.id;
-  console.log(parentId);
-  const sidebarId = "sidebar" + " " + parentId;
-  const sidebarItem = document.getElementById(sidebarId);
-  console.log(sidebarItem);
-  if (sidebarItem.children.length === 0) {
-    sidebarItem.className = "bar_item" + " " + name;
-    sidebarItem.innerHTML = name;
+  if (!name) {
+    alert("folder name is required!");
+    inputItem.value = "folder";
   } else {
-    sidebarItem.className = "parentSideBar" + " " + name;
-    if (sidebarItem.children[1].style.display === "block") {
-      sidebarItem.children[0].innerHTML = `<img src="images/down.svg" class="down">${name}`;
+    const parentId = inputItem.parentNode.parentNode.id;
+    const sidebarId = "sidebar" + " " + parentId;
+    const sidebarItem = document.getElementById(sidebarId);
+
+    if (sidebarItem.children.length === 0) {
+      sidebarItem.className = "bar_item" + " " + name;
+      sidebarItem.innerHTML = name;
     } else {
-      sidebarItem.children[0].innerHTML = `<img src="images/down-before.svg" class="downBefore">${name}`;
+      sidebarItem.className = "parentSideBar" + " " + name;
+      if (sidebarItem.children[1].style.display === "block") {
+        sidebarItem.children[0].innerHTML = `<img src="images/down.svg" class="down">${name}`;
+      } else {
+        sidebarItem.children[0].innerHTML = `<img src="images/down-before.svg" class="downBefore">${name}`;
+      }
     }
+    const data = { id: parentId, name: name };
+    changeFolderName(data);
   }
-  const data = { id: parentId, name: name };
-  console.log(data);
-  changeFolderName(data).then(data => {
-    console.log(data);
-  });
 }
