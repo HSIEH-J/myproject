@@ -9,7 +9,6 @@ This website is for organizing browser bookmarks.
   <li>Structure</li>
   <li>Database design</li>
   <li>Features</li>
-  <li>Idea</li>
 </ul>
 
 ## Technologies
@@ -66,18 +65,26 @@ Others
 
 ## Structure
 
-![image](structure.png)
+![image](readme/structure.png)
 
 ## Database design 
 
-![image](database.png)
+![image](readme/database.png)
 
 ## Features
 
+![image](readme/intro.gif)
 
-
-## Idea
-
+<ul>
+  <li>Generate bookmarks</li>
+  When user imported URL, the website will call third party API to get the thumbnail and generate bookmarks.
+  <li>Create Folders</li>
+  User can create folders to classify their bookmarks.
+  <li>Create Sticky notes</li>
+  User can create sticky notes to write remarks.
+  <li>Build collection boards</li>
+  If there are too many bookmarks or folders, user can easily find the items by creating collection boards.
+</ul>
 
 
 
