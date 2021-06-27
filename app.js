@@ -98,6 +98,11 @@ io.on("connection", async (socket) => {
   app.set("socket", socket);
 });
 
+app.use((req, res, next) => {
+  // eslint-disable-next-line node/no-path-concat
+  res.status(404).sendFile(__dirname + "/public/404.html");
+});
+
 // eslint-disable-next-line node/handle-callback-err
 app.use((err, req, res, next) => {
   console.log("app err");
