@@ -23,8 +23,11 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use("/api/1.0",
   [
+    require("./routes/block_route"),
     require("./routes/bookmark_route"),
     require("./routes/folder_route"),
+    require("./routes/item_route"),
+    require("./routes/sidebar_route"),
     require("./routes/user_route"),
     require("./routes/search_route")
   ]
@@ -69,7 +72,7 @@ io.on("connection", async (socket) => {
       const data = await cache.get(id);
       if (data) {
         const receiveData = JSON.parse(data);
-        await require("./models/folder_models").updateStickyNote(receiveData, id);
+        await require("./models/stickyNote_model").updateStickyNote(receiveData, id);
         await cache.del(id);
       }
     }

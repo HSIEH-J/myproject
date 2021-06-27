@@ -41,7 +41,6 @@ const getSearchItem = async (req, res, next) => {
         }
         case "folder": {
           const result = await search.getSearchItem("folder", user, keyword);
-          console.log(result);
           const dataObj = { data: [] };
           for (const folder of result) {
             if (folder.folder_id !== "0") {
@@ -68,7 +67,6 @@ const getSearchItem = async (req, res, next) => {
         }
         case "all": {
           const result = await search.getSearchItem("all", user, keyword);
-          console.log(result);
           const dataObj = { data: [] };
           for (const item of result) {
             if (item.folder_id || item.folder_id !== "0") {

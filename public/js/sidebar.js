@@ -1,6 +1,8 @@
+/* eslint-disable no-undef */
+/* eslint-disable no-unused-vars */
 // Sidebar
 const getNestData = async () => {
-  const response = await fetch("/api/1.0/nest", {
+  const response = await fetch("/api/1.0/sidebar/details", {
     headers: new Headers({
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`
@@ -57,7 +59,7 @@ sidebarContent.addEventListener("click", (e) => {
     for (const n in children) {
       if (n >= 1) {
         children[n].style.display = "block";
-        children[n].style.marginLeft = "1.5%";
+        children[n].style.marginLeft = "3em";
       }
     }
   }

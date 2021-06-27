@@ -29,7 +29,7 @@ const getSearchItem = async (type, user, param) => {
     const bookmarks = await searchBookmark(user, param);
     const folders = await searchFolder(user, param);
     const stickyNotes = await searchStickyNote(user, param);
-    const concatData = [...bookmarks[0], ...folders[0], ...stickyNotes[0]];
+    const concatData = [...bookmarks, ...folders, ...stickyNotes];
     return concatData;
   }
 };

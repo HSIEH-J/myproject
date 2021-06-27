@@ -57,3 +57,10 @@
     right: 1%;
     top: 1%
 }
+
+@media screen and (max-width: 1800px) {
+    .block{
+        width: 600px;
+        height: 350px;
+    }
+}

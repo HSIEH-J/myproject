@@ -1,3 +1,7 @@
+const searchSelect = document.getElementById("searchSelect");
+const search = document.getElementById("search");
+const waitingImg = document.getElementById("waitingImg");
+/* eslint-disable no-undef */
 const getSearchData = async (param, keyword) => {
   const response = await fetch(`/api/1.0/search/${param}?keyword=${keyword}`, {
     headers: new Headers({
@@ -9,42 +13,41 @@ const getSearchData = async (param, keyword) => {
   });
   if (response.status !== 200) {
     alert("There's something wrong...");
+    waitingImg.style.display = "none";
     throw new Error("error");
   }
   const data = await response.json();
   return data;
 };
 
-const searchSelect = document.getElementById("searchSelect");
-const search = document.getElementById("search");
-const waitingImg = document.getElementById("waitingImg");
 // eslint-disable-next-line no-unused-vars
 function searchItem () {
   const param = searchSelect.value;
   const keyword = search.value;
   const prevFolder = document.getElementById("parent_id");
   if (prevFolder) {
-    console.log(prevFolder);
     const prevId = prevFolder.innerHTML;
     const prevSidebarId = "sidebar" + " " + prevId;
     const prevSidebarItem = document.getElementById(prevSidebarId);
-    prevSidebarItem.style.background = "";
+    prevSidebarItem.classList.remove("dropdown_hover");
   }
   // eslint-disable-next-line no-undef
   parentData.innerHTML = "";
   // eslint-disable-next-line no-undef
   page.innerHTML = "";
-  folderNameChange.innerHTML = "result";
+  folderNameChange.innerHTML = param;
   waitingImg.style.display = "block";
   board.style.display = "none";
   note.style.display = "none";
   plusIcon.style.display = "none";
+  plus.style.display = "none";
+  importUrl.style.display = "none";
   getSearchData(param, keyword).then(data => {
     waitingImg.style.display = "none";
-    console.log(data);
+    search.value = "";
     const receiveData = data.data;
     if (receiveData.length === 0) {
-      page.innerHTML = "No result!";
+      page.innerHTML = "<div id=\"result\">no results!</div>";
     } else {
       for (const n of receiveData) {
         if (n.type === "bookmark") {
@@ -120,7 +123,6 @@ function searchItem () {
           noteDiv.setAttribute("id", n.id);
           const textAreaId = parseInt(getTimeStamp()) + parseInt(n);
           let text;
-          console.log(n.text);
           if (n.text === null) {
             text = "";
           } else {

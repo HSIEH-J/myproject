@@ -19,7 +19,7 @@ function getRandomNumber () {
 }
 
 const createBookmark = async (data) => {
-  const response = await fetch("/api/1.0/test", {
+  const response = await fetch("/api/1.0/bookmark/thumbnail", {
     body: JSON.stringify(data),
     headers: new Headers({
       "Content-Type": "application/json",
@@ -88,7 +88,6 @@ box.addEventListener("keydown", (e) => {
                               </div>`;
           page.appendChild(frame);
         } else {
-          console.log("here");
           const receiveData = data.data[0];
           const overTitle = overString(receiveData.title);
           const newTitle = overTitle.join("");

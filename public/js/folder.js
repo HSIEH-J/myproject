@@ -2,7 +2,7 @@ const page = document.getElementById("page");
 const plus = document.getElementById("plus");
 
 const createItem = async (data) => {
-  const response = await fetch("/api/1.0/item", {
+  const response = await fetch("/api/1.0/item/create", {
     body: JSON.stringify(data),
     headers: new Headers({
       "Content-Type": "application/json",
@@ -21,15 +21,11 @@ const createItem = async (data) => {
 
 // eslint-disable-next-line no-undef
 plus.addEventListener("click", (e) => {
-  const id = e.target.id;
-  console.log(id);
   const parentId = document.getElementById("parent_id");
-  console.log(parentId);
   let num;
   if (parentId) {
     num = parentId.innerHTML;
   }
-  console.log(num);
   let data;
   if (num) {
     // eslint-disable-next-line no-undef
@@ -38,12 +34,9 @@ plus.addEventListener("click", (e) => {
     // eslint-disable-next-line no-undef
     data = { type: "folder", folder_id: 0 };
   }
-  console.log(data);
   createItem(data).then(data => {
-    console.log(data);
     if (num) {
       const parentSidebarId = "sidebar" + " " + num;
-      console.log(parentSidebarId);
       const parentSideBar = document.getElementById(parentSidebarId);
       const div = document.createElement("div");
       div.innerHTML = "folder";
@@ -53,14 +46,13 @@ plus.addEventListener("click", (e) => {
         parentSideBar.innerHTML = "";
         parentSideBar.innerHTML = `<button class=sidebar_button><img src="images/down-before.svg" class="downBefore">${parentId.className}</button>`;
         parentSideBar.className = "parentSideBar" + " " + parentId.className;
-        console.log(parentSideBar);
         div.style.display = "none";
       } else {
         if (parentSideBar.children[1].style.display === "none") {
           div.style.display = "none";
         } else {
           div.style.display = "block";
-          div.style.marginLeft = "1.5%";
+          div.style.marginLeft = "3em";
         }
       }
       parentSideBar.append(div);

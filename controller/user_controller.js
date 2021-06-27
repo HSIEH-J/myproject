@@ -3,8 +3,6 @@ const validator = require("validator");
 
 const signUp = async (req, res) => {
   const { email, password } = req.body;
-  console.log(email);
-  console.log(password);
   if (!email || !password) {
     res.status(400).send({ error: "Request Error: email and password are required." });
     return;

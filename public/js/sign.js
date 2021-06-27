@@ -1,10 +1,11 @@
+/* eslint-disable no-unused-vars */
 const token = localStorage.getItem("accessToken");
 if (token) {
   location.href = "/container.html";
 }
 
 const signUpData = async (data) => {
-  const response = await fetch("/api/1.0/signup", {
+  const response = await fetch("/api/1.0/user/signup", {
     body: JSON.stringify(data),
     headers: new Headers({
       "Content-Type": "application/json"
@@ -28,7 +29,7 @@ const signUpData = async (data) => {
 };
 
 const signInData = async (data) => {
-  const response = await fetch("/api/1.0/login", {
+  const response = await fetch("/api/1.0/user/login", {
     body: JSON.stringify(data),
     headers: new Headers({
       "Content-Type": "application/json"
@@ -58,37 +59,17 @@ const pwdIn = document.getElementById("pwdIn");
 const waitingImg = document.getElementById("waitingImg");
 const signBlock = document.getElementById("signBlock");
 
-// document.addEventListener("click", (e) => {
-//   const target = e.target;
-//   if (target.id === "emailUp") {
-//     target.value = "";
-//   }
-//   if (target.id === "pwdUp") {
-//     target.value = "";
-//   }
-//   if (target.id === "emailIn") {
-//     target.value = "";
-//   }
-//   if (target.id === "pwdIn") {
-//     target.value = "";
-//   }
-// });
-
 function register () {
   const email = emailUp.value;
   const pwd = pwdUp.value;
-  console.log(email);
-  console.log(pwd);
   if (!email || !pwd) {
     alert("email and password are required!");
     return;
   }
-  console.log("sign Up");
   signBlock.style.display = "none";
   waitingImg.style.display = "block";
   const data = { email: email, password: pwd };
   signUpData(data).then(data => {
-    console.log(data);
     localStorage.setItem("accessToken", data.data.access_token);
     // top.postMessage({ updateToken: localStorage.accessToken }, "chrome-extension://koggopoanaidpohodhpdklohbngbjkif/background.html");
     window.location.href = "/container.html";
@@ -103,12 +84,10 @@ function logIn () {
     alert("email and password are required!");
     return;
   }
-  console.log("Log In");
   signBlock.style.display = "none";
   waitingImg.style.display = "block";
   const data = { email: email, password: pwd };
   signInData(data).then(data => {
-    console.log(data);
     localStorage.setItem("accessToken", data.data.access_token);
     // top.postMessage({ updateToken: localStorage.accessToken }, "chrome-extension://koggopoanaidpohodhpdklohbngbjkif/background.html");
     window.location.href = "/container.html";

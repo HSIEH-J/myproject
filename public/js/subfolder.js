@@ -2,7 +2,7 @@
 // // const url = location.href; d
 // // const id = url.split("=")[1];
 const getData = async (id) => {
-  const response = await fetch(`/api/1.0/get?id=${id}`, {
+  const response = await fetch(`/api/1.0/item/details?id=${id}`, {
     headers: new Headers({
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`
@@ -17,7 +17,7 @@ const getData = async (id) => {
 };
 
 const getBlockData = async (id) => {
-  const response = await fetch(`/api/1.0/div?id=${id}`, {
+  const response = await fetch(`/api/1.0/block/details?id=${id}`, {
     headers: new Headers({
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`
@@ -32,7 +32,7 @@ const getBlockData = async (id) => {
 };
 
 const removeItem = async (data) => {
-  const response = await fetch("/api/1.0/remove", {
+  const response = await fetch("/api/1.0/item/remove", {
     body: JSON.stringify(data),
     headers: new Headers({
       "Content-Type": "application/json",
@@ -49,7 +49,7 @@ const removeItem = async (data) => {
 };
 
 const updateBlockSize = async (data) => {
-  const response = await fetch("/api/1.0/size", {
+  const response = await fetch("/api/1.0/block/size", {
     body: JSON.stringify(data),
     headers: new Headers({
       "Content-Type": "application/json",
@@ -64,19 +64,6 @@ const updateBlockSize = async (data) => {
   const json = await response.json();
   return json;
 };
-
-// const createBlock = async (data) => {
-//   const response = await fetch("/api/1.0/block", {
-//     body: JSON.stringify(data),
-//     headers: new Headers({
-//       "Content-Type": "application/json",
-//       Authorization: `Bearer ${token}`
-//     }),
-//     method: "POST"
-//   });
-//   const json = await response.json();
-//   return json;
-// };
 
 // // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-unused-vars
@@ -93,14 +80,15 @@ const parentData = document.getElementById("parentData");
 // const layout = document.getElementById("display");
 document.addEventListener("click", (e) => {
   let num;
-  console.log(e.target);
   if (e.target.className === "frame folderItem" || e.target.className === "sidebar_button" || e.target.classList.contains("bar_item")) {
     waitingImg.style.display = "block";
+    box.value = "";
+    plus.style.display = "block";
+    importUrl.style.display = "block";
     let id;
     let folderName;
     const prevFolder = document.getElementById("parent_id");
     if (prevFolder) {
-      console.log(prevFolder);
       const prevId = prevFolder.innerHTML;
       const prevSidebarId = "sidebar" + " " + prevId;
       const prevSidebarItem = document.getElementById(prevSidebarId);
@@ -143,35 +131,25 @@ document.addEventListener("click", (e) => {
     } else {
       folderNameChange.innerHTML = folderName;
     }
-    console.log(folderNameChange);
-    console.log(id);
-    // layout.style.display = "flex";
-    // layout.style.justifyContent = "space-around";
-    // layout.style.width = "200px";
-    console.log(e.target.id);
     urlClick.style.display = "none";
     // eslint-disable-next-line no-undef
-    console.log(dataArea.style.display);
-    if (e.target.className === "block" || dataArea.style.display === "block") {
-      dataArea.style.display = "none";
-      // dataArea.innerHTML = "";
-      const div = document.querySelectorAll(".block");
-      console.log(div.length);
-      for (let i = 0; i < div.length; i++) {
-        const child = document.getElementById(div[i].id);
-        dataArea.removeChild(child);
-      }
-      container.style.width = "90vw";
+    // if (e.target.className === "block" || dataArea.style.display === "block") {
+    dataArea.style.display = "none";
+    // dataArea.innerHTML = "";
+    const div = document.querySelectorAll(".block");
+    for (let i = 0; i < div.length; i++) {
+      const child = document.getElementById(div[i].id);
+      dataArea.removeChild(child);
     }
+    container.style.width = "90vw";
+    // }
     page.innerHTML = "";
     parentData.innerHTML = "";
     getData(id).then(data => {
       waitingImg.style.display = "none";
-      console.log(data);
       const get = data.data;
       for (const n in get) {
         if (get[n].type === "bookmark") {
-          console.log("===undefined===");
           const overTitle = overString(get[n].title);
           const newTitle = overTitle.join("");
           const frame = document.createElement("div");
@@ -219,7 +197,6 @@ document.addEventListener("click", (e) => {
           noteDiv.setAttribute("id", get[n].id);
           const textAreaId = parseInt(getTimeStamp()) + parseInt(n);
           let text;
-          console.log(get[n].text);
           if (get[n].text === null) {
             text = "";
           } else {
@@ -240,19 +217,14 @@ document.addEventListener("click", (e) => {
     });
     // render dataArea
     getBlockData(id).then(data => {
-    // console.log(block.length);
-      console.log(data);
-      console.log(!data);
       if (!data && block.length === 0) {
-        console.log("highlight block");
         highlight.style.display = "block";
       } else {
         for (const n in data) {
-          console.log(data[n]);
           const div = document.createElement("div");
           div.setAttribute("class", "block");
           div.setAttribute("id", data[n].id);
-          div.setAttribute("draggable", "true");
+          // div.setAttribute("draggable", "true");
           div.innerHTML = `<div class="trashCan blockTrash">
                               <img src="images/trash.svg" width="35px" height="35px" class="trashCan blockTrash">
                            </div>`;
@@ -299,7 +271,6 @@ document.addEventListener("click", (e) => {
                                      </div>`;
               div.appendChild(addCarton);
             } else {
-              console.log("123");
               const noteDiv = document.createElement("div");
               noteDiv.className = "frame";
               noteDiv.setAttribute("draggable", "true");
@@ -333,25 +304,16 @@ document.addEventListener("click", (e) => {
     plusIcon.style.display = "block";
   }
   if (e.target.className === "block") {
-    console.log(e.target.style.width);
-    console.log(e.target.style.height);
     const width = e.target.style.width;
     const height = e.target.style.height;
     if (width || height) {
-      console.log("block size change");
       const data = { id: e.target.id, width: width, height: height };
-      updateBlockSize(data).then(data => {
-        console.log(data);
-      });
+      updateBlockSize(data);
     }
   }
   if (e.target.parentNode.classList.contains("trashCan")) {
-    console.log(e.target.parentNode.parentNode);
-    console.log(e.target.parentNode.parentNode.parentNode);
     const removeParent = e.target.parentNode.parentNode.parentNode;
     const removeChild = e.target.parentNode.parentNode;
-    console.log(removeParent);
-    console.log(removeChild);
     const id = removeChild.id;
     const parent = document.getElementById(removeParent.id);
     const child = document.getElementById(id);
@@ -420,7 +382,6 @@ document.addEventListener("click", (e) => {
     container.style.width = "30vw";
     dataArea.style.width = "60vw";
     dataArea.style.display = "block";
-    console.log(block);
     if (block.length !== 0) {
       highlight.style.display = "none";
       addBlock.style.display = "block";
@@ -441,7 +402,6 @@ document.addEventListener("click", (e) => {
     if (parentId) {
       num = parentId.innerHTML;
     }
-    console.log(num);
     highlight.style.display = "none";
     const data = { type: "block", folder_id: num };
     createItem(data).then(data => {
@@ -455,22 +415,19 @@ document.addEventListener("click", (e) => {
       dataArea.appendChild(BlockDiv);
     });
   }
-  if (e.target.className === "stickyNote") {
-    // const stickyNote = document.getElementsByClassName("stickyNote");
-    const startPosition = e.target.selectionStart;
-    const endPosition = e.target.selectionEnd;
-    console.log(startPosition, endPosition);
-  }
+  // if (e.target.className === "stickyNote") {
+  //   // const stickyNote = document.getElementsByClassName("stickyNote");
+  //   const startPosition = e.target.selectionStart;
+  //   const endPosition = e.target.selectionEnd;
+  //   console.log(startPosition, endPosition);
+  // }
 });
 
 note.addEventListener("click", (e) => {
   const parent = document.getElementById("parent_id");
   const parentId = parent.innerHTML;
-  console.log(parentId);
   const data = { type: "stickyNote", folder_id: parentId };
-  console.log(data);
   createItem(data).then(data => {
-    console.log(data);
     const noteDiv = document.createElement("div");
     noteDiv.className = "frame";
     noteDiv.setAttribute("draggable", "true");

@@ -8,7 +8,7 @@ if (!token) {
 
 // render main content data
 const getBookmarkData = async () => {
-  const response = await fetch("/api/1.0/get", {
+  const response = await fetch("/api/1.0/item/details", {
     headers: new Headers({
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`
@@ -91,7 +91,7 @@ homepage.addEventListener("click", (e) => {
 });
 
 const changeFolderName = async (data) => {
-  const response = await fetch("/api/1.0/name", {
+  const response = await fetch("/api/1.0/folder/name", {
     body: JSON.stringify(data),
     headers: new Headers({
       "Content-Type": "application/json",
