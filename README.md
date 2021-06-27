@@ -5,13 +5,13 @@ This website is for organizing browser bookmarks.
 ## Table of Content 
 
 <ul>
-  <li>Technologies</li>
-  <li>Structure</li>
-  <li>Database design</li>
-  <li>Features</li>
+  <li><a href= #technologie>Technologies</li>
+  <li><a href= #structures>Structure</li>
+  <li><a href= #database>Database design</li>
+  <li><a href= #feature>Features</li>
 </ul>
 
-## Technologies
+## <div id="technologie">Technologies</div>
 
 Back-End
 
@@ -63,15 +63,15 @@ Others
   <li>AWS S3</li>
 </ul>
 
-## Structure
+## <div id="structures">Structure</div>
 
 ![image](readme/structure.png)
 
-## Database design 
+## <div id="database">Database design</div>
 
 ![image](readme/database.png)
 
-## Features
+## <div id="feature">Features</div>
 
 ![image](readme/intro.gif)
 
