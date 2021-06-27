@@ -66,7 +66,12 @@ Others
 
 ## Structure
 
+![image](structure.png)
+
 ## Database design 
+
+![image](database.png)
+
 
 ## Features
 
