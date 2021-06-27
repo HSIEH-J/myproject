@@ -2,17 +2,22 @@
 
 This website is for organizing browser bookmarks.
 
+https://bookmarktool.online/
+
+Account for testing<br>
+email: 123@gmail.com<br>
+password: 123
+
 ## Table of Content 
 
 <ul>
-  <li>Technologies</li>
-  <li>Structure</li>
-  <li>Database design</li>
-  <li>Features</li>
-  <li>Idea</li>
+  <li><a href= #technologie>Technologies</li>
+  <li><a href= #structures>Structure</li>
+  <li><a href= #database>Database design</li>
+  <li><a href= #feature>Features</li>
 </ul>
 
-## Technologies
+## <div id="technologie">Technologies</div>
 
 Back-End
 
@@ -64,20 +69,28 @@ Others
   <li>AWS S3</li>
 </ul>
 
-## Structure
+## <div id="structures">Structure</div>
 
-![image](structure.png)
+![image](readme/structure.png)
 
-## Database design 
+## <div id="database">Database design</div>
 
-![image](database.png)
+![image](readme/database.png)
 
-## Features
+## <div id="feature">Features</div>
 
+![image](readme/intro.gif)
 
-
-## Idea
-
+<ul>
+  <li>Generate bookmarks</li>
+  When user imported URL, the website will call third party API to get the thumbnail and generate bookmarks.
+  <li>Create Folders</li>
+  User can create folders to classify their bookmarks.
+  <li>Create Sticky notes</li>
+  User can create sticky notes to write remarks.
+  <li>Build collection boards</li>
+  If there are too many bookmarks or folders, user can easily find the items by creating collection boards.
+</ul>
 
 
 
