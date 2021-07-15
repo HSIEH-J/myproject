@@ -1,6 +1,7 @@
 # Bookmark tool website
 
-This website is for organizing browser bookmarks.
+People might open too many tabs while they were browsing web pages. And they might want to store these tabs as bookmarks.
+Therefore, this website is for people to generate and organize bookmarks.
 
 https://bookmarktool.online/
 
