@@ -71,7 +71,7 @@ Others
 
 ## <div id="structures">Structure</div>
 
-![image](readme/structure.png)
+![image](readme/structure)
 
 ## <div id="database">Database design</div>
 
