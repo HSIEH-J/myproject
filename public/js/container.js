@@ -1,10 +1,4 @@
 /* eslint-disable no-undef */
-const token = localStorage.getItem("accessToken");
-
-if (!token) {
-  alert("請先登入");
-  window.location.href = "/sign.html";
-}
 
 // render main content data
 const getBookmarkData = async () => {

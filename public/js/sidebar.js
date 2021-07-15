@@ -1,6 +1,14 @@
 /* eslint-disable no-undef */
 /* eslint-disable no-unused-vars */
 // Sidebar
+
+const token = localStorage.getItem("accessToken");
+
+if (!token) {
+  alert("請先登入");
+  window.location.href = "/sign.html";
+}
+
 const getNestData = async () => {
   const response = await fetch("/api/1.0/sidebar/details", {
     headers: new Headers({
